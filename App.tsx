@@ -25,6 +25,11 @@ const App: React.FC = () => {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  // Scroll to top whenever route changes to avoid "blank screen" error
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [route]);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (loginForm.login === 'Admin' && loginForm.password === 'Admin1243') {
@@ -35,43 +40,53 @@ const App: React.FC = () => {
     }
   };
 
-  // Simple Hash Routing for the demonstration
+  // Simple Hash Routing
   if (route === '#admin') {
     if (!isAuthenticated) {
         return (
             <div className="min-h-screen bg-black flex items-center justify-center p-4">
-                <div className="w-full max-w-md bg-zinc-900 p-8 rounded-2xl border border-white/10">
+                <div className="w-full max-w-md bg-zinc-900 p-8 rounded-2xl border border-white/10 shadow-2xl">
                     <div className="flex justify-center mb-6">
-                        <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-electricBlue">
-                            <Lock size={24} />
+                        <div className="w-16 h-16 bg-zinc-800 rounded-full flex items-center justify-center text-electricBlue border border-white/5">
+                            <Lock size={28} />
                         </div>
                     </div>
-                    <h2 className="text-2xl font-bold text-center text-white mb-6">Вход в систему</h2>
-                    <form onSubmit={handleLogin} className="space-y-4">
+                    <h2 className="text-2xl font-bold text-center text-white mb-2">Вход в систему</h2>
+                    <p className="text-zinc-500 text-center text-sm mb-8">Панель управления Highway Motors</p>
+                    
+                    <form onSubmit={handleLogin} className="space-y-5">
                         <div>
-                            <label className="text-xs text-zinc-500 uppercase font-bold">Логин</label>
+                            <label className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-2 block">Логин</label>
                             <input 
                                 type="text" 
-                                className="w-full bg-black border border-white/10 rounded-lg p-3 text-white focus:border-electricBlue focus:outline-none mt-1"
+                                className="w-full bg-black border border-white/10 rounded-lg p-3 text-white focus:border-electricBlue focus:outline-none focus:ring-1 focus:ring-electricBlue transition-all"
                                 value={loginForm.login}
                                 onChange={e => setLoginForm({...loginForm, login: e.target.value})}
+                                placeholder="Введите логин"
                             />
                         </div>
                         <div>
-                            <label className="text-xs text-zinc-500 uppercase font-bold">Пароль</label>
+                            <label className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-2 block">Пароль</label>
                             <input 
                                 type="password" 
-                                className="w-full bg-black border border-white/10 rounded-lg p-3 text-white focus:border-electricBlue focus:outline-none mt-1"
+                                className="w-full bg-black border border-white/10 rounded-lg p-3 text-white focus:border-electricBlue focus:outline-none focus:ring-1 focus:ring-electricBlue transition-all"
                                 value={loginForm.password}
                                 onChange={e => setLoginForm({...loginForm, password: e.target.value})}
+                                placeholder="Введите пароль"
                             />
                         </div>
-                        {error && <p className="text-red-500 text-sm">{error}</p>}
-                        <button className="w-full bg-white text-black font-bold py-3 rounded-lg hover:bg-zinc-200 transition-colors">
+                        {error && (
+                            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-center">
+                                {error}
+                            </div>
+                        )}
+                        <button className="w-full bg-white text-black font-bold py-3.5 rounded-lg hover:bg-zinc-200 transition-colors mt-2">
                             ВОЙТИ
                         </button>
                     </form>
-                    <a href="/" className="block text-center text-zinc-500 text-sm mt-6 hover:text-white">← Вернуться на сайт</a>
+                    <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState("", document.title, window.location.pathname); setRoute(''); }} className="block text-center text-zinc-500 text-sm mt-8 hover:text-white transition-colors cursor-pointer">
+                        ← Вернуться на сайт
+                    </a>
                 </div>
             </div>
         )
