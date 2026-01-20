@@ -80,7 +80,6 @@ export const MOCK_CARS: Car[] = [
 ];
 
 export const NAV_LINKS: NavLink[] = [
-  { label: 'Каталог', href: '#catalog' },
   { label: 'Процесс', href: '#process' },
   { label: 'Гарантии', href: '#trust' },
   { label: 'Контакты', href: '#contact' },
