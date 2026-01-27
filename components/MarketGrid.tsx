@@ -1,29 +1,49 @@
-import React from 'react';
+"use client";
+
 import { motion } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
-import { MARKETS } from '../constants';
+import { ArrowUpRight, Globe } from 'lucide-react';
+import Link from 'next/link';
 
-export const MarketGrid: React.FC = () => {
+const MARKETS = [
+  {
+    id: 'china',
+    name: 'КИТАЙ',
+    description: 'Li Auto, Zeekr, BYD. Прямые поставки с заводов. 0% пошлина на электро.',
+    bg: 'bg-red-900/20',
+    tags: ['Li Auto', 'Zeekr', 'BYD']
+  },
+  {
+    id: 'usa',
+    name: 'США',
+    description: 'Страховые аукционы Copart и Manheim. Максимальная выгода для бюджетных авто.',
+    bg: 'bg-blue-900/20',
+    tags: ['Copart', 'Tesla', 'Ford']
+  },
+  {
+    id: 'korea',
+    name: 'КОРЕЯ',
+    description: 'Дизельные кроссоверы и седаны (Kia, Hyundai, BMW) в идеальном состоянии.',
+    bg: 'bg-indigo-900/20',
+    tags: ['Encar', 'Mohave', 'Palisade']
+  },
+  {
+    id: 'europe',
+    name: 'ЕВРОПА',
+    description: 'Премиум сегмент (BMW, Mercedes, Porsche) и возврат НДС.',
+    bg: 'bg-emerald-900/20',
+    tags: ['Mobile.de', 'Audi', 'Porsche']
+  }
+];
+
+export function MarketGrid() {
   return (
-    <section id="markets" className="py-24 bg-matteBlack">
+    <section className="py-24 bg-black">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-          <div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-white">
-              ГЛОБАЛЬНЫЙ РЫНОК
-            </h2>
-            <p className="text-zinc-400 max-w-md">
-              Прямой доступ к лучшим аукционам и дилерским площадкам мира.
-              Никаких посредников.
-            </p>
-          </div>
-          <div className="text-right hidden md:block">
-            <div className="text-4xl font-mono text-zinc-700">2026</div>
-            <div className="text-xs text-zinc-500 uppercase tracking-widest">Глобальная логистическая сеть</div>
-          </div>
-        </div>
+        <h2 className="text-3xl md:text-5xl font-bold mb-12 tracking-tight text-white flex items-center gap-4">
+          <Globe className="text-red-500" size={40} /> ГЛОБАЛЬНЫЙ РЫНОК
+        </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-auto md:h-[600px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {MARKETS.map((market, index) => (
             <motion.div
               key={market.id}
@@ -31,49 +51,36 @@ export const MarketGrid: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="group relative rounded-2xl overflow-hidden cursor-pointer bg-zinc-900 border border-white/5 h-80 md:h-full"
+              className={`group relative rounded-3xl overflow-hidden cursor-pointer border border-white/10 h-80 ${market.bg}`}
             >
-              {/* Image Background */}
-              <div className="absolute inset-0">
-                <img
-                  src={market.imageUrl}
-                  alt={market.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 filter grayscale group-hover:grayscale-0"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
-              </div>
+              <Link href={`/catalog?market=${market.id}`} className="absolute inset-0 p-6 flex flex-col justify-between hover:bg-white/5 transition-colors">
 
-              {/* Content */}
-              <div className="absolute inset-0 p-6 flex flex-col justify-between">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-bold px-2 py-1 bg-white/10 backdrop-blur-md rounded border border-white/10 text-white">
-                    {`0${index + 1}`}
+                  <span className="text-xs font-bold px-2 py-1 bg-white/10 rounded-md text-white/70">
+                    0{index + 1}
                   </span>
-                  <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center transform -rotate-45 group-hover:rotate-0 transition-transform duration-300">
-                    <ArrowUpRight className="text-white w-5 h-5" />
-                  </div>
+                  <ArrowUpRight className="text-white/50 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
                 </div>
 
                 <div>
-                  <h3 className="text-3xl font-bold text-white mb-2">{market.name}</h3>
-                  <div className="h-0 overflow-hidden group-hover:h-auto transition-all duration-300">
-                    <p className="text-sm text-zinc-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity delay-100 duration-300">
-                      {market.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {market.tags.map(tag => (
-                        <span key={tag} className="text-[10px] uppercase border border-white/20 px-2 py-1 rounded text-zinc-300">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                  <h3 className="text-2xl font-black text-white mb-2 uppercase">{market.name}</h3>
+                  <p className="text-sm text-zinc-400 mb-4 line-clamp-3">
+                    {market.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {market.tags.map(tag => (
+                      <span key={tag} className="text-[10px] uppercase border border-white/10 px-2 py-1 rounded text-zinc-500 group-hover:text-zinc-300 transition-colors">
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
-              </div>
+
+              </Link>
             </motion.div>
           ))}
         </div>
       </div>
     </section>
   );
-};
+}

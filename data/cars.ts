@@ -18,6 +18,7 @@ export interface CarFamily {
   image: string;
   start_price: number;
   description: string;
+  market: 'China' | 'Korea' | 'USA' | 'Europe';
   variants: CarVariant[];
 }
 
@@ -29,6 +30,7 @@ export const carDatabase: CarFamily[] = [
     image: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Li_Auto_L6_001.jpg",
     start_price: 38500,
     description: "Ideal family SUV. EREV (Hybrid).",
+    market: "China",
     variants: [
       {
         id: "l6-pro-2024",
@@ -63,6 +65,7 @@ export const carDatabase: CarFamily[] = [
     image: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Voyah_Free_003.jpg",
     start_price: 20500,
     description: "Sporty EREV Crossover. 3 Generations available.",
+    market: "China",
     variants: [
       {
         id: "free-2021-rwd",
@@ -95,6 +98,44 @@ export const carDatabase: CarFamily[] = [
         condition: "Demo/New",
         price_usd: 36000,
         tags: ["Long Range"]
+      }
+    ]
+  },
+  {
+    id: "chevy-equinox-family",
+    brand: "Chevrolet",
+    model: "Equinox",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/2022_Chevrolet_Equinox_RS_%28front%29.jpg/1280px-2022_Chevrolet_Equinox_RS_%28front%29.jpg",
+    start_price: 13500,
+    description: "Classic American SUV. Reliable and spacious.",
+    market: "USA",
+    variants: [
+      {
+        id: "equinox-2020-lt",
+        name: "2020 LT 1.5 AWD",
+        specs: "AWD, Keyless Entry",
+        condition: "Run&Drive (Repairable)",
+        price_usd: 13500,
+        tags: ["Value", "Project"]
+      }
+    ]
+  },
+  {
+    id: "santa-fe-tm-family",
+    brand: "Hyundai",
+    model: "Santa Fe",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/2021_Hyundai_Santa_Fe_%28TM_PE%29_2.2_D_HTRAC_Prestige_%281%29.jpg/1280px-2021_Hyundai_Santa_Fe_%28TM_PE%29_2.2_D_HTRAC_Prestige_%281%29.jpg",
+    start_price: 21800,
+    description: "Korean bestseller. Diesel power and comfort.",
+    market: "Korea",
+    variants: [
+      {
+        id: "santa-fe-2021-diesel",
+        name: "2021 2.2 Diesel Premium",
+        specs: "Diesel, Leather Interior",
+        condition: "Used (Encar)",
+        price_usd: 21800,
+        tags: ["Bestseller", "Comfort"]
       }
     ]
   }
