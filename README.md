@@ -1,20 +1,24 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Highway Motors
 
-# Run and deploy your AI Studio app
+Premium car import services (China, USA, Korea, Europe).
 
-This contains everything you need to run your app locally.
+## Tech Stack
+- **Framework**: Next.js 14 (App Router)
+- **Styling**: Tailwind CSS v4.0 (Native Import)
+- **Language**: TypeScript
+- **State**: Zustand
+- **Server**: Node.js (PM2) + Nginx
 
-View your app in AI Studio: https://ai.studio/apps/drive/14hRnFA-YcHbLc9lFTlW_d9l29Y_K6V28
+## Deployment
+1. `npm run build`
+2. `pm2 start ecosystem.config.cjs` (or `pm2 restart highway-motors`)
 
-## Run Locally
+## Architecture
+- `app/` - Next.js App Router (Pages & Layouts)
+- `components/` - Functional UI components
+- `data/` - Static data (cars, markets)
+- `store/` - Global state (Zustand)
+- `public/images/` - High-quality car assets
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+*Version: 1.1.0*

@@ -2,13 +2,16 @@ import { LandingPriceCalculator } from "@/components/calculator/LandingPriceCalc
 import { Hero } from "@/components/Hero";
 import { MarketGrid } from "@/components/MarketGrid";
 import { CarCatalog } from "@/components/CarCatalog";
+import { getSiteContent } from "@/lib/data";
 
-export default function Home() {
+export default async function Home() {
+    const siteContent = await getSiteContent();
+
     return (
         <div className="pb-20">
             <Hero />
 
-            <MarketGrid />
+            <MarketGrid content={siteContent.marketSection} />
 
             {/* Calculator Section */}
             <section id="calculator" className="max-w-7xl mx-auto px-4 relative z-20 py-24">

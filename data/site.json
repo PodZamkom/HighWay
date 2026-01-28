@@ -1,0 +1,184 @@
+{
+  "seo": {
+    "title": "Highway Motors | Авто из Китая, Европы и США",
+    "description": "Честные цены, быстрая доставка, профессиональный подбор.",
+    "keywords": "авто из Китая, авто из Европы, авто из США, импорт авто, подбор авто, Highway Motors",
+    "ogImage": "/images/og-image.jpg"
+  },
+  "navbar": {
+    "brandPrimary": "HIGHWAY",
+    "brandAccent": "MOTORS",
+    "links": [
+      {
+        "label": "Каталог",
+        "href": "/catalog"
+      },
+      {
+        "label": "Калькулятор",
+        "href": "/calculator"
+      },
+      {
+        "label": "Вопросы (FAQ)",
+        "href": "/faq"
+      },
+      {
+        "label": "Контакты",
+        "href": "/contacts"
+      }
+    ],
+    "ctaLabel": "Связаться"
+  },
+  "hero": {
+    "badge": "СИСТЕМА АКТИВНА • LIVE DATA",
+    "titlePrimary": "HIGHWAY",
+    "titleAccent": "MOTORS",
+    "subtitleLine1": "Хватит переплачивать посредникам.",
+    "subtitleLine2Emphasis": "Честный импорт авто",
+    "subtitleLine2Rest": " из Китая, Европы и США.",
+    "marqueeLine": "ДАННЫЕ АУКЦИОНОВ США В РЕАЛЬНОМ ВРЕМЕНИ • ПРЯМОЙ ДОСТУП К ENCAR КОРЕЯ • ЭКСПОРТ ЭЛЕКТРОКАРОВ ИЗ КИТАЯ • ",
+    "primaryCta": {
+      "label": "ВЫБРАТЬ АВТО",
+      "href": "/catalog"
+    },
+    "secondaryCta": {
+      "label": "РАССЧИТАТЬ ЦЕНУ",
+      "href": "#calculator"
+    }
+  },
+  "calculator": {
+    "sectionTitle": "Честный калькулятор",
+    "sectionHighlight": "под ключ",
+    "sectionDescription": "Выберите параметры автомобиля и получите расчет государственных таможенных платежей в РБ.",
+    "engineTypeLabel": "Тип двигателя",
+    "engineTypeOptions": {
+      "EV": "Электро",
+      "EREV": "Гибрид (REEV)",
+      "HEV": "Гибрид (классич.)",
+      "ICE": "ДВС"
+    },
+    "engineTypeHint": {
+      "EV": "0% таможенная пошлина.",
+      "OTHER": "Таможня + НДС (или льгота)."
+    },
+    "priceLabel": "Стоимость авто в Китае ($)",
+    "engineVolumeLabel": "Объем двигателя (см³)",
+    "carAgeLabel": "Возраст автомобиля",
+    "carAgeOptions": {
+      "0-3": "0-3 года",
+      "3-5": "3-5 лет",
+      "5+": "5+ лет"
+    },
+    "legalEntityLabel": "Юр. лицо",
+    "decreeLabel": "Льгота (Указ 140)",
+    "breakdownTitle": "Таможенные платежи (РБ)",
+    "breakdownLabels": {
+      "price": "Цена авто (USD)",
+      "duty": "Пошлина (EUR)",
+      "vat": "НДС (EUR)",
+      "recycling": "Утильсбор (BYN)",
+      "processing": "Сбор за оформление (BYN)",
+      "total": "Итого таможенные платежи"
+    },
+    "ctaLabel": "Получить детальный расчет",
+    "approxLabel": "≈"
+  },
+  "marketSection": {
+    "title": "ГЛОБАЛЬНЫЙ РЫНОК",
+    "markets": [
+      {
+        "id": "china",
+        "name": "КИТАЙ",
+        "description": "Li Auto, Zeekr, BYD. Прямые поставки с заводов. 0% пошлина на электро.",
+        "image": "/images/market-china.jpg",
+        "tags": [
+          "Li Auto",
+          "Zeekr",
+          "BYD"
+        ],
+        "bgClass": "bg-red-900/20"
+      },
+      {
+        "id": "usa",
+        "name": "США",
+        "description": "Страховые аукционы Copart и Manheim. Максимальная выгода для бюджетных авто.",
+        "image": "/images/market-usa.jpg",
+        "tags": [
+          "Copart",
+          "Tesla",
+          "Ford"
+        ],
+        "bgClass": "bg-blue-900/20"
+      },
+      {
+        "id": "korea",
+        "name": "КОРЕЯ",
+        "description": "Дизельные кроссоверы и седаны (Kia, Hyundai, BMW) в идеальном состоянии.",
+        "image": "/images/market-korea.jpg",
+        "tags": [
+          "Encar",
+          "Mohave",
+          "Palisade"
+        ],
+        "bgClass": "bg-indigo-900/20"
+      },
+      {
+        "id": "europe",
+        "name": "ЕВРОПА",
+        "description": "Премиум сегмент (BMW, Mercedes, Porsche) и возврат НДС.",
+        "image": "/images/market-europe.jpg",
+        "tags": [
+          "Mobile.de",
+          "Audi",
+          "Porsche"
+        ],
+        "bgClass": "bg-emerald-900/20"
+      }
+    ]
+  },
+  "catalogSection": {
+    "title": "КАТАЛОГ АВТО",
+    "noImageLabel": "Нет фото",
+    "filterLabels": {
+      "all": "Все",
+      "china": "Китай",
+      "europe": "Европа",
+      "usa": "США",
+      "korea": "Корея"
+    },
+    "availabilityLabels": {
+      "inStock": "В Минске",
+      "enRoute": "В Пути",
+      "onOrder": "Под Заказ"
+    },
+    "typeLabels": {
+      "EV": "Электро",
+      "EREV": "Гибрид",
+      "ICE": "ДВС"
+    },
+    "cardLabels": {
+      "price": "Цена в Китае",
+      "details": "Подробнее",
+      "acceleration": "Разгон",
+      "range": "Запас хода",
+      "drive": "Привод"
+    }
+  },
+  "carDetail": {
+    "backLabel": "Назад в каталог",
+    "specBadgeSuffix": "Spec",
+    "noImageLabel": "Нет фото",
+    "accelerationLabel": "0-100 км/ч",
+    "rangeLabel": "Запас хода (CLTC)",
+    "marketPriceLabel": "Цена в Китае (FOB)",
+    "marketPriceNote": "Не включает доставку и таможню",
+    "trimsLabel": "Комплектации",
+    "orderButton": "Заказать расчет",
+    "whatsappButton": "Написать в WhatsApp"
+  },
+  "footer": {
+    "copyright": "© 2026 Highway Motors. Все права защищены.",
+    "tagline": "Разработано для лучших автомобилей.",
+    "version": "v1.1.1",
+    "adminLinkLabel": "Вход в админку"
+  }
+}
