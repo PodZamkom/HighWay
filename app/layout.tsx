@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { getSiteContent } from "@/lib/data";
+import Script from "next/script";
 
 export const dynamic = 'force-dynamic';
 
@@ -33,7 +34,11 @@ export default async function RootLayout({
                     {children}
                 </main>
                 <Footer content={siteContent.footer} />
-                <script src="https://staging.oryntix.ru/api/live-chat/widget.js?key=lc_adWIdg6tnh6h8yzd9kj3Q4YJ" async></script>
+                {/* Oryntix Live Chat */}
+                <Script
+                    src="https://www.oryntix.ru/api/live-chat/widget.js?key=lc_YwA0fbtbGzvXs2jNURSerhFl"
+                    strategy="afterInteractive"
+                />
             </body>
         </html>
     );
