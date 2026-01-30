@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { getSiteContent } from "@/lib/data";
 import Script from "next/script";
 
-export const dynamic = 'force-dynamic';
+
 
 export async function generateMetadata(): Promise<Metadata> {
     const { seo } = await getSiteContent();
