@@ -10,6 +10,7 @@ import Script from "next/script";
 export async function generateMetadata(): Promise<Metadata> {
     const { seo } = await getSiteContent();
     return {
+        metadataBase: new URL('https://reply.teleforge.ru'),
         title: seo.title,
         description: seo.description,
         keywords: seo.keywords,
