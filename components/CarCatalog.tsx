@@ -8,32 +8,65 @@ import { Filter } from 'lucide-react';
 
 export function CarCatalog() {
     const [filterMarket, setFilterMarket] = useState<'All' | 'China' | 'USA' | 'Korea' | 'Europe'>('All');
+    const [filterBrand, setFilterBrand] = useState('All');
 
-    const filteredCars = filterMarket === 'All'
+    // Filter by market first
+    const marketCars = filterMarket === 'All'
         ? cars_db
         : cars_db.filter(car => car.market === filterMarket);
+
+    // Get unique brands for the current market selection
+    const brands = ['All', ...new Set(marketCars.map(car => car.brand))].sort();
+
+    // Finally filter by brand
+    const filteredCars = filterBrand === 'All'
+        ? marketCars
+        : marketCars.filter(car => car.brand === filterBrand);
+
+    const handleMarketChange = (m: any) => {
+        setFilterMarket(m);
+        setFilterBrand('All'); // Reset brand on market change
+    };
 
     return (
         <section id="catalog" className="py-24 bg-zinc-950 border-t border-white/5">
             <div className="max-w-7xl mx-auto px-6">
 
                 {/* Header & Filters */}
-                <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
-                        КАТАЛОГ АВТО
-                    </h2>
+                <div className="space-y-8 mb-12">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                        <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
+                            КАТАЛОГ АВТО
+                        </h2>
 
-                    <div className="flex bg-white/5 p-1 rounded-xl">
-                        {['All', 'China', 'Europe', 'USA', 'Korea'].map((m) => (
-                            <button
-                                key={m}
-                                onClick={() => setFilterMarket(m as any)}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filterMarket === m
+                        <div className="flex bg-white/5 p-1 rounded-xl">
+                            {['All', 'China', 'Europe', 'USA', 'Korea'].map((m) => (
+                                <button
+                                    key={m}
+                                    onClick={() => handleMarketChange(m)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filterMarket === m
                                         ? 'bg-white text-black shadow-lg'
                                         : 'text-zinc-400 hover:text-white'
+                                        }`}
+                                >
+                                    {m === 'All' ? 'Все' : m === 'China' ? 'Китай' : m === 'USA' ? 'США' : m === 'Europe' ? 'Европа' : 'Корея'}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Brand Selector */}
+                    <div className="flex flex-wrap gap-2 justify-center border-t border-white/5 pt-8">
+                        {brands.map((brand) => (
+                            <button
+                                key={brand}
+                                onClick={() => setFilterBrand(brand)}
+                                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all border ${filterBrand === brand
+                                    ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-500/20'
+                                    : 'bg-transparent border-white/10 text-zinc-500 hover:border-white/30 hover:text-white'
                                     }`}
                             >
-                                {m === 'All' ? 'Все' : m === 'China' ? 'Китай' : m === 'USA' ? 'США' : m === 'Europe' ? 'Европа' : 'Корея'}
+                                {brand === 'All' ? 'Все марки' : brand}
                             </button>
                         ))}
                     </div>

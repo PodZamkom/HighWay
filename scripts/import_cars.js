@@ -1,61 +1,24 @@
-import fs from 'fs';
-import path from 'path';
-import https from 'https';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
 
 const CSV_PATH = path.join(__dirname, '../Parcing/china-bu-mejdukoles-by-2026-02-01-4.csv');
 const OUTPUT_PATH = path.join(__dirname, '../data/cars_imported_db.ts');
 const IMAGES_DIR = path.join(__dirname, '../public/images/cars');
 
-// Helper to download image w/ redirect support
-async function downloadImage(url, filepath) {
-    if (!url) return false;
-    return new Promise((resolve, reject) => {
-        const file = fs.createWriteStream(filepath);
-        const request = https.get(url, (response) => {
-            if (response.statusCode > 300 && response.statusCode < 400 && response.headers.location) {
-                file.close();
-                downloadImage(response.headers.location, filepath).then(resolve).catch(reject);
-                return;
-            }
-            if (response.statusCode !== 200) {
-                file.close();
-                fs.unlink(filepath, () => { });
-                reject(new Error(`Failed to download: ${response.statusCode}`));
-                return;
-            }
-            response.pipe(file);
-            file.on('finish', () => {
-                file.close();
-                resolve(true);
-            });
-        }).on('error', (err) => {
-            fs.unlink(filepath, () => { });
-            reject(err);
-        });
-    });
-}
+if (!fs.existsSync(IMAGES_DIR)) fs.mkdirSync(IMAGES_DIR, { recursive: true });
 
 function parseCSV(text) {
     const rows = [];
     let currentRow = [];
     let currentField = '';
     let insideQuotes = false;
-
     for (let i = 0; i < text.length; i++) {
         const char = text[i];
         const nextChar = text[i + 1];
-
         if (char === '"') {
-            if (insideQuotes && nextChar === '"') {
-                currentField += '"';
-                i++;
-            } else {
-                insideQuotes = !insideQuotes;
-            }
+            if (insideQuotes && nextChar === '"') { currentField += '"'; i++; }
+            else { insideQuotes = !insideQuotes; }
         } else if (char === ',' && !insideQuotes) {
             currentRow.push(currentField);
             currentField = '';
@@ -67,32 +30,39 @@ function parseCSV(text) {
                 currentRow = [];
                 currentField = '';
             }
-        } else {
-            currentField += char;
-        }
+        } else { currentField += char; }
     }
-    if (currentRow.length > 0) rows.push(currentRow);
+    if (currentRow.length > 0) { currentRow.push(currentField); rows.push(currentRow); }
     return rows;
 }
 
-const transliterate = (str) => {
-    const ru = {
-        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
-        'е': 'e', 'ё': 'e', 'ж': 'j', 'з': 'z', 'и': 'i',
-        'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
-        'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
-        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh',
-        'щ': 'shch', 'ы': 'y', 'э': 'e', 'ю': 'yu', 'я': 'ya',
-        'ъ': '', 'ь': '', 'й': 'y'
-    };
-    return str.toLowerCase().split('').map(char => ru[char] || char).join('');
-};
+function transliterate(text) {
+    const map = { 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya' };
+    return text.toLowerCase().split('').map(char => map[char] || char).join('');
+}
+
+function downloadImage(url, dest) {
+    return new Promise((resolve, reject) => {
+        https.get(url, (res) => {
+            if (res.statusCode !== 200) {
+                reject(new Error(`Failed to download ${url}: ${res.statusCode}`));
+                return;
+            }
+            const file = fs.createWriteStream(dest);
+            res.pipe(file);
+            file.on('finish', () => {
+                file.close();
+                resolve();
+            });
+        }).on('error', reject);
+    });
+}
 
 async function main() {
     console.log('Reading CSV...');
+    if (!fs.existsSync(CSV_PATH)) throw new Error('CSV not found');
     const content = fs.readFileSync(CSV_PATH, 'utf8');
     const rows = parseCSV(content);
-
     const headers = rows[0];
     const getIdx = (name) => headers.indexOf(name);
 
@@ -100,142 +70,85 @@ async function main() {
         brand: getIdx('Brand_0') > -1 ? getIdx('Brand_0') : getIdx('brand_0'),
         name: getIdx('name_0'),
         price: getIdx('price_0'),
-        year: 15,
-        condition: 14,
-        image1: 25,
-        image2: 26,
+        year: getIdx('Year_0'),
+        condition: getIdx('Condition_0'),
+        image1: getIdx('image_21'),
+        image2: getIdx('image_22'),
         desc: getIdx('description_0'),
-        specs: 18
+        specs: getIdx('Description_0') > -1 ? getIdx('Description_0') : getIdx('description_0')
     };
 
     const allCars = [];
     const sanitize = (str) => transliterate(str).replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '').toLowerCase();
 
-    const processRows = rows.slice(1);
-    for (const row of processRows) {
+    for (const row of rows.slice(1)) {
         if (!row[idx.brand]) continue;
 
         let brand = row[idx.brand].replace(/^Бренд/i, '').trim();
         brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
         let rawName = row[idx.name] || '';
+
+        let year = parseInt(row[idx.year]) || 0;
+        const rawCond = (row[idx.condition] || '').toLowerCase();
+        const isNew = (year >= 2024 && year <= 2026) || rawCond.includes('new') || rawCond.includes('нов');
+
+        if (!isNew || year < 1900) continue;
+
         let nameClean = rawName.replace(new RegExp(brand, 'gi'), '').trim();
-        nameClean = nameClean.replace(/Бренд/gi, '').trim();
         const nameParts = nameClean.split(/\s+/);
         let model = nameParts[0] || 'Unknown';
-
-        if (nameParts.length > 1) {
-            const p1 = nameParts[0].toLowerCase();
-            const p2 = nameParts[1].toLowerCase();
-            if (p1.length < 4 || /^[a-z0-9]+$/.test(p1)) {
-                if (p2.length > 1 && !p2.includes('км')) {
-                    model += ' ' + nameParts[1];
-                }
-            }
+        if (nameParts.length > 1 && (nameParts[0].length < 4 || /^[a-z0-9]+$/.test(nameParts[0]))) {
+            if (!nameParts[1].includes('км')) model += ' ' + nameParts[1];
         }
         model = model.replace(/['"“”]/g, '').trim();
+        let modelNormalized = model.split(',')[0].split('(')[0].replace(/\s+\d+.*$/i, '').trim();
+        if (modelNormalized.length < 2) modelNormalized = model;
 
-        const year = parseInt(row[idx.year]) || 2025;
-        const rawCond = (row[idx.condition] || '').toLowerCase();
-        const isNew = year >= 2025 || rawCond.includes('new') || rawCond.includes('нов');
-
-        if (!isNew) continue;
-
-        const carId = `${sanitize(brand)}-${sanitize(model)}`.replace(/_+/g, '-');
+        const carId = `${sanitize(brand)}-${sanitize(modelNormalized)}`.replace(/_+/g, '-');
         let car = allCars.find(c => c.id === carId);
 
         if (!car) {
-            const imgDir = path.join(IMAGES_DIR, sanitize(brand), sanitize(model));
+            const imgDir = path.join(IMAGES_DIR, sanitize(brand), sanitize(modelNormalized));
             if (!fs.existsSync(imgDir)) fs.mkdirSync(imgDir, { recursive: true });
 
             let imageUrl = '/images/placeholder.jpg';
-            let rawImgUrl = row[idx.image1] || row[idx.image2];
+            const rawImgUrl = (row[idx.image1] || row[idx.image2] || '').split(/[\r\n]+/)[0].trim().replace(/^['"]+|['"]+$/g, '');
 
-            if (rawImgUrl) {
-                rawImgUrl = rawImgUrl.split(/[\r\n]+/)[0].trim().replace(/^['"]+|['"]+$/g, '');
-            }
-
-            if (rawImgUrl && (rawImgUrl.startsWith('http') || rawImgUrl.startsWith('https'))) {
-                let ext = '.jpg';
-                try {
-                    const urlObj = new URL(rawImgUrl);
-                    ext = path.extname(urlObj.pathname) || '.jpg';
-                    if (ext.includes('webp')) ext = '.webp';
-                } catch (e) { }
-
-                const imgName = `main${ext}`;
+            if (rawImgUrl.startsWith('http')) {
+                const ext = path.extname(new URL(rawImgUrl).pathname) || '.webp';
+                const imgName = `main${ext.includes('webp') ? '.webp' : '.jpg'}`;
                 const localPath = path.join(imgDir, imgName);
-                const publicPath = `/images/cars/${sanitize(brand)}/${sanitize(model)}/${imgName}`;
-
-                if (fs.existsSync(localPath)) {
-                    imageUrl = publicPath;
-                } else {
-                    try {
-                        console.log(`Downloading: ${rawImgUrl}`);
-                        await downloadImage(rawImgUrl, localPath);
-                        imageUrl = publicPath;
-                    } catch (e) {
-                        console.error(`Error downloading ${rawImgUrl}: ${e.message}`);
-                    }
-                }
+                const publicPath = `/images/cars/${sanitize(brand)}/${sanitize(modelNormalized)}/${imgName}`;
+                if (fs.existsSync(localPath)) imageUrl = publicPath;
             }
 
-            const specsText = ((row[idx.specs] || '') + ' ' + (row[idx.desc] || '')).replace(/\s+/g, ' ');
-            let accel = 0;
-            let range = 0;
-            const accelMatch = specsText.match(/(\d+[.,]\d+)\s*(?:с|сек|s)/i);
-            const rangeMatch = specsText.match(/(\d{3,4})\s*(?:км|km)/i);
-
-            if (accelMatch) accel = parseFloat(accelMatch[1].replace(',', '.'));
-            if (rangeMatch) range = parseInt(rangeMatch[1]);
-
-            let carType = 'EV';
-            if (specsText.toLowerCase().includes('гибрид') || specsText.toLowerCase().includes('erev')) carType = 'EREV';
-            if (specsText.toLowerCase().includes('бензин') || specsText.toLowerCase().includes('дизель')) carType = 'ICE';
+            const specsP = ((row[idx.specs] || '') + ' ' + (row[idx.desc] || '')).replace(/\s+/g, ' ');
+            let accel = 0, range = 0;
+            const am = specsP.match(/(\d+[.,]\d+)\s*(?:с|сек|s)/i);
+            const rm = specsP.match(/(\d{3,4})\s*(?:км|km)/i);
+            if (am) accel = parseFloat(am[1].replace(',', '.'));
+            if (rm) range = parseInt(rm[1]);
 
             car = {
-                id: carId,
-                brand: brand,
-                model: model,
-                year: year,
-                market: 'China',
-                type: carType,
-                price_fob: 0,
-                currency: 'USD',
-                availability: 'On Order',
-                images: [imageUrl],
-                trims: [],
-                specs: {
-                    range_km: range || 500,
-                    acceleration_0_100: accel || 5.9,
-                    drive: specsText.toLowerCase().includes('4wd') || specsText.toLowerCase().includes('awd') ? 'AWD' : 'RWD'
-                }
+                id: carId, brand, model: modelNormalized, year, market: 'China',
+                type: specsP.toLowerCase().includes('гибрид') ? 'EREV' : 'EV',
+                price_fob: 0, currency: 'USD', availability: 'On Order',
+                images: [imageUrl], trims: [],
+                specs: { range_km: range || 500, acceleration_0_100: accel || 5.9, drive: specsP.toLowerCase().includes('4wd') ? 'AWD' : 'RWD' }
             };
             allCars.push(car);
         }
 
         const price = parseInt((row[idx.price] || '').replace(/[^0-9.]/g, '')) || 0;
-        if (car.price_fob === 0 || (price > 0 && price < car.price_fob)) {
-            car.price_fob = price;
-        }
+        if (car.price_fob === 0 || (price > 5000 && price < car.price_fob)) car.price_fob = price;
 
-        let trimName = rawName.replace(brand, '').replace(model, '').replace(/Бренд/gi, '').trim();
-        if (trimName.length < 2) trimName = "Standard";
-
-        car.trims.push({
-            name: trimName.slice(0, 40),
-            price_adjustment: price - car.price_fob,
-            features: [row[idx.specs]?.slice(0, 50) || 'Standard features']
-        });
+        let trim = rawName.replace(brand, '').replace(modelNormalized, '').trim();
+        if (car.trims.length < 8) car.trims.push({ name: trim || 'Standard', price_adjustment: price > car.price_fob ? price - car.price_fob : 0, features: [row[idx.specs]?.slice(0, 50) || 'Standard'] });
     }
 
-    const tsContent = `// Auto-generated by scripts/import_cars.js
-import { CarModel } from '../types/car';
-
-export const importedCarsDb: CarModel[] = ${JSON.stringify(allCars, null, 2)};
-`;
-
+    const tsContent = `import { CarModel } from '../types/car';\n\nexport const importedCarsDb: CarModel[] = ${JSON.stringify(allCars, null, 2)};\n`;
     fs.writeFileSync(OUTPUT_PATH, tsContent);
-    console.log(`Done! Exported ${allCars.length} models to ${OUTPUT_PATH}`);
+    console.log(`Done! Exported ${allCars.length} models.`);
 }
 
 main().catch(console.error);
