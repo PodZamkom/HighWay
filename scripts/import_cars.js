@@ -15,7 +15,6 @@ function transliterate(text) {
     return text.toLowerCase().split('').map(char => map[char] || char).join('');
 }
 
-// FULL FILE CSV Parser (handles newlines in quotes)
 function parseCSV(text) {
     const rows = [];
     let currentRow = [];
@@ -38,9 +37,7 @@ function parseCSV(text) {
                 currentRow = [];
                 currentField = '';
             }
-        } else {
-            currentField += char;
-        }
+        } else { currentField += char; }
     }
     if (currentRow.length > 0 || currentField.length > 0) {
         currentRow.push(currentField);
@@ -51,13 +48,9 @@ function parseCSV(text) {
 
 async function main() {
     console.log('Reading CSV...');
-    let content = fs.readFileSync(CSV_PATH, 'utf8');
-    if (content.charCodeAt(0) === 0xFEFF) content = content.slice(1);
-
+    let content = fs.readFileSync(CSV_PATH, 'utf8').replace(/^\uFEFF/, '');
     const rows = parseCSV(content);
-    if (rows.length < 2) throw new Error('No data rows found');
-
-    const headers = rows[0].map(h => h.trim());
+    const headers = rows[0].map(h => h.trim().replace(/^"|"$/g, ''));
     const getIdx = (name) => headers.indexOf(name);
 
     const idx = {
@@ -72,20 +65,16 @@ async function main() {
         specs: getIdx('Description_0') > -1 ? getIdx('Description_0') : getIdx('description_0')
     };
 
-    console.log('Detected Indices:', idx);
-    if (idx.brand === -1) throw new Error('Brand column not found');
-
     const allCars = [];
     const sanitize = (str) => transliterate(str).replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '').toLowerCase();
 
     for (const row of rows.slice(1)) {
         if (!row[idx.brand]) continue;
-
         let brand = row[idx.brand].replace(/^Бренд/i, '').trim();
         brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
         let rawName = row[idx.name] || '';
-
-        let year = parseInt(row[idx.year]) || 0;
+        let yearArr = row[idx.year];
+        let year = parseInt(yearArr) || 0;
         const rawCond = (row[idx.condition] || '').toLowerCase();
         const isNew = (year >= 2024 && year <= 2026) || rawCond.includes('new') || rawCond.includes('нов');
 
@@ -119,16 +108,13 @@ async function main() {
                 images: ['/images/placeholder.jpg'], trims: [],
                 specs: { range_km: range || 500, acceleration_0_100: accel || 5.9, drive: specsP.toLowerCase().includes('4wd') ? 'AWD' : 'RWD' }
             };
-
             const rawImgUrl = (row[idx.image1] || row[idx.image2] || '').split(/[\r\n]+/)[0].trim().replace(/^['"]+|['"]+$/g, '');
             if (rawImgUrl.startsWith('http')) {
                 const ext = rawImgUrl.includes('webp') ? '.webp' : '.jpg';
-                const imgPath = `/images/cars/${sanitize(brand)}/${sanitize(modelNorm)}/main${ext}`;
-                car.images = [imgPath];
+                car.images = [`/images/cars/${sanitize(brand)}/${sanitize(modelNorm)}/main${ext}`];
             }
             allCars.push(car);
         }
-
         const price = parseInt((row[idx.price] || '').replace(/[^0-9.]/g, '')) || 0;
         if (car.price_fob === 0 || (price > 5000 && price < car.price_fob)) car.price_fob = price;
         let trim = rawName.replace(brand, '').replace(modelNorm, '').trim();
