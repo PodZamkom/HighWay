@@ -1,6 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
+import fs from 'fs';
+import path from 'path';
+import https from 'https';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const CSV_PATH = path.join(__dirname, '../Parcing/china-bu-mejdukoles-by-2026-02-01-4.csv');
 const OUTPUT_PATH = path.join(__dirname, '../data/cars_imported_db.ts');
@@ -37,35 +41,27 @@ function parseCSV(text) {
 }
 
 function transliterate(text) {
-    const map = { 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya' };
+    const map = { 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts', ' ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya' };
     return text.toLowerCase().split('').map(char => map[char] || char).join('');
 }
 
 function downloadImage(url, dest) {
     return new Promise((resolve, reject) => {
         https.get(url, (res) => {
-            if (res.statusCode !== 200) {
-                reject(new Error(`Failed to download ${url}: ${res.statusCode}`));
-                return;
-            }
+            if (res.statusCode !== 200) { reject(new Error(`Failed: ${res.statusCode}`)); return; }
             const file = fs.createWriteStream(dest);
             res.pipe(file);
-            file.on('finish', () => {
-                file.close();
-                resolve();
-            });
+            file.on('finish', () => { file.close(); resolve(); });
         }).on('error', reject);
     });
 }
 
 async function main() {
     console.log('Reading CSV...');
-    if (!fs.existsSync(CSV_PATH)) throw new Error('CSV not found');
     const content = fs.readFileSync(CSV_PATH, 'utf8');
     const rows = parseCSV(content);
     const headers = rows[0];
     const getIdx = (name) => headers.indexOf(name);
-
     const idx = {
         brand: getIdx('Brand_0') > -1 ? getIdx('Brand_0') : getIdx('brand_0'),
         name: getIdx('name_0'),
@@ -83,12 +79,11 @@ async function main() {
 
     for (const row of rows.slice(1)) {
         if (!row[idx.brand]) continue;
-
         let brand = row[idx.brand].replace(/^Бренд/i, '').trim();
         brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
         let rawName = row[idx.name] || '';
-
-        let year = parseInt(row[idx.year]) || 0;
+        let yearArr = row[idx.year];
+        let year = parseInt(yearArr) || 0;
         const rawCond = (row[idx.condition] || '').toLowerCase();
         const isNew = (year >= 2024 && year <= 2026) || rawCond.includes('new') || rawCond.includes('нов');
 
@@ -101,25 +96,21 @@ async function main() {
             if (!nameParts[1].includes('км')) model += ' ' + nameParts[1];
         }
         model = model.replace(/['"“”]/g, '').trim();
-        let modelNormalized = model.split(',')[0].split('(')[0].replace(/\s+\d+.*$/i, '').trim();
-        if (modelNormalized.length < 2) modelNormalized = model;
+        let modelNorm = model.split(',')[0].split('(')[0].replace(/\s+\d+.*$/i, '').trim();
+        if (modelNorm.length < 2) modelNorm = model;
 
-        const carId = `${sanitize(brand)}-${sanitize(modelNormalized)}`.replace(/_+/g, '-');
+        const carId = `${sanitize(brand)}-${sanitize(modelNorm)}`.replace(/_+/g, '-');
         let car = allCars.find(c => c.id === carId);
 
         if (!car) {
-            const imgDir = path.join(IMAGES_DIR, sanitize(brand), sanitize(modelNormalized));
+            const imgDir = path.join(IMAGES_DIR, sanitize(brand), sanitize(modelNorm));
             if (!fs.existsSync(imgDir)) fs.mkdirSync(imgDir, { recursive: true });
-
             let imageUrl = '/images/placeholder.jpg';
             const rawImgUrl = (row[idx.image1] || row[idx.image2] || '').split(/[\r\n]+/)[0].trim().replace(/^['"]+|['"]+$/g, '');
-
             if (rawImgUrl.startsWith('http')) {
-                const ext = path.extname(new URL(rawImgUrl).pathname) || '.webp';
-                const imgName = `main${ext.includes('webp') ? '.webp' : '.jpg'}`;
-                const localPath = path.join(imgDir, imgName);
-                const publicPath = `/images/cars/${sanitize(brand)}/${sanitize(modelNormalized)}/${imgName}`;
-                if (fs.existsSync(localPath)) imageUrl = publicPath;
+                const ext = rawImgUrl.includes('webp') ? '.webp' : '.jpg';
+                const localPath = path.join(imgDir, `main${ext}`);
+                if (fs.existsSync(localPath)) imageUrl = `/images/cars/${sanitize(brand)}/${sanitize(modelNorm)}/main${ext}`;
             }
 
             const specsP = ((row[idx.specs] || '') + ' ' + (row[idx.desc] || '')).replace(/\s+/g, ' ');
@@ -130,7 +121,7 @@ async function main() {
             if (rm) range = parseInt(rm[1]);
 
             car = {
-                id: carId, brand, model: modelNormalized, year, market: 'China',
+                id: carId, brand, model: modelNorm, year, market: 'China',
                 type: specsP.toLowerCase().includes('гибрид') ? 'EREV' : 'EV',
                 price_fob: 0, currency: 'USD', availability: 'On Order',
                 images: [imageUrl], trims: [],
@@ -141,8 +132,7 @@ async function main() {
 
         const price = parseInt((row[idx.price] || '').replace(/[^0-9.]/g, '')) || 0;
         if (car.price_fob === 0 || (price > 5000 && price < car.price_fob)) car.price_fob = price;
-
-        let trim = rawName.replace(brand, '').replace(modelNormalized, '').trim();
+        let trim = rawName.replace(brand, '').replace(modelNorm, '').trim();
         if (car.trims.length < 8) car.trims.push({ name: trim || 'Standard', price_adjustment: price > car.price_fob ? price - car.price_fob : 0, features: [row[idx.specs]?.slice(0, 50) || 'Standard'] });
     }
 
