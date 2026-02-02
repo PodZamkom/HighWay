@@ -11,8 +11,8 @@ export function Navbar({ content }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold tracking-tighter text-white">
-              {content.brandPrimary}<span className="text-red-500">{content.brandAccent}</span>
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/images/logo.png" alt="Highway Motors" className="h-12 w-auto object-contain" />
             </Link>
           </div>
           <div className="hidden md:block">

@@ -132,4 +132,10 @@ export interface FooterContent {
   tagline: string;
   version: string;
   adminLinkLabel: string;
+  contacts?: {
+    phone: string;
+    phoneLink: string;
+    whatsapp: string;
+    offices: { city: string; address: string }[];
+  };
 }

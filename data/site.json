@@ -178,7 +178,22 @@
   "footer": {
     "copyright": "© 2026 Highway Motors. Все права защищены.",
     "tagline": "Разработано для лучших автомобилей.",
-    "version": "1.1.6",
-    "adminLinkLabel": "Вход в админку"
+    "version": "1.1.7",
+    "adminLinkLabel": "Вход в админку",
+    "contacts": {
+      "phone": "+375 (33) 696-22-24",
+      "phoneLink": "tel:+375336962224",
+      "whatsapp": "https://wa.me/375447772224",
+      "offices": [
+        {
+          "city": "Пинск",
+          "address": "ул. Первомайская 55, 225710"
+        },
+        {
+          "city": "Минск",
+          "address": "ул. Корш-Саблина 74, офис 8, 220100"
+        }
+      ]
+    }
   }
 }
