@@ -21,6 +21,10 @@ export interface NavbarContent {
   brandAccent: string;
   links: NavLink[];
   ctaLabel: string;
+  phone: string;
+  phoneLink: string;
+  instagram: string;
+  whatsapp: string;
 }
 
 export interface NavLink {

@@ -1,17 +1,15 @@
+"use client";
+
 import { cars_db } from '@/data/cars_db';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { useState } from 'react';
 import { ArrowLeft, Check, Calendar, Activity, Zap } from 'lucide-react';
-import { LandingPriceCalculator } from '@/components/calculator/LandingPriceCalculator'; // You might want to pass props to pre-fill it
-
-// Generate static params for all known cars
-export async function generateStaticParams() {
-    return cars_db.map((car) => ({
-        id: car.id,
-    }));
-}
+import { LandingPriceCalculator } from '@/components/calculator/LandingPriceCalculator';
+import { LeadFormModal } from '@/components/LeadFormModal';
 
 export default function CarPage({ params }: { params: { id: string } }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const car = cars_db.find((c) => c.id === params.id);
 
     if (!car) {
@@ -98,17 +96,31 @@ export default function CarPage({ params }: { params: { id: string } }) {
                         </div>
 
                         <div className="flex gap-4">
-                            <button className="flex-1 bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors">
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="flex-1 bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors"
+                            >
                                 Заказать расчет
                             </button>
-                            <button className="flex-1 bg-transparent border border-white/20 text-white font-bold py-4 rounded-xl hover:bg-white/5 transition-colors">
-                                Написать в WhatsApp
-                            </button>
+                            <a
+                                href="https://wa.me/375447772224"
+                                target="_blank"
+                                className="flex-1 bg-transparent border border-white/20 text-white font-bold py-4 rounded-xl hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
+                            >
+                                <Zap size={18} className="text-green-500" /> Написать в WhatsApp
+                            </a>
                         </div>
 
                     </div>
                 </div>
             </div>
+
+            <LeadFormModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title={`ЗАКАЗАТЬ ${car.brand}`}
+                subtitle={`Оставьте заявку на расчет по модели ${car.model} ${car.year}`}
+            />
         </div>
     );
 }
