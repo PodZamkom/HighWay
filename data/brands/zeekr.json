@@ -1,0 +1,429 @@
+[
+  {
+    "id": "zeekr-h-49-kwh-2wd-5-mest",
+    "brand": "Zeekr",
+    "model": "Х 49 kWh 2WD (5 мест)",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 21853,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/h_49_kwh_2wd_5_mest/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-007-smart",
+    "brand": "Zeekr",
+    "model": "007 Smart",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 29211,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/007_smart/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD 100кВт/ч",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "2WD 100 кВт/ч",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "2WD 75 кВт/ч",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-007-gt",
+    "brand": "Zeekr",
+    "model": "007 GT",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 28483,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/007_gt/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "100KW 4WD smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "100KW RWD smart driving Long Range (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "75KW 4WD Smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "75KW RWD smart driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-009",
+    "brand": "Zeekr",
+    "model": "009",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 58604,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/009/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "6 seats executive version 4WD 108 kWh (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "7 seats Aisle Edition 2WD 108 kWh (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "7 seats Aisle Edition 2WD 140 kWh (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-h-66-kwh-4wd-5-mest",
+    "brand": "Zeekr",
+    "model": "Х 66 kWh 4WD (5 мест)",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 25518,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/h_66_kwh_4wd_5_mest/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-mix",
+    "brand": "Zeekr",
+    "model": "Mix",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 41132,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/mix/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "102 кВт/ч",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-001-we",
+    "brand": "Zeekr",
+    "model": "001 WE",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 34817,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/001_we/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD 95 кВт/ч",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "2WD 95 кВт/ч",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-001-you",
+    "brand": "Zeekr",
+    "model": "001 YOU",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 42952,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/001_you/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD 95 кВт/ч",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "100 kWh 4WD (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-001-me",
+    "brand": "Zeekr",
+    "model": "001 ME",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 39367,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/001_me/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD 100 кВт/ч",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-007-perfomance",
+    "brand": "Zeekr",
+    "model": "007 Perfomance",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 40222,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/007_perfomance/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "100кВт/ч",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-44-700-44-745-ekonomiya-45",
+    "brand": "Zeekr",
+    "model": "$44 700\n\t\t\t\t\t\t\t\t\t\t\t\t$44 745\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $45",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 447004474545,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/44_700_44_745_ekonomiya_45/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-009-brilliant-collector-s",
+    "brand": "Zeekr",
+    "model": "009 Brilliant Collector's",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 150905,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/009_brilliant_collector_s/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD 108kWh (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "zeekr-7x",
+    "brand": "Zeekr",
+    "model": "7X",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 31640,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/zeekr/7x/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "ZEEKR  2WD 75kWh (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]

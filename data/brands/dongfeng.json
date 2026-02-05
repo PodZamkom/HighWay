@@ -1,0 +1,352 @@
+[
+  {
+    "id": "dongfeng-e",
+    "brand": "Dongfeng",
+    "model": "eπ",
+    "year": 2025,
+    "market": "China",
+    "type": "EREV",
+    "price_fob": 18610,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/dongfeng/e/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "007 200 km Pro гибрид (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "008 210 Ultra Ruyi 5 Seats гибрид (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "008 636 km Ultra Smart Driving 5 Seats (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "007 230 Air Cruise гибрид (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "008 636 km Ultra Ruyi 6 Seats (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "008 210 Max Ruyi 5 Seats гибрид (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "008 210 km Ultra Smart Driving 6 Seats гибрид (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "007 565 4WD Max Pilot Pure Electric (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "008636 km Max Smart Driving 6 Seats (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "008 210 Ultra Ruyi 6 Seats гибрид  (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "008 636 km Max Ruyi 5 Seats (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "008 636 km Ultra Ruyi 5 Seats (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "007 550 Pro Pilot Pure Electric (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "008 210 km Ultra Smart Driving 5 Seats гибрид (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "007 230 Pro Cruise гибрид (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "007 550 Pro Cruise Pure Electric (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "dongfeng-nammi-nano",
+    "brand": "Dongfeng",
+    "model": "NAMMI  Nano",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 16744,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/dongfeng/nammi_nano/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "06 471 Pro (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "dongfeng-fengxing-s7",
+    "brand": "Dongfeng",
+    "model": "Fengxing S7",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 19192,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/dongfeng/fengxing_s7/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "555 km Fortune (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "235 Enjoy гибрид (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "dongfeng-fengshen-l7-ev",
+    "brand": "Dongfeng",
+    "model": "Fengshen L7 EV",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 17772,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/dongfeng/fengshen_l7_ev/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "518 km Pro (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "518 Enjoy (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "518 indulgent type (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "430 comfort (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "dongfeng-fengxing-lingzhi-m5-ev",
+    "brand": "Dongfeng",
+    "model": "Fengxing Lingzhi M5 EV",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 17800,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/dongfeng/fengxing_lingzhi_m5_ev/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "420km pure electric city transport version 5 seats (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "110km range extension basic type 7 seats (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "110km range extension basic type 5 seats (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "dongfeng-fengshen-sky-ev01",
+    "brand": "Dongfeng",
+    "model": "Fengshen SKY EV01",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 25353,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/dongfeng/fengshen_sky_ev01/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "530 km PRO (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "530 km PRO Elite (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "dongfeng-nammi",
+    "brand": "Dongfeng",
+    "model": "NAMMI",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 13104,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/dongfeng/nammi/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "01 330km Youth Edition (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]

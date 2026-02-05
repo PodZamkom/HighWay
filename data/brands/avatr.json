@@ -1,0 +1,772 @@
+[
+  {
+    "id": "avatr-12-facelifted-theatre-royal-edition",
+    "brand": "Avatr",
+    "model": "12 Facelifted Theatre Royal Edition",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 63263,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12_facelifted_theatre_royal_edition/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-11-max-rwd-pure-electric",
+    "brand": "Avatr",
+    "model": "11 Max RWD pure electric",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 41132,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/11_max_rwd_pure_electric/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-12-facelifted-max-four-wheel-drive-pure-electric-version",
+    "brand": "Avatr",
+    "model": "12 Facelifted Max four-wheel drive pure electric version",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 45436,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12_facelifted_max_four_wheel_drive_pure_electric_version/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-12-max-gibrid",
+    "brand": "Avatr",
+    "model": "12 Max гибрид",
+    "year": 2025,
+    "market": "China",
+    "type": "EREV",
+    "price_fob": 34307,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12_max_gibrid/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-06-pro-pure-electric",
+    "brand": "Avatr",
+    "model": "06 Pro pure electric",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 29484,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/06_pro_pure_electric/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-11-facelift-max-rwd-gibrid",
+    "brand": "Avatr",
+    "model": "11 Facelift Max RWD гибрид",
+    "year": 2025,
+    "market": "China",
+    "type": "EREV",
+    "price_fob": 42806,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/11_facelift_max_rwd_gibrid/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-07-max",
+    "brand": "Avatr",
+    "model": "07 Max",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 32396,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/07_max/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD pure electric (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "4WD гибрид (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-11-ultra-rwd-pure-electric",
+    "brand": "Avatr",
+    "model": "11 Ultra RWD pure electric",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 46228,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/11_ultra_rwd_pure_electric/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-07-max-rwd-pure-electric-discovery",
+    "brand": "Avatr",
+    "model": "07 Max RWD pure electric Discovery",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 34580,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/07_max_rwd_pure_electric_discovery/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-12-facelift-max-rear-drive-pure-electric-version",
+    "brand": "Avatr",
+    "model": "12 Facelift Max rear drive pure electric version",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 42679,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12_facelift_max_rear_drive_pure_electric_version/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-11-max",
+    "brand": "Avatr",
+    "model": "11 Max",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 48330,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/11_max/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD pure electric",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-11-ultra",
+    "brand": "Avatr",
+    "model": "11 Ultra",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 48867,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/11_ultra/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD pure electric (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-12-master",
+    "brand": "Avatr",
+    "model": "12 Master",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 48958,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12_master/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD pure electric (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-06-ultra-electric",
+    "brand": "Avatr",
+    "model": "06 Ultra Electric",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 36855,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/06_ultra_electric/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-12-theatre-royal-edition",
+    "brand": "Avatr",
+    "model": "12 Theatre Royal Edition",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 64783,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12_theatre_royal_edition/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-11-pro-gibrid",
+    "brand": "Avatr",
+    "model": "11 Pro+ гибрид",
+    "year": 2025,
+    "market": "China",
+    "type": "EREV",
+    "price_fob": 26891,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/11_pro_gibrid/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-12facelifted-ultra-rear-drive-extended-range-version",
+    "brand": "Avatr",
+    "model": "12Facelifted Ultra rear drive extended range version",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 42679,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12facelifted_ultra_rear_drive_extended_range_version/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-11-facelifted-ultra",
+    "brand": "Avatr",
+    "model": "11 Facelifted Ultra",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 53981,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/11_facelifted_ultra/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD pure electric (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-12",
+    "brand": "Avatr",
+    "model": "12",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 123068,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "012 Kim Jones Joint Limited Edition (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-12-max-rwd-pure-electric",
+    "brand": "Avatr",
+    "model": "12 Max RWD pure electric",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 38675,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12_max_rwd_pure_electric/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-06-max-gibrid",
+    "brand": "Avatr",
+    "model": "06 Max гибрид",
+    "year": 2025,
+    "market": "China",
+    "type": "EREV",
+    "price_fob": 30121,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/06_max_gibrid/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-07-ultra",
+    "brand": "Avatr",
+    "model": "07 Ultra",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 38948,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/07_ultra/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD pure electric (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-07-max-rwd-discovery-gibrid",
+    "brand": "Avatr",
+    "model": "07 Max RWD Discovery гибрид",
+    "year": 2025,
+    "market": "China",
+    "type": "EREV",
+    "price_fob": 31213,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/07_max_rwd_discovery_gibrid/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-12-ultra-gibrid",
+    "brand": "Avatr",
+    "model": "12 Ultra гибрид",
+    "year": 2025,
+    "market": "China",
+    "type": "EREV",
+    "price_fob": 36628,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12_ultra_gibrid/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-06-max-pure-electric",
+    "brand": "Avatr",
+    "model": "06 Max pure electric",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 33124,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/06_max_pure_electric/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-11-theatre-royal-edition",
+    "brand": "Avatr",
+    "model": "11 Theatre Royal Edition",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 56511,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/11_theatre_royal_edition/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "avatr-12-ultra",
+    "brand": "Avatr",
+    "model": "12 Ultra",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 42224,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/avatr/12_ultra/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD pure electric (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]

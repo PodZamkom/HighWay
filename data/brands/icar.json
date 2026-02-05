@@ -1,0 +1,121 @@
+[
+  {
+    "id": "icar-03",
+    "brand": "Icar",
+    "model": "03",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 19119,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/icar/03/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "iCAR  4WD long battery life Yue Chao (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "iCAR  03T 4WD long range version (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "iCAR  2WD Standart (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "iCAR  4WD long-range Zhiyue version (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "iCAR  2WD standart Yue Chao (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "iCAR  2WD long battery life Yuechao (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "iCAR  03T 2WD long battery life (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "icar-v23",
+    "brand": "Icar",
+    "model": "V23",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 18919,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/icar/v23/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "iCAR  401 km 2WD Smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "iCAR  401 km 2WD Advanced (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "iCAR  501 km 4WD Advanced (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "iCAR  501 km 4WD Smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]

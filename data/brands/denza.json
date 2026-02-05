@@ -1,0 +1,212 @@
+[
+  {
+    "id": "denza-z9-ev-pro",
+    "brand": "Denza",
+    "model": "Z9 ev Pro",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 25735,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/denza/z9_ev_pro/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "denza-d9-ev",
+    "brand": "Denza",
+    "model": "D9 EV",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 54118,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/denza/d9_ev/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "600 4WD flagship (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "620 Exclusive type (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "600 4WD premium (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "denza-d9-ev-smart-driving-version",
+    "brand": "Denza",
+    "model": "D9 EV Smart driving version",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 61607,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/denza/d9_ev_smart_driving_version/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "600 four-wheel drive premium type (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "600 four-wheel drive flagship model (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "denza-z9-gt-ev-max",
+    "brand": "Denza",
+    "model": "Z9 GT ev Max",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 51169,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/denza/z9_gt_ev_max/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "denza-n7",
+    "brand": "Denza",
+    "model": "N7",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 34544,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/denza/n7/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "550 km Smart Driving Pro (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "702 Smart Driving Pro Shadow Hunting Edition (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "630 km 4WD Smart driving Max (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "702 km 2WD smart driving dual laser Premium (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "denza-z9-ev-max",
+    "brand": "Denza",
+    "model": "Z9 ev Max",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 25735,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/denza/z9_ev_max/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]

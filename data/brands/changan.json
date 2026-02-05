@@ -1,0 +1,506 @@
+[
+  {
+    "id": "changan-18-750-18-769-ekonomiya-19",
+    "brand": "Changan",
+    "model": "$18 750\n\t\t\t\t\t\t\t\t\t\t\t\t$18 769\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $19",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 187501876919,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/18_750_18_769_ekonomiya_19/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-lumin",
+    "brand": "Changan",
+    "model": "Lumin",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 6934,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/lumin/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "210km fragrance version (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "301km Departure (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "205 km Departure (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "205km fragrance version (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "301 km Orange Wind (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "205km fragrant Qin style (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "130 km Qingyue (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "301km Mengbao Edition (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-26-450-26-476-ekonomiya-26",
+    "brand": "Changan",
+    "model": "$26 450\n\t\t\t\t\t\t\t\t\t\t\t\t$26 476\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $26",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 264502647626,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/26_450_26_476_ekonomiya_26/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-19-750-19-770-ekonomiya-20",
+    "brand": "Changan",
+    "model": "$19 750\n\t\t\t\t\t\t\t\t\t\t\t\t$19 770\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $20",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 197501977020,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/19_750_19_770_ekonomiya_20/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-90-000-40-541-ekonomiya-49",
+    "brand": "Changan",
+    "model": "$90 000\n\t\t\t\t\t\t\t\t\t\t\t\t$40 541\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $-49",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 900004054149459,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/90_000_40_541_ekonomiya_49/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "459",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-qiyuan-pro-smart",
+    "brand": "Changan",
+    "model": "Qiyuan Pro Smart",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 33051,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/qiyuan_pro_smart/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "90 kWh RWD (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "90 kWh 4WD (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-qiyuan-a07-blue-whale-pure-electric",
+    "brand": "Changan",
+    "model": "Qiyuan A07 Blue Whale Pure Electric",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 20493,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/qiyuan_a07_blue_whale_pure_electric/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "625 Smart Driving Luxury (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "625 Smart Driving Flagship (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "710 Smart Driving Flagship (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "515 Collection (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "525 Smart Driving Luxury (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-24-250-24-274-ekonomiya-24",
+    "brand": "Changan",
+    "model": "$24 250\n\t\t\t\t\t\t\t\t\t\t\t\t$24 274\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $24",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 242502427424,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/24_250_24_274_ekonomiya_24/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-qiyuan-a07-blue-whale",
+    "brand": "Changan",
+    "model": "Qiyuan A07 Blue Whale",
+    "year": 2025,
+    "market": "China",
+    "type": "EREV",
+    "price_fob": 21995,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/qiyuan_a07_blue_whale/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "230 Smart Driving Flagship гибрид(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-25-650-25-676-ekonomiya-26",
+    "brand": "Changan",
+    "model": "$25 650\n\t\t\t\t\t\t\t\t\t\t\t\t$25 676\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $26",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 256502567626,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/25_650_25_676_ekonomiya_26/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-qiyuan-max-smart-driving",
+    "brand": "Changan",
+    "model": "Qiyuan Max smart driving",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 41851,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/qiyuan_max_smart_driving/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "90 kWh 4WD (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-qiyuan-ultra-high-performance",
+    "brand": "Changan",
+    "model": "Qiyuan Ultra high-performance",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 45427,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/qiyuan_ultra_high_performance/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "90 kWh 4WD (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-22-050-22-072-ekonomiya-22",
+    "brand": "Changan",
+    "model": "$22 050\n\t\t\t\t\t\t\t\t\t\t\t\t$22 072\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $22",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 220502207222,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/22_050_22_072_ekonomiya_22/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-22-150-22-172-ekonomiya-22",
+    "brand": "Changan",
+    "model": "$22 150\n\t\t\t\t\t\t\t\t\t\t\t\t$22 172\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $22",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 221502217222,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/22_150_22_172_ekonomiya_22/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "changan-16-250-16-266-ekonomiya-16",
+    "brand": "Changan",
+    "model": "$16 250\n\t\t\t\t\t\t\t\t\t\t\t\t$16 266\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $16",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 162501626616,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/changan/16_250_16_266_ekonomiya_16/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]

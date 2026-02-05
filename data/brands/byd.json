@@ -1,0 +1,1367 @@
+[
+  {
+    "id": "byd-e2-comfort",
+    "brand": "Byd",
+    "model": "е2 comfort",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 14014,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/e2_comfort/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-e2-honor-edition-comfort",
+    "brand": "Byd",
+    "model": "E2 Honor Edition Comfort",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 16389,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/e2_honor_edition_comfort/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-seal",
+    "brand": "Byd",
+    "model": "Seal",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 16608,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/seal/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  06EV 470 KM Honor (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  4WD Smart Driving",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  06 GT Wave Plus Smart",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  510 km Standart (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  06 GT Hot Wave Smart",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  650 KM long battery life (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  650 km Smart Driving(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  06GT 505 KM 2WD Wave Plus (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  06GT 505 KM 2WD Wave (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-qin-l-ev",
+    "brand": "Byd",
+    "model": "Qin L EV",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 18200,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/qin_l_ev/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  545 km Pilot Version (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  2025 Exellence",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  2025 Leading",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-dolphin",
+    "brand": "Byd",
+    "model": "Dolphin",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 14196,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/dolphin/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  520 KM Knight (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  420 KM fashion (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  420 KM Free (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  2025 Freedom 420km",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  410 KM Fashion Smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  420 KM Free Smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-tang-l",
+    "brand": "Byd",
+    "model": "Tang L",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 31759,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/tang_l/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  670 km RWD LIDAR Premium",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-yuan-plus-excellence",
+    "brand": "Byd",
+    "model": "Yuan Plus “Excellence”",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 19383,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/yuan_plus_excellence/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-26-150-26-176-ekonomiya-26",
+    "brand": "Byd",
+    "model": "$26 150\n\t\t\t\t\t\t\t\t\t\t\t\t$26 176\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $26",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 261502617626,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/26_150_26_176_ekonomiya_26/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-han-premium-smart-driving",
+    "brand": "Byd",
+    "model": "Han Premium Smart Driving",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 25435,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/han_premium_smart_driving/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  701km",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  506km",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-15-500-15-516-ekonomiya-16",
+    "brand": "Byd",
+    "model": "$15 500\n\t\t\t\t\t\t\t\t\t\t\t\t$15 516\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $16",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 155001551616,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/15_500_15_516_ekonomiya_16/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-15-750-15-766-ekonomiya-16",
+    "brand": "Byd",
+    "model": "$15 750\n\t\t\t\t\t\t\t\t\t\t\t\t$15 766\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $16",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 157501576616,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/15_750_15_766_ekonomiya_16/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-23-380-26-744-ekonomiya-3",
+    "brand": "Byd",
+    "model": "$23 380\n\t\t\t\t\t\t\t\t\t\t\t\t$26 744\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $3",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 23380267443364,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/23_380_26_744_ekonomiya_3/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "364",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-song-l",
+    "brand": "Byd",
+    "model": "Song L",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 28701,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/song_l/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  662 km excellent (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  662 km beyond (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  602 km 4WD excellent (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  550 km excellent (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-seagull",
+    "brand": "Byd",
+    "model": "SEAGULL",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 11339,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/seagull/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  305 KM Vitality Facelifted Smart driving",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  305 KM Vitality Facelifted Smart driving",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  305 KM Vitality Facelifted Smart driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  305 KM Free Smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-han-ev",
+    "brand": "Byd",
+    "model": "Han EV",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 26436,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/han_ev/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  506 KM premium (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  605 KM premium (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-tang",
+    "brand": "Byd",
+    "model": "Tang",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 364,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/tang/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  730 km Premium",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  730 km 4WD Premium",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  600 km Premium",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-sea-lion",
+    "brand": "Byd",
+    "model": "Sea Lion",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 364,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/sea_lion/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  07 EV 610 km Navigation Smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  05 2025 520km Flagship",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  06EV High-end version (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  07 550km Zhihang",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  07 4WD Smart Driving",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  05 2025 520km Intelligent Navigation",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  07 EV 610 km Smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-qin-plus",
+    "brand": "Byd",
+    "model": "Qin PLUS",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 18291,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/qin_plus/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  2025 Beyond 510 km Рестайлинг 2025",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  2025 Leading 420 km Рестайлинг 2025",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-18-550-18-569-ekonomiya-19",
+    "brand": "Byd",
+    "model": "$18 550\n\t\t\t\t\t\t\t\t\t\t\t\t$18 569\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $19",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 185501856919,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/18_550_18_569_ekonomiya_19/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-22-900-25-116-ekonomiya-2",
+    "brand": "Byd",
+    "model": "$22 900\n\t\t\t\t\t\t\t\t\t\t\t\t$25 116\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $2",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 22900251162216,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/22_900_25_116_ekonomiya_2/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "216",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-yuan-plus-leading",
+    "brand": "Byd",
+    "model": "Yuan Plus “Leading”",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 17563,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/yuan_plus_leading/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  430км",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  510км",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-24-450-24-474-ekonomiya-24",
+    "brand": "Byd",
+    "model": "$24 450\n\t\t\t\t\t\t\t\t\t\t\t\t$24 474\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $24",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 244502447424,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/24_450_24_474_ekonomiya_24/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-22-150-22-172-ekonomiya-22",
+    "brand": "Byd",
+    "model": "$22 150\n\t\t\t\t\t\t\t\t\t\t\t\t$22 172\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $22",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 221502217222,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/22_150_22_172_ekonomiya_22/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-20-900-23-087-ekonomiya-2",
+    "brand": "Byd",
+    "model": "$20 900\n\t\t\t\t\t\t\t\t\t\t\t\t$23 087\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $2",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 20900230872187,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/20_900_23_087_ekonomiya_2/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "187",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-seagull-vitality-smart-driving",
+    "brand": "Byd",
+    "model": "Seagull “Vitality Smart Driving”",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 12012,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/seagull_vitality_smart_driving/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-seal-zhihang-smart-driving",
+    "brand": "Byd",
+    "model": "Seal Zhihang Smart Driving",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 27018,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/seal_zhihang_smart_driving/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-han-l-ev",
+    "brand": "Byd",
+    "model": "Han L EV",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 30030,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/han_l_ev/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  701km 2RWD LiDAR Premium",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-seagull-flying-smart-driving",
+    "brand": "Byd",
+    "model": "Seagull “Flying Smart Driving”",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 13868,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/seagull_flying_smart_driving/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-qin-plus-ev",
+    "brand": "Byd",
+    "model": "Qin Plus EV",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 15698,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/qin_plus_ev/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  420 KM Smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  510 KM Leading Smart Driving (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  510 KM Standard (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-e2-honor-edition-luxury",
+    "brand": "Byd",
+    "model": "E2 Honor Edition Luxury",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 17299,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/e2_honor_edition_luxury/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-e2-luxury",
+    "brand": "Byd",
+    "model": "е2 luxury",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 14560,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/e2_luxury/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-25-250-25-275-ekonomiya-25",
+    "brand": "Byd",
+    "model": "$25 250\n\t\t\t\t\t\t\t\t\t\t\t\t$25 275\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $25",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 252502527525,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/25_250_25_275_ekonomiya_25/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-24-630-27-994-ekonomiya-3",
+    "brand": "Byd",
+    "model": "$24 630\n\t\t\t\t\t\t\t\t\t\t\t\t$27 994\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $3",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 24630279943364,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/24_630_27_994_ekonomiya_3/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "364",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-e7",
+    "brand": "Byd",
+    "model": "E7",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 16744,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/e7/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  520 km Smart (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  520 km Smart Travel (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-song-l-excellent-smart-driving-lidar",
+    "brand": "Byd",
+    "model": "Song L Excellent Smart Driving lidar",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 29985,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/song_l_excellent_smart_driving_lidar/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-yuan-plus-beyond",
+    "brand": "Byd",
+    "model": "Yuan Plus “Beyond”",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 18337,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/yuan_plus_beyond/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  510км",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "BYD  430км",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-seal-smart-driving",
+    "brand": "Byd",
+    "model": "Seal Smart Driving",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 30258,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/seal_smart_driving/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-qin-plus-ev-smart-driving-version",
+    "brand": "Byd",
+    "model": "Qin Plus EV Smart Driving Version",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 25080,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/qin_plus_ev_smart_driving_version/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD  510KM Pilot Version (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "byd-song-l-beyond-smart-driving",
+    "brand": "Byd",
+    "model": "Song L Beyond Smart Driving",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 27073,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/byd/song_l_beyond_smart_driving/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "BYD",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]

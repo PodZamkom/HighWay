@@ -1,0 +1,86 @@
+[
+  {
+    "id": "xiaomi-su",
+    "brand": "Xiaomi",
+    "model": "SU",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 30303,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/xiaomi/su/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "XIAOMI  7 Standart",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "xiaomi-yu7-pro",
+    "brand": "Xiaomi",
+    "model": "YU7 Pro",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 38311,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/xiaomi/yu7_pro/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "xiaomi-su7-ultra",
+    "brand": "Xiaomi",
+    "model": "SU7 Ultra",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 71117,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/xiaomi/su7_ultra/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD Ultra (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]

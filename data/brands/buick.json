@@ -1,0 +1,128 @@
+[
+  {
+    "id": "buick-velite",
+    "brand": "Buick",
+    "model": "Velite",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 14005,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/buick/velite/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "6 450 km Enjoy Plus (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "6 430 km Premium (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "6 450 km Comfort Plus (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "6 430 km Comfort (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "6 450 km travel (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "buick-e5",
+    "brand": "Buick",
+    "model": "E5",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 24497,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/buick/e5/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "545 KM Smart (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "515 KM Premium (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "620 KM Premium (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "buick-electra-e5-enjoy-the-video-version",
+    "brand": "Buick",
+    "model": "Electra E5 Enjoy the video version",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 26326,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/buick/electra_e5_enjoy_the_video_version/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "(2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]

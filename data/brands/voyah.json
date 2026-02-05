@@ -1,0 +1,156 @@
+[
+  {
+    "id": "voyah-dreamer-ev-four-wheel-drive-premium-dry-version",
+    "brand": "Voyah",
+    "model": "Dreamer EV Four-wheel drive premium dry version",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 61998,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/voyah/dreamer_ev_four_wheel_drive_premium_dry_version/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "VOYAH  (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "voyah-free",
+    "brand": "Voyah",
+    "model": "FREE",
+    "year": 2025,
+    "market": "China",
+    "type": "EREV",
+    "price_fob": 33261,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/voyah/free/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "VOYAH  318 4WD гибрид (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "VOYAH  318 2WD гибрид (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "VOYAH  4WD Qiankun гибрид (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "voyah-dreamer-ev-four-wheel-drive-excellent-kunpeng-edition",
+    "brand": "Voyah",
+    "model": "Dreamer EV Four-wheel drive Excellent Kunpeng Edition",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 52844,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/voyah/dreamer_ev_four_wheel_drive_excellent_kunpeng_edition/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "VOYAH  (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "voyah-dreamer-ev-four-wheel-drive-flagship-kunpeng-edition",
+    "brand": "Voyah",
+    "model": "Dreamer EV Four-wheel drive flagship Kunpeng Edition",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 63527,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/voyah/dreamer_ev_four_wheel_drive_flagship_kunpeng_edition/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "VOYAH  (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "voyah-dreamer-ev-four-wheel-drive-premium-kunpeng-edition",
+    "brand": "Voyah",
+    "model": "Dreamer EV Four-wheel drive Premium Kunpeng Edition",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 57421,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/voyah/dreamer_ev_four_wheel_drive_premium_kunpeng_edition/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "VOYAH  (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]

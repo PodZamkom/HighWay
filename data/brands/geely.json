@@ -1,0 +1,373 @@
+[
+  {
+    "id": "geely-star-wish-dream",
+    "brand": "Geely",
+    "model": "Star Wish “Dream”",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 13723,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/star_wish_dream/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "310 км",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-star-wish-discovery",
+    "brand": "Geely",
+    "model": "Star Wish “Discovery”",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 15061,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/star_wish_discovery/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "410 км",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-18-990-22-354-ekonomiya-3",
+    "brand": "Geely",
+    "model": "$18 990\n\t\t\t\t\t\t\t\t\t\t\t\t$22 354\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $3",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 18990223543364,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/18_990_22_354_ekonomiya_3/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "364",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-jiyue",
+    "brand": "Geely",
+    "model": "Jiyue",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 47011,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/jiyue/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "01 new Max performance (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-galaxy-e8",
+    "brand": "Geely",
+    "model": "Galaxy e8",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 28711,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/galaxy_e8/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "4WD Starship Lidar driving",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-18-620-21-984-ekonomiya-3",
+    "brand": "Geely",
+    "model": "$18 620\n\t\t\t\t\t\t\t\t\t\t\t\t$21 984\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $3",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 18620219843364,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/18_620_21_984_ekonomiya_3/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "364",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-galaxy-e5",
+    "brand": "Geely",
+    "model": "Galaxy e5",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 17024,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/galaxy_e5/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "440 km Explorer Edition (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "530 km Long-Range (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "530 km Starship (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "530 km Explorer+ (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "440 km Departure (2024)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-galaxy-e8-exploration-smart-driving",
+    "brand": "Geely",
+    "model": "Galaxy e8 exploration smart driving",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 24479,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/galaxy_e8_exploration_smart_driving/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-star-wish-freedom",
+    "brand": "Geely",
+    "model": "Star Wish “Freedom”",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 14474,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/star_wish_freedom/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "410 км",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-galaxy-e8-intellegent-driving",
+    "brand": "Geely",
+    "model": "Galaxy e8 intellegent driving",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 26290,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/galaxy_e8_intellegent_driving/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "Standard",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-17-600-20-964-ekonomiya-3",
+    "brand": "Geely",
+    "model": "$17 600\n\t\t\t\t\t\t\t\t\t\t\t\t$20 964\n\t\t\t\t\t\t\t\t\t\t\t\tэкономия $3",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 17600209643364,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/17_600_20_964_ekonomiya_3/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "364",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  },
+  {
+    "id": "geely-panda",
+    "brand": "Geely",
+    "model": "Panda",
+    "year": 2025,
+    "market": "China",
+    "type": "EV",
+    "price_fob": 9992,
+    "currency": "USD",
+    "availability": "On Order",
+    "images": [
+      "/images/cars/geely/panda/main.jpg"
+    ],
+    "trims": [
+      {
+        "name": "200km Panda Cardin (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      },
+      {
+        "name": "210km Panda Knight (2025)",
+        "price_adjustment": 0,
+        "features": [
+          "Standard"
+        ]
+      }
+    ],
+    "specs": {
+      "range_km": 500,
+      "acceleration_0_100": 5.9,
+      "drive": "RWD"
+    }
+  }
+]
