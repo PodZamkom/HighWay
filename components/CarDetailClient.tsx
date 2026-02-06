@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { ArrowLeft, Activity, Tag, Zap } from 'lucide-react';
+import { ArrowLeft, Zap } from 'lucide-react';
 import { LeadFormModal } from '@/components/LeadFormModal';
 import { importedCarsDb } from '@/data/cars_imported_db';
 import { CarModel } from '@/types/car';
@@ -71,7 +71,6 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                         <h1 className="text-2xl font-bold mb-2">Загрузка...</h1>
                         <p className="text-zinc-400">Получаем данные автомобиля.</p>
                     </div>
-                </div>
             </div>
         );
     }
@@ -88,6 +87,7 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                         <p className="text-zinc-400">Проверьте ссылку или вернитесь в каталог.</p>
                     </div>
                 </div>
+
             </div>
         );
     }
@@ -96,7 +96,22 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
     const mainImage = images[activeImageIndex] || images[0];
 
     const descriptionSections = useMemo(() => splitDescriptionSections(car.description || ''), [car.description]);
+    const derivedSpecs = useMemo(() => deriveSpecsFromDescription(car.description || ''), [car.description]);
     const specItems = useMemo(() => buildSpecsList(car, car.description || ''), [car]);
+    const quickSpecs = useMemo(
+        () =>
+            [
+                { label: 'Поколение', value: car.generation },
+                { label: 'Тип кузова', value: derivedSpecs.bodyType },
+                { label: 'Тип двигателя', value: derivedSpecs.engineType },
+                { label: 'Привод', value: derivedSpecs.drive },
+                { label: 'Коробка', value: derivedSpecs.transmission },
+                { label: 'Запас хода', value: derivedSpecs.rangeKm },
+                { label: 'Мощность', value: derivedSpecs.power },
+                { label: 'Емкость батареи', value: derivedSpecs.battery }
+            ].filter((item) => item.value),
+        [car.generation, derivedSpecs]
+    );
 
     return (
         <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
@@ -107,10 +122,10 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                     <ArrowLeft size={16} /> Назад в каталог
                 </Link>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
                     {/* Left: Images */}
-                    <div className="space-y-4">
+                    <div className="space-y-4 lg:col-span-7">
                         <div className="rounded-3xl overflow-hidden border border-white/10 aspect-[4/3] relative bg-zinc-900">
                             {mainImage ? (
                                 <img src={mainImage} alt={car.model} className="w-full h-full object-cover" />
@@ -138,81 +153,36 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                                 ))}
                             </div>
                         ) : null}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-zinc-900 p-4 rounded-xl border border-white/5 text-center">
-                                <Activity className="mx-auto text-red-500 mb-2" />
-                                <div className="text-2xl font-bold font-mono">{conditionLabel(car.condition)}</div>
-                                <div className="text-xs text-zinc-500">Состояние</div>
-                            </div>
-                            <div className="bg-zinc-900 p-4 rounded-xl border border-white/5 text-center">
-                                <Tag className="mx-auto text-yellow-500 mb-2" />
-                                <div className="text-2xl font-bold font-mono">
-                                    {car.mileage_km ? `${car.mileage_km.toLocaleString()} км` : car.generation || car.year}
-                                </div>
-                                <div className="text-xs text-zinc-500">{car.mileage_km ? 'Пробег' : car.generation ? 'Поколение' : 'Год'}</div>
-                            </div>
-                        </div>
                     </div>
 
                     {/* Right: Info */}
-                    <div>
-                        <div className="mb-2 text-red-500 font-bold tracking-wider text-sm uppercase">{car.brand}</div>
-                        <h1 className="text-5xl font-black tracking-tight mb-4">
-                            {car.model} {car.generation ? <span className="text-zinc-600">{car.generation}</span> : null}
-                        </h1>
+                    <div className="lg:col-span-5 space-y-8">
+                        <div>
+                            <div className="mb-2 text-red-500 font-bold tracking-wider text-sm uppercase">{car.brand}</div>
+                            <h1 className="text-4xl lg:text-5xl font-black tracking-tight">
+                                {car.model} {car.generation ? <span className="text-zinc-600">{car.generation}</span> : null}
+                            </h1>
+                        </div>
 
-                        <div className="flex items-center gap-4 mb-8">
+                        <div className="flex flex-wrap items-center gap-3">
                             <div className="bg-white/10 px-3 py-1 rounded-full text-sm font-medium">{car.year}</div>
                             <div className="bg-white/10 px-3 py-1 rounded-full text-sm font-medium">{conditionLabel(car.condition)}</div>
+                            <div className="bg-white/10 px-3 py-1 rounded-full text-sm font-medium">{car.market}</div>
                             <div className={`px-3 py-1 rounded-full text-sm font-bold ${car.availability === 'InStock' ? 'bg-green-500 text-black' : 'text-zinc-400 border border-white/20'}`}>
                                 {availabilityLabel(car.availability)}
                             </div>
                         </div>
 
-                        <div className="bg-zinc-900 rounded-2xl p-6 border border-white/10 mb-8">
+                        <div className="bg-zinc-900 rounded-2xl p-6 border border-white/10">
                             <div className="flex justify-between items-end mb-2">
                                 <span className="text-zinc-400">{priceTypeLabel(car.price_type)}</span>
-                                <span className="text-3xl font-bold text-white">{currencySymbol(car.price_currency)}{formatPrice(car.price_value)} <span className="text-base text-zinc-400">{car.price_currency}</span></span>
+                                <span className="text-3xl font-bold text-white">
+                                    {currencySymbol(car.price_currency)}
+                                    {formatPrice(car.price_value)} <span className="text-base text-zinc-400">{car.price_currency}</span>
+                                </span>
                             </div>
                             <p className="text-xs text-zinc-500 text-right">Итог считается по текущему курсу</p>
                         </div>
-
-                        {specItems.length ? (
-                            <div className="mb-10">
-                                <h3 className="font-bold mb-4">Характеристики</h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {specItems.map((item) => (
-                                        <div key={item.label} className="bg-zinc-900 border border-white/10 rounded-xl px-4 py-3">
-                                            <div className="text-xs text-zinc-500">{item.label}</div>
-                                            <div className="text-sm font-semibold">{item.value}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : null}
-
-                        {descriptionSections.intro ? (
-                            <div className="mb-10">
-                                <h3 className="font-bold mb-4">Описание</h3>
-                                <div className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
-                                    {descriptionSections.intro}
-                                </div>
-                            </div>
-                        ) : null}
-
-                        {descriptionSections.sections.map((section) => (
-                            <div key={section.title} className="mb-10">
-                                <h3 className="font-bold mb-4">{section.title}</h3>
-                                <ul className="text-sm text-zinc-300 leading-relaxed space-y-2">
-                                    {section.items.map((item, index) => (
-                                        <li key={`${section.title}-${index}`} className="flex gap-2">
-                                            <span className="mt-1 h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
-                                            <span>{item}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ))}
 
                         <div className="flex gap-4">
                             <button
@@ -230,7 +200,60 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                             </a>
                         </div>
 
+                        {quickSpecs.length ? (
+                            <div>
+                                <h3 className="font-bold mb-3">Ключевые параметры</h3>
+                                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                                    {quickSpecs.map((item) => (
+                                        <div key={item.label} className="flex items-start justify-between gap-3 border-b border-white/10 py-2">
+                                            <dt className="text-zinc-500">{item.label}</dt>
+                                            <dd className="text-zinc-200 text-right max-w-[60%] line-clamp-2">{item.value}</dd>
+                                        </div>
+                                    ))}
+                                </dl>
+                            </div>
+                        ) : null}
+
                     </div>
+                </div>
+
+                <div className="mt-14 space-y-12">
+                    {descriptionSections.intro ? (
+                        <div>
+                            <h3 className="font-bold mb-4">Описание</h3>
+                            <div className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
+                                {descriptionSections.intro}
+                            </div>
+                        </div>
+                    ) : null}
+
+                    {specItems.length ? (
+                        <div>
+                            <h3 className="font-bold mb-4">Характеристики</h3>
+                            <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-3 text-sm">
+                                {specItems.map((item) => (
+                                    <div key={item.label} className="flex items-start justify-between gap-4 border-b border-white/10 py-2">
+                                        <dt className="text-zinc-500">{item.label}</dt>
+                                        <dd className="text-zinc-200 text-right max-w-[60%] line-clamp-2">{item.value}</dd>
+                                    </div>
+                                ))}
+                            </dl>
+                        </div>
+                    ) : null}
+
+                    {descriptionSections.sections.map((section) => (
+                        <div key={section.title}>
+                            <h3 className="font-bold mb-4">{section.title}</h3>
+                            <ul className="text-sm text-zinc-300 leading-relaxed grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2">
+                                {section.items.map((item, index) => (
+                                    <li key={`${section.title}-${index}`} className="flex gap-2">
+                                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                                        <span>{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
                 </div>
             </div>
 
