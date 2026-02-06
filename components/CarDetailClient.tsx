@@ -71,6 +71,7 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                         <h1 className="text-2xl font-bold mb-2">Загрузка...</h1>
                         <p className="text-zinc-400">Получаем данные автомобиля.</p>
                     </div>
+                </div>
             </div>
         );
     }
