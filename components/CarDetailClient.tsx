@@ -1,18 +1,21 @@
 "use client";
 
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { ArrowLeft, Activity, Tag, Zap } from 'lucide-react';
 import { LeadFormModal } from '@/components/LeadFormModal';
 import { importedCarsDb } from '@/data/cars_imported_db';
 
 type CarDetailClientProps = {
-    carId: string;
+    carId?: string;
 };
 
 export function CarDetailClient({ carId }: CarDetailClientProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const car = importedCarsDb.find((c) => c.id === carId);
+    const params = useParams<{ id?: string | string[] }>();
+    const resolvedId = carId ?? (Array.isArray(params?.id) ? params?.id?.[0] : params?.id);
+    const car = resolvedId ? importedCarsDb.find((c) => c.id === resolvedId) : undefined;
 
     const currencySymbol = (currency: string) => {
         switch (currency) {
@@ -57,6 +60,19 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
         }
         return value.toLocaleString();
     };
+
+    if (!resolvedId) {
+        return (
+            <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="bg-zinc-900 border border-white/10 rounded-2xl p-8">
+                        <h1 className="text-2xl font-bold mb-2">Загрузка...</h1>
+                        <p className="text-zinc-400">Получаем данные автомобиля.</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (!car) {
         return (
