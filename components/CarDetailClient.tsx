@@ -4,14 +4,15 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { ArrowLeft, Activity, Tag, Zap } from 'lucide-react';
 import { LeadFormModal } from '@/components/LeadFormModal';
-import { CarModel } from '@/types/car';
+import { importedCarsDb } from '@/data/cars_imported_db';
 
 type CarDetailClientProps = {
-    car: CarModel;
+    carId: string;
 };
 
-export function CarDetailClient({ car }: CarDetailClientProps) {
+export function CarDetailClient({ carId }: CarDetailClientProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const car = importedCarsDb.find((c) => c.id === carId);
 
     const currencySymbol = (currency: string) => {
         switch (currency) {
@@ -56,6 +57,22 @@ export function CarDetailClient({ car }: CarDetailClientProps) {
         }
         return value.toLocaleString();
     };
+
+    if (!car) {
+        return (
+            <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
+                <div className="max-w-7xl mx-auto px-6">
+                    <Link href="/" className="inline-flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors">
+                        Назад в каталог
+                    </Link>
+                    <div className="bg-zinc-900 border border-white/10 rounded-2xl p-8">
+                        <h1 className="text-2xl font-bold mb-2">Авто не найдено</h1>
+                        <p className="text-zinc-400">Проверьте ссылку или вернитесь в каталог.</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
