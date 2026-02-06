@@ -278,19 +278,20 @@ function buildSpecsList(car: CarModel, description: string): SpecItem[] {
 }
 
 function deriveSpecsFromDescription(description: string) {
-    const text = normalizeSpace(description).toLowerCase();
-    const pick = (regex: RegExp) => {
-        const match = regex.exec(text);
+    const rawText = normalizeSpace(description);
+    const text = rawText.toLowerCase();
+    const pickRaw = (regex: RegExp) => {
+        const match = regex.exec(rawText);
         return match?.[1]?.trim();
     };
 
-    const bodyType = pick(/тип кузова[:\s]*([^\.]+)/i) || pick(/кузов[:\s]*([^\.]+)/i);
-    const driveRaw = pick(/привод[:\s]*([^\.]+)/i);
-    const transmissionRaw = pick(/коробка передач[:\s]*([^\.]+)/i) || pick(/трансмиссия[:\s]*([^\.]+)/i);
-    const batteryRaw = pick(/(аккумулятор|батаре[яи])[:\s]*([^\.]+)/i);
-    const rangeRaw = pick(/запас хода[^\d]*(\d{2,4}\s*км[^\.]*)/i);
-    const powerKw = pick(/мощност[^\d]*(\d{2,4})\s*квт/i);
-    const powerHp = pick(/(\\d{2,4})\\s*л\\.?\\s*с\\.?/i);
+    const bodyType = pickRaw(/тип кузова[:\s]*([^.;]+)/i) || pickRaw(/кузов[:\s]*([^.;]+)/i);
+    const driveRaw = pickRaw(/привод[:\s]*([^.;]+)/i);
+    const transmissionRaw = pickRaw(/коробка передач[:\s]*([^.;]+)/i) || pickRaw(/трансмиссия[:\s]*([^.;]+)/i);
+    const batteryRaw = pickRaw(/(?:аккумулятор|батаре[яи])[^0-9]*(\d+(?:[.,]\d+)?\s*кВт·?ч)/i);
+    const rangeRaw = pickRaw(/запас хода[^0-9]*(\d{2,4}\s*км(?:\s*\([^)]*\))?)/i);
+    const powerKw = pickRaw(/мощност[^0-9]*(\d{2,4})\s*кВт/i);
+    const powerHp = pickRaw(/(\d{2,4})\s*л\.?\s*с\.?/i);
 
     let engineType: string | undefined;
     if (text.includes('erev') || text.includes('гибрид')) engineType = 'Гибрид (EREV/HEV)';
@@ -312,16 +313,30 @@ function deriveSpecsFromDescription(description: string) {
         else if (text.includes('робот')) transmission = 'Робот';
     }
 
-    const battery = batteryRaw ? batteryRaw.replace(/^(аккумулятор|батаре[яи])[:\s]*/i, '') : undefined;
-    const rangeKm = rangeRaw ? rangeRaw.replace(/\s{2,}/g, ' ') : undefined;
+    const compact = (value?: string) => {
+        if (!value) return undefined;
+        let trimmed = value.replace(/\s{2,}/g, ' ').trim();
+        const lower = trimmed.toLowerCase();
+        const markers = ['безопасность', 'дизайн', 'комфорт', 'производитель', 'дата выхода', 'разгон', 'максимальная скорость'];
+        let cutIndex = trimmed.length;
+        for (const marker of markers) {
+            const idx = lower.indexOf(marker);
+            if (idx >= 0 && idx < cutIndex) cutIndex = idx;
+        }
+        trimmed = trimmed.slice(0, cutIndex).trim();
+        return trimmed.length > 80 ? `${trimmed.slice(0, 80)}…` : trimmed;
+    };
+
+    const battery = compact(batteryRaw);
+    const rangeKm = compact(rangeRaw);
     const power = powerKw ? `${powerKw} кВт` : powerHp ? `${powerHp} л.с.` : undefined;
 
     return {
-        bodyType: bodyType ? bodyType.replace(/\s{2,}/g, ' ') : undefined,
+        bodyType: compact(bodyType),
         engineType,
-        drive: drive ? drive.replace(/\s{2,}/g, ' ') : undefined,
-        transmission: transmission ? transmission.replace(/\s{2,}/g, ' ') : undefined,
-        battery: battery ? battery.replace(/\s{2,}/g, ' ') : undefined,
+        drive: compact(drive),
+        transmission: compact(transmission),
+        battery,
         rangeKm,
         power
     };
