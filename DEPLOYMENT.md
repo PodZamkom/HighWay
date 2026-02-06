@@ -14,9 +14,9 @@
 - При деплое всегда используй флаги `-o StrictHostKeyChecking=no` и `-o UserKnownHostsFile=/dev/null`, так как сервер часто меняет ключи или сбрасывается.
 
 ### 4. Робастная команда деплоя
-Для деплоя используй эту "золотую" цепочку:
+Для деплоя используй эту "золотую" цепочку (деплой из `origin/main`):
 ```bash
-ssh -o StrictHostKeyChecking=no root@82.40.37.223 "nohup sh -c 'cd HighWay && git fetch origin && git reset --hard origin/release/v0.0.1 && git clean -fd && docker build --no-cache -t highway-motors:latest . && docker stop highway-highway-1 || true && docker rm highway-highway-1 || true && docker run -d --name highway-highway-1 -p 8080:3000 --restart always highway-motors:latest' > deploy.log 2>&1 &"
+ssh -o StrictHostKeyChecking=no root@82.40.37.223 "nohup sh -c 'cd HighWay && git fetch origin && git reset --hard origin/main && git clean -fd && docker build --no-cache -t highway-motors:latest . && docker stop highway-highway-1 || true && docker rm highway-highway-1 || true && docker run -d --name highway-highway-1 -p 8080:3000 --restart always highway-motors:latest' > deploy.log 2>&1 &"
 ```
 
 ### Причины задержек в прошлые разы:

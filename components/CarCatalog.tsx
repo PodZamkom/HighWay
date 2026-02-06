@@ -1,10 +1,8 @@
 "use client";
 
-import { CarModel } from '@/types/car';
 import Link from 'next/link';
 import { cars_db } from '@/data/cars_db';
 import { useState } from 'react';
-import { Filter } from 'lucide-react';
 
 export function CarCatalog() {
     const [filterMarket, setFilterMarket] = useState<'All' | 'China' | 'USA' | 'Korea' | 'Europe'>('All');
@@ -26,6 +24,43 @@ export function CarCatalog() {
     const handleMarketChange = (m: any) => {
         setFilterMarket(m);
         setFilterBrand('All'); // Reset brand on market change
+    };
+
+    const currencySymbol = (currency: string) => {
+        switch (currency) {
+            case 'EUR': return '€';
+            case 'CNY': return '¥';
+            case 'KRW': return '₩';
+            default: return '$';
+        }
+    };
+
+    const conditionLabel = (condition: string) => {
+        switch (condition) {
+            case 'New': return 'Новый';
+            case 'Used': return 'Б/У';
+            case 'Crashed': return 'Битый';
+            default: return condition;
+        }
+    };
+
+    const availabilityLabel = (availability: string) => {
+        switch (availability) {
+            case 'InStock': return 'В Минске';
+            case 'EnRoute': return 'В Пути';
+            case 'OnOrder': return 'Под Заказ';
+            default: return availability;
+        }
+    };
+
+    const priceTypeLabel = (priceType: string) => {
+        switch (priceType) {
+            case 'FOB': return 'Цена (FOB)';
+            case 'EXW': return 'Цена (EXW)';
+            case 'OnRoad': return 'Цена (OnRoad)';
+            case 'Estimate': return 'Оценка';
+            default: return 'Цена';
+        }
     };
 
     return (
@@ -86,9 +121,9 @@ export function CarCatalog() {
                                 )}
 
                                 <div className="absolute top-4 right-4 flex gap-2">
-                                    <span className={`px-2 py-1 text-xs font-bold rounded uppercase ${car.availability === 'In Stock (Minsk)' ? 'bg-green-500 text-black' : 'bg-black/50 backdrop-blur text-white'
+                                    <span className={`px-2 py-1 text-xs font-bold rounded uppercase ${car.availability === 'InStock' ? 'bg-green-500 text-black' : 'bg-black/50 backdrop-blur text-white'
                                         }`}>
-                                        {car.availability === 'In Stock (Minsk)' ? 'В Минске' : car.availability === 'En Route' ? 'В Пути' : 'Под Заказ'}
+                                        {availabilityLabel(car.availability)}
                                     </span>
                                 </div>
                             </div>
@@ -97,26 +132,31 @@ export function CarCatalog() {
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
                                         <h3 className="text-xl font-bold text-white">{car.brand} {car.model}</h3>
-                                        <p className="text-sm text-zinc-500">{car.year} • {car.type === 'EV' ? 'Электро' : car.type === 'EREV' ? 'Гибрид' : 'ДВС'}</p>
+                                        {car.generation ? (
+                                            <p className="text-sm text-zinc-400">{car.generation}</p>
+                                        ) : null}
+                                        <p className="text-sm text-zinc-500">{car.year} • {conditionLabel(car.condition)}</p>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-lg font-bold text-red-500">${car.price_fob.toLocaleString()}</div>
-                                        <div className="text-[10px] text-zinc-600">Цена в Китае</div>
+                                        <div className="text-lg font-bold text-red-500">{currencySymbol(car.price_currency)}{car.price_value.toLocaleString()}</div>
+                                        <div className="text-[10px] text-zinc-600">{priceTypeLabel(car.price_type)} {car.price_currency}</div>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-3 gap-2 py-4 border-t border-white/5 mb-4">
                                     <div className="text-center">
-                                        <div className="text-xs text-zinc-500">Разгон</div>
-                                        <div className="font-mono text-white">{car.specs.acceleration_0_100}s</div>
+                                        <div className="text-xs text-zinc-500">Состояние</div>
+                                        <div className="font-mono text-white">{conditionLabel(car.condition)}</div>
                                     </div>
                                     <div className="text-center border-l border-white/5">
-                                        <div className="text-xs text-zinc-500">Запас хода</div>
-                                        <div className="font-mono text-white">{car.specs.range_km}km</div>
+                                        <div className="text-xs text-zinc-500">Доступность</div>
+                                        <div className="font-mono text-white">{availabilityLabel(car.availability)}</div>
                                     </div>
                                     <div className="text-center border-l border-white/5">
-                                        <div className="text-xs text-zinc-500">Привод</div>
-                                        <div className="font-mono text-white">{car.specs.drive}</div>
+                                        <div className="text-xs text-zinc-500">{car.mileage_km ? 'Пробег' : car.generation ? 'Поколение' : 'Рынок'}</div>
+                                        <div className="font-mono text-white">
+                                            {car.mileage_km ? `${car.mileage_km.toLocaleString()} км` : car.generation ? car.generation : car.market}
+                                        </div>
                                     </div>
                                 </div>
 

@@ -4,8 +4,7 @@ import { cars_db } from '@/data/cars_db';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ArrowLeft, Check, Calendar, Activity, Zap } from 'lucide-react';
-import { LandingPriceCalculator } from '@/components/calculator/LandingPriceCalculator';
+import { ArrowLeft, Activity, Tag, Zap } from 'lucide-react';
 import { LeadFormModal } from '@/components/LeadFormModal';
 
 export default function CarPage({ params }: { params: { id: string } }) {
@@ -15,6 +14,43 @@ export default function CarPage({ params }: { params: { id: string } }) {
     if (!car) {
         notFound();
     }
+
+    const currencySymbol = (currency: string) => {
+        switch (currency) {
+            case 'EUR': return '€';
+            case 'CNY': return '¥';
+            case 'KRW': return '₩';
+            default: return '$';
+        }
+    };
+
+    const conditionLabel = (condition: string) => {
+        switch (condition) {
+            case 'New': return 'Новый';
+            case 'Used': return 'Б/У';
+            case 'Crashed': return 'Битый';
+            default: return condition;
+        }
+    };
+
+    const availabilityLabel = (availability: string) => {
+        switch (availability) {
+            case 'InStock': return 'В Минске';
+            case 'EnRoute': return 'В Пути';
+            case 'OnOrder': return 'Под Заказ';
+            default: return availability;
+        }
+    };
+
+    const priceTypeLabel = (priceType: string) => {
+        switch (priceType) {
+            case 'FOB': return 'Цена (FOB)';
+            case 'EXW': return 'Цена (EXW)';
+            case 'OnRoad': return 'Цена (OnRoad)';
+            case 'Estimate': return 'Оценка';
+            default: return 'Цена';
+        }
+    };
 
     return (
         <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
@@ -36,20 +72,22 @@ export default function CarPage({ params }: { params: { id: string } }) {
                                 <div className="flex items-center justify-center h-full text-zinc-600">Нет фото</div>
                             )}
                             <div className="absolute top-4 left-4 bg-black/50 backdrop-blur px-3 py-1 rounded text-xs font-bold border border-white/10 uppercase">
-                                {car.market} Spec
+                                {car.market} • {conditionLabel(car.condition)}
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             {/* Spec Cards */}
                             <div className="bg-zinc-900 p-4 rounded-xl border border-white/5 text-center">
                                 <Activity className="mx-auto text-red-500 mb-2" />
-                                <div className="text-2xl font-bold font-mono">{car.specs.acceleration_0_100}s</div>
-                                <div className="text-xs text-zinc-500">0-100 км/ч</div>
+                                <div className="text-2xl font-bold font-mono">{conditionLabel(car.condition)}</div>
+                                <div className="text-xs text-zinc-500">Состояние</div>
                             </div>
                             <div className="bg-zinc-900 p-4 rounded-xl border border-white/5 text-center">
-                                <Zap className="mx-auto text-yellow-500 mb-2" />
-                                <div className="text-2xl font-bold font-mono">{car.specs.range_km} км</div>
-                                <div className="text-xs text-zinc-500">Запас хода (CLTC)</div>
+                                <Tag className="mx-auto text-yellow-500 mb-2" />
+                                <div className="text-2xl font-bold font-mono">
+                                    {car.mileage_km ? `${car.mileage_km.toLocaleString()} км` : car.generation || car.year}
+                                </div>
+                                <div className="text-xs text-zinc-500">{car.mileage_km ? 'Пробег' : car.generation ? 'Поколение' : 'Год'}</div>
                             </div>
                         </div>
                     </div>
@@ -57,43 +95,34 @@ export default function CarPage({ params }: { params: { id: string } }) {
                     {/* Right: Info */}
                     <div>
                         <div className="mb-2 text-red-500 font-bold tracking-wider text-sm uppercase">{car.brand}</div>
-                        <h1 className="text-5xl font-black tracking-tight mb-4">{car.model} <span className="text-zinc-600">{car.year}</span></h1>
+                        <h1 className="text-5xl font-black tracking-tight mb-4">
+                            {car.model} {car.generation ? <span className="text-zinc-600">{car.generation}</span> : null}
+                        </h1>
 
                         <div className="flex items-center gap-4 mb-8">
-                            <div className="bg-white/10 px-3 py-1 rounded-full text-sm font-medium">{car.type}</div>
-                            <div className="bg-white/10 px-3 py-1 rounded-full text-sm font-medium">{car.specs.drive}</div>
-                            <div className={`px-3 py-1 rounded-full text-sm font-bold ${car.availability === 'In Stock (Minsk)' ? 'bg-green-500 text-black' : 'text-zinc-400 border border-white/20'}`}>
-                                {car.availability}
+                            <div className="bg-white/10 px-3 py-1 rounded-full text-sm font-medium">{car.year}</div>
+                            <div className="bg-white/10 px-3 py-1 rounded-full text-sm font-medium">{conditionLabel(car.condition)}</div>
+                            <div className={`px-3 py-1 rounded-full text-sm font-bold ${car.availability === 'InStock' ? 'bg-green-500 text-black' : 'text-zinc-400 border border-white/20'}`}>
+                                {availabilityLabel(car.availability)}
                             </div>
                         </div>
 
                         <div className="bg-zinc-900 rounded-2xl p-6 border border-white/10 mb-8">
                             <div className="flex justify-between items-end mb-2">
-                                <span className="text-zinc-400">Цена в Китае (FOB)</span>
-                                <span className="text-3xl font-bold text-white">${car.price_fob.toLocaleString()}</span>
+                                <span className="text-zinc-400">{priceTypeLabel(car.price_type)}</span>
+                                <span className="text-3xl font-bold text-white">{currencySymbol(car.price_currency)}{car.price_value.toLocaleString()} <span className="text-base text-zinc-400">{car.price_currency}</span></span>
                             </div>
-                            <p className="text-xs text-zinc-500 text-right">Не включает доставку и таможню</p>
+                            <p className="text-xs text-zinc-500 text-right">Итог считается по текущему курсу</p>
                         </div>
 
-                        {/* Trims */}
-                        <div className="mb-8">
-                            <h3 className="font-bold mb-4 flex items-center gap-2">Комплектации <Calendar size={16} className="text-zinc-500" /></h3>
-                            <div className="space-y-3">
-                                {car.trims.map((trim) => (
-                                    <div key={trim.name} className="flex justify-between items-center p-4 rounded-xl border border-white/10 hover:border-red-500/50 cursor-pointer transition-colors bg-white/5">
-                                        <div>
-                                            <div className="font-bold">{trim.name}</div>
-                                            <div className="text-xs text-zinc-500 max-w-[250px]">{trim.features.join(', ')}</div>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="font-mono text-lg">
-                                                {trim.price_adjustment > 0 ? `+$${trim.price_adjustment}` : 'Base'}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                        {car.description ? (
+                            <div className="mb-8">
+                                <h3 className="font-bold mb-4">Описание</h3>
+                                <div className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
+                                    {car.description}
+                                </div>
                             </div>
-                        </div>
+                        ) : null}
 
                         <div className="flex gap-4">
                             <button
@@ -119,7 +148,7 @@ export default function CarPage({ params }: { params: { id: string } }) {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 title={`ЗАКАЗАТЬ ${car.brand}`}
-                subtitle={`Оставьте заявку на расчет по модели ${car.model} ${car.year}`}
+                subtitle={`Оставьте заявку на расчет по модели ${car.model}${car.generation ? ` ${car.generation}` : ''} ${car.year}`}
             />
         </div>
     );

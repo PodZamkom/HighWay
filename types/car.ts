@@ -1,27 +1,24 @@
+export type Market = 'China' | 'USA' | 'Korea' | 'Europe';
+export type Condition = 'New' | 'Used' | 'Crashed';
+export type Availability = 'InStock' | 'EnRoute' | 'OnOrder';
+export type PriceType = 'FOB' | 'EXW' | 'OnRoad' | 'Estimate';
+
 export interface CarModel {
     id: string;
+    slug: string;
     brand: string;
     model: string;
+    generation?: string;
     year: number;
-    market: 'China' | 'USA' | 'Korea' | 'Europe';
-    type: 'EV' | 'EREV' | 'ICE';
-    price_fob: number; // Base price at auction/dealer in original currency (usually converted to USD or CNY)
-    currency: 'USD' | 'CNY' | 'EUR' | 'KRW';
-    trims: CarTrim[];
-    availability: 'In Stock (Minsk)' | 'En Route' | 'On Order';
+    condition: Condition;
+    mileage_km?: number;
+    price_value: number;
+    price_currency: 'USD' | 'CNY' | 'EUR' | 'KRW';
+    price_type: PriceType;
+    availability: Availability;
+    market: Market;
     images: string[];
-    specs: {
-        engine?: string; // e.g., "1.5L Turbo" or "Dual Motor"
-        range_km?: number; // For EVs/EREVs
-        acceleration_0_100?: number; // seconds
-        drive: 'AWD' | 'RWD' | 'FWD';
-    };
-}
-
-export interface CarTrim {
-    name: string; // e.g., "Max", "Pro", "Ultra"
-    price_adjustment: number; // Additive to base price
-    features: string[]; // Key differentiating features
+    description?: string;
 }
 
 export interface ExchangeRates {
