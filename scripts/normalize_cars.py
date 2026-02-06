@@ -302,10 +302,32 @@ def filter_image_urls(urls):
         lower = url.lower()
         if 'no_image' in lower or 'placeholder' in lower:
             continue
-        if '-100x100' in lower or '100x100' in lower:
-            continue
         filtered.append(url)
     return filtered
+
+
+def expand_image_candidates(url):
+    candidates = []
+
+    def add(value):
+        if value and value not in candidates:
+            candidates.append(value)
+
+    lower = url.lower()
+
+    if '100x100' in lower:
+        add(re.sub(r'(?i)100x100', '1000x1000', url))
+        add(re.sub(r'(?i)100x100', '500x500', url))
+        add(url)
+        return candidates
+
+    if 'csecollege-1000x1000' in lower:
+        add(url)
+        add(url.replace('csecollege-1000x1000', 'csecollege-500x500'))
+        return candidates
+
+    add(url)
+    return candidates
 
 
 def download_images(urls, brand, slug, max_images, images_dir):
@@ -324,12 +346,18 @@ def download_images(urls, brand, slug, max_images, images_dir):
         filename = f'main{ext}' if idx == 1 else f'image_{idx}{ext}'
         dest = dest_dir / filename
         if not dest.exists():
-            try:
-                resp = requests.get(url, timeout=10, headers={'User-Agent': 'Mozilla/5.0'})
-                if resp.status_code != 200 or not resp.content:
+            fetched = False
+            for candidate in expand_image_candidates(url):
+                try:
+                    resp = requests.get(candidate, timeout=10, headers={'User-Agent': 'Mozilla/5.0'})
+                    if resp.status_code != 200 or not resp.content:
+                        continue
+                    dest.write_bytes(resp.content)
+                    fetched = True
+                    break
+                except Exception:
                     continue
-                dest.write_bytes(resp.content)
-            except Exception:
+            if not fetched:
                 continue
         local_paths.append(f'/images/cars/{safe_brand}/{slug}/{filename}')
 
