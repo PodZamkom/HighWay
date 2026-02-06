@@ -63,6 +63,13 @@ export function CarCatalog() {
         }
     };
 
+    const formatPrice = (value: number | undefined) => {
+        if (typeof value !== 'number' || !Number.isFinite(value)) {
+            return '—';
+        }
+        return value.toLocaleString();
+    };
+
     return (
         <section id="catalog" className="py-24 bg-zinc-950 border-t border-white/5">
             <div className="max-w-7xl mx-auto px-6">
@@ -138,7 +145,7 @@ export function CarCatalog() {
                                         <p className="text-sm text-zinc-500">{car.year} • {conditionLabel(car.condition)}</p>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-lg font-bold text-red-500">{currencySymbol(car.price_currency)}{car.price_value.toLocaleString()}</div>
+                                        <div className="text-lg font-bold text-red-500">{currencySymbol(car.price_currency)}{formatPrice(car.price_value)}</div>
                                         <div className="text-[10px] text-zinc-600">{priceTypeLabel(car.price_type)} {car.price_currency}</div>
                                     </div>
                                 </div>

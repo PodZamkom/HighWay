@@ -52,6 +52,13 @@ export default function CarPage({ params }: { params: { id: string } }) {
         }
     };
 
+    const formatPrice = (value: number | undefined) => {
+        if (typeof value !== 'number' || !Number.isFinite(value)) {
+            return '—';
+        }
+        return value.toLocaleString();
+    };
+
     return (
         <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
             <div className="max-w-7xl mx-auto px-6">
@@ -110,7 +117,7 @@ export default function CarPage({ params }: { params: { id: string } }) {
                         <div className="bg-zinc-900 rounded-2xl p-6 border border-white/10 mb-8">
                             <div className="flex justify-between items-end mb-2">
                                 <span className="text-zinc-400">{priceTypeLabel(car.price_type)}</span>
-                                <span className="text-3xl font-bold text-white">{currencySymbol(car.price_currency)}{car.price_value.toLocaleString()} <span className="text-base text-zinc-400">{car.price_currency}</span></span>
+                                <span className="text-3xl font-bold text-white">{currencySymbol(car.price_currency)}{formatPrice(car.price_value)} <span className="text-base text-zinc-400">{car.price_currency}</span></span>
                             </div>
                             <p className="text-xs text-zinc-500 text-right">Итог считается по текущему курсу</p>
                         </div>
