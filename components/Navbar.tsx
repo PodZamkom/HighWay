@@ -13,6 +13,7 @@ interface NavbarProps {
 export function Navbar({ content }: NavbarProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const secondaryMenus = content.secondaryMenus ?? [];
+  const secondaryLinks = content.secondaryLinks ?? [];
 
   return (
     <>
@@ -96,6 +97,15 @@ export function Navbar({ content }: NavbarProps) {
                       </div>
                     </div>
                   </div>
+                ))}
+                {secondaryLinks.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="rounded-full border border-white/15 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] font-semibold text-white/70 hover:text-white hover:border-white/40 hover:bg-white/5 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
                 ))}
               </div>
             </div>

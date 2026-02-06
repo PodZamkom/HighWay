@@ -21,6 +21,7 @@ export interface NavbarContent {
   brandAccent: string;
   links: NavLink[];
   secondaryMenus?: NavbarMenu[];
+  secondaryLinks?: NavLink[];
   ctaLabel: string;
   phone: string;
   phoneLink: string;

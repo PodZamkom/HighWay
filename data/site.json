@@ -79,6 +79,12 @@
         ]
       }
     ],
+    "secondaryLinks": [
+      {
+        "label": "Каталог",
+        "href": "/catalog"
+      }
+    ],
     "ctaLabel": "ОБРАТНЫЙ ЗВОНОК",
     "phone": "+375 (33) 696-22-24",
     "phoneLink": "tel:+375336962224",
@@ -235,7 +241,7 @@
   "footer": {
     "copyright": "© 2026 Highway Motors. Все права защищены.",
     "tagline": "Разработано для лучших автомобилей.",
-    "version": "1.2.9",
+    "version": "1.2.10",
     "adminLinkLabel": "Вход в админку",
     "contacts": {
       "phone": "+375 (33) 696-22-24",
