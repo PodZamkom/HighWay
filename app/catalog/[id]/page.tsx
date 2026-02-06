@@ -1,21 +1,11 @@
 import Link from 'next/link';
 import { CarDetailClient } from '@/components/CarDetailClient';
-import { CarModel } from '@/types/car';
+import { importedCarsDb } from '@/data/cars_imported_db';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CarPage({ params }: { params: { id: string } }) {
-    let cars: CarModel[] = [];
-    try {
-        const res = await fetch('http://127.0.0.1:3000/api/cars', { cache: 'no-store' });
-        if (res.ok) {
-            cars = await res.json();
-        }
-    } catch {
-        cars = [];
-    }
-
-    const car = cars.find((c) => c.id === params.id);
+export default function CarPage({ params }: { params: { id: string } }) {
+    const car = importedCarsDb.find((c) => c.id === params.id);
 
     if (!car) {
         return (
