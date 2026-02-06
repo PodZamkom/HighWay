@@ -58,6 +58,7 @@ KNOWN_BRANDS = {
 
 YEAR_MIN = 1990
 YEAR_MAX = 2027
+PAGE_IMAGE_CACHE = {}
 
 
 def normalize_space(text):
@@ -285,12 +286,76 @@ def extract_images(row):
         if not val:
             continue
         images.extend(extract_urls(val))
+    if not images:
+        page_url = (
+            row.get('data-page-selector')
+            or row.get('data_page_selector')
+            or row.get('data-page-selector')
+        )
+        if page_url:
+            images.extend(extract_images_from_page(page_url))
     seen = set()
     unique = []
     for url in images:
         if url not in seen:
             seen.add(url)
             unique.append(url)
+    return unique
+
+
+def extract_images_from_page(page_url):
+    cached = PAGE_IMAGE_CACHE.get(page_url)
+    if cached is not None:
+        return cached
+
+    images = []
+    try:
+        resp = requests.get(page_url, timeout=15, headers={'User-Agent': 'Mozilla/5.0'})
+        if resp.status_code != 200:
+            PAGE_IMAGE_CACHE[page_url] = []
+            return []
+        html = resp.text
+    except Exception:
+        PAGE_IMAGE_CACHE[page_url] = []
+        return []
+
+    if 'westmotors.by' in page_url:
+        urls = re.findall(r"https?://[^\s\"']+\.(?:jpg|jpeg|png|webp)", html, flags=re.I)
+        for url in urls:
+            if 'uploads/public' in url:
+                images.append(url)
+    elif 'mejdukoles.by' in page_url:
+        scripts = re.findall(r'<script type=\"application/ld\\+json\">(.*?)</script>', html, flags=re.S)
+        for raw in scripts:
+            try:
+                data = json.loads(raw)
+            except Exception:
+                continue
+            items = data if isinstance(data, list) else [data]
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                if item.get('@type') != 'Product':
+                    continue
+                imgs = item.get('image') or []
+                if isinstance(imgs, str):
+                    imgs = [imgs]
+                images.extend([u for u in imgs if isinstance(u, str)])
+        if not images:
+            urls = re.findall(r"https?://[^\s\"']+\.(?:jpg|jpeg|png|webp)", html, flags=re.I)
+            for url in urls:
+                if '/image/cache/catalog/' in url:
+                    images.append(url)
+
+    # Deduplicate
+    seen = set()
+    unique = []
+    for url in images:
+        if url not in seen:
+            seen.add(url)
+            unique.append(url)
+
+    PAGE_IMAGE_CACHE[page_url] = unique
     return unique
 
 
