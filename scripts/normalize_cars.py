@@ -14,7 +14,8 @@ SOURCES = [
     {
         'path': PROJECT / 'Parcing' / 'china-bu-mejdukoles-by-2026-02-01-4.csv',
         'market': 'China',
-        'default_condition': 'New',
+        'default_condition': 'Used',
+        'force_condition': 'Used',
         'availability': 'OnOrder',
         'price_type': 'FOB',
     },
@@ -375,7 +376,7 @@ def normalize_rows():
                     year = datetime.utcnow().year
                     missing_year += 1
 
-                condition = extract_condition(row, source['default_condition'])
+                condition = source.get('force_condition') or extract_condition(row, source['default_condition'])
                 price_value, price_text = extract_price(row)
                 if price_value is None:
                     skipped += 1
