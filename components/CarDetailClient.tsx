@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ArrowLeft, Activity, Tag, Zap } from 'lucide-react';
 import { LeadFormModal } from '@/components/LeadFormModal';
 import { importedCarsDb } from '@/data/cars_imported_db';
+import { CarModel } from '@/types/car';
 
 type CarDetailClientProps = {
     carId?: string;
@@ -13,6 +14,7 @@ type CarDetailClientProps = {
 
 export function CarDetailClient({ carId }: CarDetailClientProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
     const params = useParams<{ id?: string | string[] }>();
     const resolvedId = carId ?? (Array.isArray(params?.id) ? params?.id?.[0] : params?.id);
     const car = resolvedId ? importedCarsDb.find((c) => c.id === resolvedId) : undefined;
@@ -90,6 +92,12 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
         );
     }
 
+    const images = (car.images || []).filter(Boolean);
+    const mainImage = images[activeImageIndex] || images[0];
+
+    const descriptionSections = useMemo(() => splitDescriptionSections(car.description || ''), [car.description]);
+    const specItems = useMemo(() => buildSpecsList(car, car.description || ''), [car]);
+
     return (
         <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
             <div className="max-w-7xl mx-auto px-6">
@@ -104,15 +112,32 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                     {/* Left: Images */}
                     <div className="space-y-4">
                         <div className="rounded-3xl overflow-hidden border border-white/10 aspect-[4/3] relative bg-zinc-900">
-                            {car.images[0] ? (
-                                <img src={car.images[0]} alt={car.model} className="w-full h-full object-cover" />
+                            {mainImage ? (
+                                <img src={mainImage} alt={car.model} className="w-full h-full object-cover" />
                             ) : (
                                 <div className="flex items-center justify-center h-full text-zinc-600">Нет фото</div>
                             )}
                             <div className="absolute top-4 left-4 bg-black/50 backdrop-blur px-3 py-1 rounded text-xs font-bold border border-white/10 uppercase">
                                 {car.market} • {conditionLabel(car.condition)}
                             </div>
+                            <div className="absolute top-4 right-4 bg-black/50 backdrop-blur px-3 py-1 rounded text-xs font-bold border border-white/10 uppercase">
+                                {images.length} фото
+                            </div>
                         </div>
+                        {images.length > 1 ? (
+                            <div className="flex gap-3 overflow-x-auto pb-2">
+                                {images.map((img, index) => (
+                                    <button
+                                        key={`${img}-${index}`}
+                                        onClick={() => setActiveImageIndex(index)}
+                                        className={`relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-xl border transition-colors ${index === activeImageIndex ? 'border-white' : 'border-white/10 hover:border-white/40'}`}
+                                        aria-label={`Фото ${index + 1}`}
+                                    >
+                                        <img src={img} alt={`${car.model} ${index + 1}`} className="h-full w-full object-cover" />
+                                    </button>
+                                ))}
+                            </div>
+                        ) : null}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-zinc-900 p-4 rounded-xl border border-white/5 text-center">
                                 <Activity className="mx-auto text-red-500 mb-2" />
@@ -152,14 +177,42 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                             <p className="text-xs text-zinc-500 text-right">Итог считается по текущему курсу</p>
                         </div>
 
-                        {car.description ? (
-                            <div className="mb-8">
-                                <h3 className="font-bold mb-4">Описание</h3>
-                                <div className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
-                                    {car.description}
+                        {specItems.length ? (
+                            <div className="mb-10">
+                                <h3 className="font-bold mb-4">Характеристики</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {specItems.map((item) => (
+                                        <div key={item.label} className="bg-zinc-900 border border-white/10 rounded-xl px-4 py-3">
+                                            <div className="text-xs text-zinc-500">{item.label}</div>
+                                            <div className="text-sm font-semibold">{item.value}</div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         ) : null}
+
+                        {descriptionSections.intro ? (
+                            <div className="mb-10">
+                                <h3 className="font-bold mb-4">Описание</h3>
+                                <div className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
+                                    {descriptionSections.intro}
+                                </div>
+                            </div>
+                        ) : null}
+
+                        {descriptionSections.sections.map((section) => (
+                            <div key={section.title} className="mb-10">
+                                <h3 className="font-bold mb-4">{section.title}</h3>
+                                <ul className="text-sm text-zinc-300 leading-relaxed space-y-2">
+                                    {section.items.map((item, index) => (
+                                        <li key={`${section.title}-${index}`} className="flex gap-2">
+                                            <span className="mt-1 h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                                            <span>{item}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
 
                         <div className="flex gap-4">
                             <button
@@ -189,4 +242,164 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
             />
         </div>
     );
+}
+
+type SpecItem = { label: string; value: string };
+
+function buildSpecsList(car: CarModel, description: string): SpecItem[] {
+    const specs: SpecItem[] = [];
+    const add = (label: string, value?: string) => {
+        if (!value) return;
+        specs.push({ label, value });
+    };
+
+    add('Марка', car.brand);
+    add('Модель', car.model);
+    add('Поколение', car.generation);
+    add('Год выпуска', String(car.year));
+    add('Состояние', conditionLabelStatic(car.condition));
+    add('Рынок', car.market);
+    add('Наличие', availabilityLabelStatic(car.availability));
+    add('Пробег', car.mileage_km ? `${car.mileage_km.toLocaleString()} км` : undefined);
+    add('Тип цены', priceTypeLabelStatic(car.price_type));
+    add('Валюта', car.price_currency);
+    add('Кол-во фото', `${car.images?.length ?? 0}`);
+
+    const derived = deriveSpecsFromDescription(description);
+    add('Тип кузова', derived.bodyType);
+    add('Тип двигателя', derived.engineType);
+    add('Запас хода', derived.rangeKm);
+    add('Мощность', derived.power);
+    add('Привод', derived.drive);
+    add('Коробка', derived.transmission);
+    add('Емкость батареи', derived.battery);
+
+    return specs;
+}
+
+function deriveSpecsFromDescription(description: string) {
+    const text = normalizeSpace(description).toLowerCase();
+    const pick = (regex: RegExp) => {
+        const match = regex.exec(text);
+        return match?.[1]?.trim();
+    };
+
+    const bodyType = pick(/тип кузова[:\s]*([^\.]+)/i) || pick(/кузов[:\s]*([^\.]+)/i);
+    const driveRaw = pick(/привод[:\s]*([^\.]+)/i);
+    const transmissionRaw = pick(/коробка передач[:\s]*([^\.]+)/i) || pick(/трансмиссия[:\s]*([^\.]+)/i);
+    const batteryRaw = pick(/(аккумулятор|батаре[яи])[:\s]*([^\.]+)/i);
+    const rangeRaw = pick(/запас хода[^\d]*(\d{2,4}\s*км[^\.]*)/i);
+    const powerKw = pick(/мощност[^\d]*(\d{2,4})\s*квт/i);
+    const powerHp = pick(/(\\d{2,4})\\s*л\\.?\\s*с\\.?/i);
+
+    let engineType: string | undefined;
+    if (text.includes('erev') || text.includes('гибрид')) engineType = 'Гибрид (EREV/HEV)';
+    else if (text.includes('электр')) engineType = 'Электро';
+    else if (text.includes('бенз')) engineType = 'Бензин';
+    else if (text.includes('дизел')) engineType = 'Дизель';
+
+    let drive = driveRaw;
+    if (!drive) {
+        if (text.includes('awd') || text.includes('4wd') || text.includes('полный')) drive = 'Полный';
+        else if (text.includes('rwd') || text.includes('задн')) drive = 'Задний';
+        else if (text.includes('fwd') || text.includes('передн')) drive = 'Передний';
+    }
+
+    let transmission = transmissionRaw;
+    if (!transmission) {
+        if (text.includes('односкорост')) transmission = 'Односкоростная';
+        else if (text.includes('автомат')) transmission = 'Автомат';
+        else if (text.includes('робот')) transmission = 'Робот';
+    }
+
+    const battery = batteryRaw ? batteryRaw.replace(/^(аккумулятор|батаре[яи])[:\s]*/i, '') : undefined;
+    const rangeKm = rangeRaw ? rangeRaw.replace(/\s{2,}/g, ' ') : undefined;
+    const power = powerKw ? `${powerKw} кВт` : powerHp ? `${powerHp} л.с.` : undefined;
+
+    return {
+        bodyType: bodyType ? bodyType.replace(/\s{2,}/g, ' ') : undefined,
+        engineType,
+        drive: drive ? drive.replace(/\s{2,}/g, ' ') : undefined,
+        transmission: transmission ? transmission.replace(/\s{2,}/g, ' ') : undefined,
+        battery: battery ? battery.replace(/\s{2,}/g, ' ') : undefined,
+        rangeKm,
+        power
+    };
+}
+
+function splitDescriptionSections(description: string) {
+    const text = description.trim();
+    if (!text) return { intro: '', sections: [] as { title: string; items: string[] }[] };
+
+    const markers = [
+        { title: 'Характеристики', regex: /все характеристики:/i },
+        { title: 'Безопасность и ассистенты', regex: /безопасность и ассистенты:/i },
+        { title: 'Дизайн и комфорт', regex: /дизайн и комфорт:/i }
+    ];
+
+    const positions = markers
+        .map((marker) => {
+            const match = marker.regex.exec(text);
+            return match ? { ...marker, index: match.index, length: match[0].length } : null;
+        })
+        .filter((item): item is { title: string; regex: RegExp; index: number; length: number } => !!item)
+        .sort((a, b) => a.index - b.index);
+
+    if (!positions.length) {
+        return { intro: text, sections: [] };
+    }
+
+    const intro = text.slice(0, positions[0].index).trim();
+    const sections = positions.map((pos, idx) => {
+        const start = pos.index + pos.length;
+        const end = positions[idx + 1]?.index ?? text.length;
+        const raw = text.slice(start, end).trim();
+        return {
+            title: pos.title,
+            items: splitToItems(raw)
+        };
+    }).filter(section => section.items.length);
+
+    return { intro, sections };
+}
+
+function splitToItems(text: string) {
+    return text
+        .replace(/\s+/g, ' ')
+        .replace(/[•●]/g, ';')
+        .split(/\s*;\s*|\s*\n\s*|\.\s+/g)
+        .map((item) => item.trim())
+        .filter(Boolean);
+}
+
+function normalizeSpace(text: string) {
+    return text.replace(/\s+/g, ' ').trim();
+}
+
+function conditionLabelStatic(condition: string) {
+    switch (condition) {
+        case 'New': return 'Новый';
+        case 'Used': return 'Б/У';
+        case 'Crashed': return 'Битый';
+        default: return condition;
+    }
+}
+
+function availabilityLabelStatic(availability: string) {
+    switch (availability) {
+        case 'InStock': return 'В Минске';
+        case 'EnRoute': return 'В Пути';
+        case 'OnOrder': return 'Под Заказ';
+        default: return availability;
+    }
+}
+
+function priceTypeLabelStatic(priceType: string) {
+    switch (priceType) {
+        case 'FOB': return 'Цена (FOB)';
+        case 'EXW': return 'Цена (EXW)';
+        case 'OnRoad': return 'Цена (OnRoad)';
+        case 'Estimate': return 'Оценка';
+        default: return 'Цена';
+    }
 }
