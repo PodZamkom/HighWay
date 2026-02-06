@@ -30,6 +30,55 @@
         "href": "/#contacts"
       }
     ],
+    "secondaryMenus": [
+      {
+        "label": "Автомобили",
+        "items": [
+          {
+            "label": "Авто из Китая",
+            "href": "/catalog"
+          },
+          {
+            "label": "Авто из США",
+            "href": "/catalog"
+          },
+          {
+            "label": "Авто из Кореи",
+            "href": "/catalog"
+          },
+          {
+            "label": "Авто из Европы",
+            "href": "/catalog"
+          }
+        ]
+      },
+      {
+        "label": "Электрокары",
+        "items": [
+          {
+            "label": "из США",
+            "href": "/catalog"
+          },
+          {
+            "label": "из Китая",
+            "href": "/catalog"
+          }
+        ]
+      },
+      {
+        "label": "В наличии",
+        "items": [
+          {
+            "label": "В наличии в Минске",
+            "href": "/catalog"
+          },
+          {
+            "label": "В наличии в Хоргосе",
+            "href": "/catalog"
+          }
+        ]
+      }
+    ],
     "ctaLabel": "ОБРАТНЫЙ ЗВОНОК",
     "phone": "+375 (33) 696-22-24",
     "phoneLink": "tel:+375336962224",
@@ -186,7 +235,7 @@
   "footer": {
     "copyright": "© 2026 Highway Motors. Все права защищены.",
     "tagline": "Разработано для лучших автомобилей.",
-    "version": "1.2.8",
+    "version": "1.2.9",
     "adminLinkLabel": "Вход в админку",
     "contacts": {
       "phone": "+375 (33) 696-22-24",

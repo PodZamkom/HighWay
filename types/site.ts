@@ -20,6 +20,7 @@ export interface NavbarContent {
   brandPrimary: string;
   brandAccent: string;
   links: NavLink[];
+  secondaryMenus?: NavbarMenu[];
   ctaLabel: string;
   phone: string;
   phoneLink: string;
@@ -30,6 +31,11 @@ export interface NavbarContent {
 export interface NavLink {
   label: string;
   href: string;
+}
+
+export interface NavbarMenu {
+  label: string;
+  items: NavLink[];
 }
 
 export interface HeroContent {
