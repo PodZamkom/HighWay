@@ -1,14 +1,52 @@
 "use client";
-
-import { cars_db } from '@/data/cars_db';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, Activity, Tag, Zap } from 'lucide-react';
 import { LeadFormModal } from '@/components/LeadFormModal';
+import { CarModel } from '@/types/car';
 
 export default function CarPage({ params }: { params: { id: string } }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const car = cars_db.find((c) => c.id === params.id);
+    const [car, setCar] = useState<CarModel | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isMissing, setIsMissing] = useState(false);
+
+    useEffect(() => {
+        let isActive = true;
+        const load = async () => {
+            try {
+                const res = await fetch('/api/cars', { cache: 'no-store' });
+                if (!res.ok) {
+                    throw new Error('cars api error');
+                }
+                const list: CarModel[] = await res.json();
+                const found = list.find((c) => c.id === params.id);
+                if (!isActive) return;
+                if (found) {
+                    setCar(found);
+                } else {
+                    setIsMissing(true);
+                }
+            } catch {
+                if (isActive) {
+                    setIsMissing(true);
+                }
+            } finally {
+                if (isActive) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        setIsLoading(true);
+        setIsMissing(false);
+        setCar(null);
+        load();
+
+        return () => {
+            isActive = false;
+        };
+    }, [params.id]);
 
     const currencySymbol = (currency: string) => {
         switch (currency) {
@@ -54,7 +92,23 @@ export default function CarPage({ params }: { params: { id: string } }) {
         return value.toLocaleString();
     };
 
-    if (!car) {
+    if (isLoading) {
+        return (
+            <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
+                <div className="max-w-7xl mx-auto px-6">
+                    <Link href="/" className="inline-flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors">
+                        <ArrowLeft size={16} /> Назад в каталог
+                    </Link>
+                    <div className="bg-zinc-900 border border-white/10 rounded-2xl p-8">
+                        <h1 className="text-2xl font-bold mb-2">Загрузка...</h1>
+                        <p className="text-zinc-400">Получаем данные по авто.</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (isMissing || !car) {
         return (
             <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
                 <div className="max-w-7xl mx-auto px-6">
