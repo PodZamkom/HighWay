@@ -1,7 +1,6 @@
 "use client";
 
 import { cars_db } from '@/data/cars_db';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
 import { ArrowLeft, Activity, Tag, Zap } from 'lucide-react';
@@ -10,10 +9,6 @@ import { LeadFormModal } from '@/components/LeadFormModal';
 export default function CarPage({ params }: { params: { id: string } }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const car = cars_db.find((c) => c.id === params.id);
-
-    if (!car) {
-        notFound();
-    }
 
     const currencySymbol = (currency: string) => {
         switch (currency) {
@@ -58,6 +53,22 @@ export default function CarPage({ params }: { params: { id: string } }) {
         }
         return value.toLocaleString();
     };
+
+    if (!car) {
+        return (
+            <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
+                <div className="max-w-7xl mx-auto px-6">
+                    <Link href="/" className="inline-flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors">
+                        <ArrowLeft size={16} /> Назад в каталог
+                    </Link>
+                    <div className="bg-zinc-900 border border-white/10 rounded-2xl p-8">
+                        <h1 className="text-2xl font-bold mb-2">Авто не найдено</h1>
+                        <p className="text-zinc-400">Проверьте ссылку или вернитесь в каталог.</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
