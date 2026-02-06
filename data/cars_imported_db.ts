@@ -2453,5 +2453,115 @@ export const importedCarsDb: CarModel[] = [
     "generation": "1.5",
     "mileage_km": 95014,
     "description": "Цена от 37045 BYN (≈ $13000) без доставки и растаможки."
+  },
+  {
+    "id": "volkswagen-golf-1-6-2019-used",
+    "slug": "volkswagen-golf-1-6-2019-used",
+    "brand": "Volkswagen",
+    "model": "Golf",
+    "year": 2019,
+    "condition": "Used",
+    "price_value": 11000,
+    "price_currency": "USD",
+    "price_type": "EXW",
+    "availability": "OnOrder",
+    "market": "Europe",
+    "images": [
+      "/images/cars/volkswagen/volkswagen-golf-1-6-2019-used/main.jpeg",
+      "/images/cars/volkswagen/volkswagen-golf-1-6-2019-used/image_2.jpeg",
+      "/images/cars/volkswagen/volkswagen-golf-1-6-2019-used/image_3.jpeg",
+      "/images/cars/volkswagen/volkswagen-golf-1-6-2019-used/image_4.jpeg"
+    ],
+    "generation": "1.6",
+    "mileage_km": 119324,
+    "description": "Цена от 31346 BYN (≈ $11000) без доставки и растаможки."
+  },
+  {
+    "id": "volkswagen-passat-2-0-2019-used",
+    "slug": "volkswagen-passat-2-0-2019-used",
+    "brand": "Volkswagen",
+    "model": "Passat",
+    "year": 2019,
+    "condition": "Used",
+    "price_value": 14000,
+    "price_currency": "USD",
+    "price_type": "EXW",
+    "availability": "OnOrder",
+    "market": "Europe",
+    "images": [
+      "/images/cars/volkswagen/volkswagen-passat-2-0-2019-used/main.jpeg",
+      "/images/cars/volkswagen/volkswagen-passat-2-0-2019-used/image_2.jpeg",
+      "/images/cars/volkswagen/volkswagen-passat-2-0-2019-used/image_3.jpeg",
+      "/images/cars/volkswagen/volkswagen-passat-2-0-2019-used/image_4.jpeg"
+    ],
+    "generation": "2.0",
+    "mileage_km": 122538,
+    "description": "Цена от 39894 BYN (≈ $14000) без доставки и растаможки."
+  },
+  {
+    "id": "volkswagen-polo-1-0-2019-used",
+    "slug": "volkswagen-polo-1-0-2019-used",
+    "brand": "Volkswagen",
+    "model": "Polo",
+    "year": 2019,
+    "condition": "Used",
+    "price_value": 10500,
+    "price_currency": "USD",
+    "price_type": "EXW",
+    "availability": "OnOrder",
+    "market": "Europe",
+    "images": [
+      "/images/cars/volkswagen/volkswagen-polo-1-0-2019-used/main.jpeg",
+      "/images/cars/volkswagen/volkswagen-polo-1-0-2019-used/image_2.jpeg",
+      "/images/cars/volkswagen/volkswagen-polo-1-0-2019-used/image_3.jpeg",
+      "/images/cars/volkswagen/volkswagen-polo-1-0-2019-used/image_4.jpeg"
+    ],
+    "generation": "1.0",
+    "mileage_km": 109823,
+    "description": "Цена от 29921 BYN (≈ $10500) без доставки и растаможки."
+  },
+  {
+    "id": "volvo-v60-2-0-2019-used",
+    "slug": "volvo-v60-2-0-2019-used",
+    "brand": "Volvo",
+    "model": "V60",
+    "year": 2019,
+    "condition": "Used",
+    "price_value": 17000,
+    "price_currency": "USD",
+    "price_type": "EXW",
+    "availability": "OnOrder",
+    "market": "Europe",
+    "images": [
+      "/images/cars/volvo/volvo-v60-2-0-2019-used/main.jpeg",
+      "/images/cars/volvo/volvo-v60-2-0-2019-used/image_2.jpeg",
+      "/images/cars/volvo/volvo-v60-2-0-2019-used/image_3.jpeg",
+      "/images/cars/volvo/volvo-v60-2-0-2019-used/image_4.jpeg"
+    ],
+    "generation": "2.0",
+    "mileage_km": 125688,
+    "description": "Цена от 48443 BYN (≈ $17000) без доставки и растаможки."
+  },
+  {
+    "id": "volvo-xc60-2-0-2019-used",
+    "slug": "volvo-xc60-2-0-2019-used",
+    "brand": "Volvo",
+    "model": "XC60",
+    "year": 2019,
+    "condition": "Used",
+    "price_value": 21000,
+    "price_currency": "USD",
+    "price_type": "EXW",
+    "availability": "OnOrder",
+    "market": "Europe",
+    "images": [
+      "/images/cars/volvo/volvo-xc60-2-0-2019-used/main.jpeg",
+      "/images/cars/volvo/volvo-xc60-2-0-2019-used/image_2.jpeg",
+      "/images/cars/volvo/volvo-xc60-2-0-2019-used/image_3.jpeg",
+      "/images/cars/volvo/volvo-xc60-2-0-2019-used/image_4.jpeg"
+    ],
+    "generation": "2.0",
+    "mileage_km": 131495,
+    "description": "Цена от 59842 BYN (≈ $21000) без доставки и растаможки."
   }
 ];
