@@ -37,7 +37,8 @@ export default async function RootLayout({
                 <Footer content={siteContent.footer} />
                 {/* Oryntix Live Chat */}
                 <Script
-                    src="https://staging.oryntix.ru/api/live-chat/widget.js?key=lc_ad8vORyLzJgi3QfVo14NTS54"
+                    src="https://staging.oryntix.ru/widget/430.js"
+                    async
                     strategy="afterInteractive"
                 />
             </body>
