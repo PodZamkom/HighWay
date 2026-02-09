@@ -101,13 +101,72 @@ def parse_price(value):
     candidates = re.findall(r'\d[\d\s,.]*', value)
     if not candidates:
         return None
-    digits = re.sub(r'\D', '', candidates[0])
+    token = candidates[0].strip()
+    compact = token.replace(' ', '')
+    if not compact:
+        return None
+
+    # If number looks decimal (e.g. 36953.88), parse as float and keep integer part.
+    if re.fullmatch(r'\d+[.,]\d{1,2}', compact):
+        compact = compact.replace(',', '.')
+        try:
+            return int(float(compact))
+        except ValueError:
+            return None
+
+    digits = re.sub(r'\D', '', compact)
     if not digits:
         return None
     try:
         return int(digits)
     except ValueError:
         return None
+
+
+def parse_currency_amount(value, currency_order=None):
+    if not value:
+        return None
+
+    by_currency = {
+        'USD': [r'(?:USD|\$)\s*([\d][\d\s,.]*)', r'([\d][\d\s,.]*)\s*(?:USD|\$)'],
+        'EUR': [r'(?:EUR|€)\s*([\d][\d\s,.]*)', r'([\d][\d\s,.]*)\s*(?:EUR|€)'],
+        'BYN': [r'(?:BYN)\s*([\d][\d\s,.]*)', r'([\d][\d\s,.]*)\s*(?:BYN)'],
+        'KRW': [r'(?:KRW|₩)\s*([\d][\d\s,.]*)', r'([\d][\d\s,.]*)\s*(?:KRW|₩)'],
+    }
+    order = currency_order or ['USD', 'EUR', 'BYN', 'KRW']
+    for currency in order:
+        for pattern in by_currency.get(currency, []):
+            match = re.search(pattern, value, flags=re.I)
+            if not match:
+                continue
+            price = parse_price(match.group(1))
+            if price is not None:
+                return price
+    return None
+
+
+def detect_currency_in_text(price_text):
+    if not price_text:
+        return None
+    text = price_text.upper()
+    candidates = []
+    mapping = [
+        ('USD', [r'USD', r'\$']),
+        ('EUR', [r'EUR', r'€']),
+        ('BYN', [r'BYN', r'БЕЛ', r'Р\.']),
+        ('CNY', [r'CNY', r'¥']),
+        ('KRW', [r'KRW', r'₩']),
+    ]
+    for currency, patterns in mapping:
+        for pattern in patterns:
+            m = re.search(pattern, text)
+            if m:
+                candidates.append((m.start(), currency))
+                break
+    if not candidates:
+        return None
+    candidates.sort(key=lambda x: x[0])
+    return candidates[0][1]
 
 
 def extract_currency(row, fallback, price_text):
@@ -120,12 +179,9 @@ def extract_currency(row, fallback, price_text):
                     if v in {'USD', 'EUR', 'CNY', 'KRW'}:
                         return v
     if price_text:
-        if '€' in price_text or 'EUR' in price_text.upper():
-            return 'EUR'
-        if '¥' in price_text or 'CNY' in price_text.upper():
-            return 'CNY'
-        if '₩' in price_text or 'KRW' in price_text.upper():
-            return 'KRW'
+        detected = detect_currency_in_text(price_text)
+        if detected:
+            return detected
     return fallback
 
 
@@ -470,27 +526,72 @@ def download_images(urls, brand, slug, max_images, images_dir):
 
 
 def extract_price(row):
-    preferred = ['Other_Offer_Price_USD_0', 'Price_0', 'price_1', 'Car_Price_0', 'Other_Offer_Price_0']
+    preferred = [
+        'Other_Offer_Price_USD_0',
+        'Price_0',
+        'Price_in_WON_0',
+        'price_1',
+        'Car_Price_0',
+        'Other_Offer_Price_0',
+    ]
     fallback = ['price_0', 'price']
+    price_like_keys = preferred + ['price_0', 'price', 'data_0', 'data_1', 'data_2', 'data_3', 'data_4']
 
+    def is_year_like(number):
+        return 1900 <= number <= 2035
+
+    # 1) Prefer explicit USD/EUR amounts from preferred keys.
     for key in preferred:
         val = row.get(key)
-        if val:
-            price = parse_price(val)
-            if price is not None:
-                return price, val
+        if not val:
+            continue
+        price = parse_currency_amount(val, ['USD', 'EUR'])
+        if price is not None and not is_year_like(price):
+            return price, val
+
+    # 2) Then USD/EUR amounts in likely price-like keys.
+    for key in price_like_keys:
+        val = row.get(key)
+        if not val:
+            continue
+        price = parse_currency_amount(val, ['USD', 'EUR'])
+        if price is not None and not is_year_like(price):
+            return price, val
+
+    # 3) Then USD/EUR amounts across the row (handles shifted CSV columns).
+    for key, val in row.items():
+        if not val:
+            continue
+        if key.lower().startswith('name'):
+            continue
+        price = parse_currency_amount(val, ['USD', 'EUR'])
+        if price is not None and not is_year_like(price):
+            return price, val
+
+    # 4) Fall back to BYN/KRW explicit amounts.
+    for key in price_like_keys:
+        val = row.get(key)
+        if not val:
+            continue
+        price = parse_currency_amount(val, ['BYN', 'KRW'])
+        if price is not None and not is_year_like(price):
+            return price, val
+
+    # 5) Fallback to preferred numeric keys (reject year-like values).
+    for key in preferred:
+        val = row.get(key)
+        if not val:
+            continue
+        price = parse_price(val)
+        if price is not None and not is_year_like(price):
+            return price, val
+
+    # 6) Final fallback.
     for key in fallback:
         val = row.get(key)
         if val:
             price = parse_price(val)
-            if price is not None:
-                return price, val
-    for val in row.values():
-        if not val:
-            continue
-        if '$' in val or 'USD' in val.upper() or '€' in val or 'EUR' in val.upper():
-            price = parse_price(val)
-            if price is not None:
+            if price is not None and not is_year_like(price):
                 return price, val
     return None, None
 
