@@ -12,6 +12,20 @@ PROJECT = Path(__file__).resolve().parents[1]
 
 SOURCES = [
     {
+        'path': PROJECT / 'Parcing' / '1-americamotors-by-2026-02-09.csv',
+        'market': 'USA',
+        'default_condition': 'Used',
+        'availability': 'OnOrder',
+        'price_type': 'FOB',
+    },
+    {
+        'path': PROJECT / 'Parcing' / '1-avtokorea-by-2026-02-09.csv',
+        'market': 'Korea',
+        'default_condition': 'Used',
+        'availability': 'OnOrder',
+        'price_type': 'FOB',
+    },
+    {
         'path': PROJECT / 'Parcing' / 'china-bu-mejdukoles-by-2026-02-01-4.csv',
         'market': 'China',
         'default_condition': 'Used',
@@ -77,7 +91,7 @@ def slugify(text):
 def extract_urls(value):
     if not value:
         return []
-    urls = re.findall(r'https?://[^\s"\']+\.(?:jpg|jpeg|png|webp)', value, flags=re.I)
+    urls = re.findall(r'https?://[^\s"\']+\.(?:jpg|jpeg|png|webp|jfif)', value, flags=re.I)
     return urls
 
 
@@ -140,14 +154,27 @@ def extract_year(row):
 
 def extract_condition(row, default_condition):
     for key, val in row.items():
-        if 'condition' in key.lower() and val:
-            v = val.lower()
-            if 'нов' in v or 'new' in v:
-                return 'New'
-            if 'бит' in v or 'crash' in v or 'авар' in v:
-                return 'Crashed'
-            if 'бу' in v or 'used' in v or 'с пробег' in v:
-                return 'Used'
+        if not val:
+            continue
+        key_l = key.lower()
+        if 'condition' not in key_l and 'status' not in key_l and 'state' not in key_l:
+            continue
+        v = val.lower()
+        if 'нов' in v or v.strip() == 'new':
+            return 'New'
+        if 'бит' in v or 'crash' in v or 'авар' in v or 'поврежд' in v or 'salvage' in v:
+            return 'Crashed'
+        if 'бу' in v or 'used' in v or 'с пробег' in v or 'завод' in v or 'runs and drives' in v:
+            return 'Used'
+
+    row_text = ' '.join([str(v).lower() for v in row.values() if v])
+    crash_keywords = [
+        'бит', 'crash', 'авар', 'поврежд', 'salvage', 'total loss',
+        'не на ходу', 'не завод', 'утоп', 'after accident',
+    ]
+    if any(k in row_text for k in crash_keywords):
+        return 'Crashed'
+
     return default_condition
 
 
@@ -204,6 +231,8 @@ def extract_model_and_generation(row, name_text, brand, year):
     generation = None
     if row.get('model_0'):
         model = normalize_space(row.get('model_0'))
+    elif row.get('Model_0'):
+        model = normalize_space(row.get('Model_0'))
     elif row.get('name_2'):
         model = normalize_space(row.get('name_2'))
     elif row.get('item_2'):
@@ -286,13 +315,14 @@ def extract_images(row):
         if not val:
             continue
         images.extend(extract_urls(val))
-    if not images:
-        page_url = (
-            row.get('data-page-selector')
-            or row.get('data_page_selector')
-            or row.get('data-page-selector')
-        )
-        if page_url:
+    page_url = (
+        row.get('data-page-selector')
+        or row.get('data_page_selector')
+        or row.get('data-page-selector')
+    )
+    if page_url:
+        should_scrape = (not images) or ('avtokorea.by' in page_url) or ('americamotors.by' in page_url)
+        if should_scrape:
             images.extend(extract_images_from_page(page_url))
     seen = set()
     unique = []
@@ -346,6 +376,16 @@ def extract_images_from_page(page_url):
             for url in urls:
                 if '/image/cache/catalog/' in url:
                     images.append(url)
+    elif 'americamotors.by' in page_url:
+        urls = re.findall(r"https?://[^\s\"']+\.(?:jpg|jpeg|png|webp|jfif)(?:\?[^\s\"']*)?", html, flags=re.I)
+        for url in urls:
+            if 'digitaloceanspaces.com/americamotors-by/' in url:
+                images.append(url)
+    elif 'avtokorea.by' in page_url:
+        urls = re.findall(r"https?://[^\s\"']+\.(?:jpg|jpeg|png|webp|jfif)(?:\?[^\s\"']*)?", html, flags=re.I)
+        for url in urls:
+            if 'ci.encar.com/carpicture/' in url:
+                images.append(url)
 
     # Deduplicate
     seen = set()
@@ -406,7 +446,7 @@ def download_images(urls, brand, slug, max_images, images_dir):
             break
         parsed = urlparse(url)
         ext = Path(parsed.path).suffix.lower()
-        if ext not in {'.jpg', '.jpeg', '.png', '.webp'}:
+        if ext not in {'.jpg', '.jpeg', '.png', '.webp', '.jfif'}:
             ext = '.jpg'
         filename = f'main{ext}' if idx == 1 else f'image_{idx}{ext}'
         dest = dest_dir / filename
@@ -430,7 +470,16 @@ def download_images(urls, brand, slug, max_images, images_dir):
 
 
 def extract_price(row):
-    for key in ['price_0', 'Price_0', 'Car_Price_0', 'Other_Offer_Price_0', 'Other_Offer_Price_USD_0', 'price']:
+    preferred = ['Other_Offer_Price_USD_0', 'Price_0', 'price_1', 'Car_Price_0', 'Other_Offer_Price_0']
+    fallback = ['price_0', 'price']
+
+    for key in preferred:
+        val = row.get(key)
+        if val:
+            price = parse_price(val)
+            if price is not None:
+                return price, val
+    for key in fallback:
         val = row.get(key)
         if val:
             price = parse_price(val)
