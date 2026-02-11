@@ -1,6 +1,4 @@
-﻿"use client";
-
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, Car, Zap, AlertTriangle, Check, Tag } from 'lucide-react';
 import { carDatabase, CarFamily, CarVariant, getPriceRange } from '../data/cars';
@@ -36,8 +34,8 @@ function VariantCard({ variant, isSelected, onSelect }: VariantCardProps) {
         <motion.button
             onClick={onSelect}
             className={`w-full p-4 rounded-xl border-2 transition-all duration-300 text-left ${isSelected
-                ? 'border-cyan-500 bg-cyan-500/10'
-                : 'border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/10'
+                    ? 'border-cyan-500 bg-cyan-500/10'
+                    : 'border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/10'
                 }`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -134,9 +132,9 @@ function ConfigModal({ family, onClose }: ConfigModalProps) {
                 <div className="mx-6 mt-4 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
                     <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
                     <div>
-                        <p className="text-amber-400 font-medium text-sm">Цены включают налоги 2025 (НДС)</p>
+                        <p className="text-amber-400 font-medium text-sm">╨ж╨╡╨╜╤Л ╨▓╨║╨╗╤О╤З╨░╤О╤В ╨╜╨░╨╗╨╛╨│╨╕ 2025 (╨Э╨Ф╨б)</p>
                         <p className="text-amber-400/70 text-xs mt-0.5">
-                            Стоимость гибридов (EREV) выросла на 25-30% из-за новых акцизов
+                            ╨б╤В╨╛╨╕╨╝╨╛╤Б╤В╤М ╨│╨╕╨▒╤А╨╕╨┤╨╛╨▓ (EREV) ╨▓╤Л╤А╨╛╤Б╨╗╨░ ╨╜╨░ 25-30% ╨╕╨╖-╨╖╨░ ╨╜╨╛╨▓╤Л╤Е ╨░╨║╤Ж╨╕╨╖╨╛╨▓
                         </p>
                     </div>
                 </div>
@@ -145,7 +143,7 @@ function ConfigModal({ family, onClose }: ConfigModalProps) {
                 <div className="p-6">
                     <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <Tag className="w-5 h-5 text-cyan-400" />
-                        Выберите комплектацию
+                        ╨Т╤Л╨▒╨╡╤А╨╕╤В╨╡ ╨║╨╛╨╝╨┐╨╗╨╡╨║╤В╨░╤Ж╨╕╤О
                     </h3>
 
                     <div className="grid gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
@@ -163,12 +161,12 @@ function ConfigModal({ family, onClose }: ConfigModalProps) {
                 {/* Footer with Selected Price */}
                 <div className="px-6 py-4 border-t border-white/10 bg-black/20 flex items-center justify-between">
                     <div>
-                        <p className="text-sm text-gray-400">Выбрано:</p>
+                        <p className="text-sm text-gray-400">╨Т╤Л╨▒╤А╨░╨╜╨╛:</p>
                         <p className="text-white font-medium">{selectedVariant.name}</p>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="text-right">
-                            <p className="text-sm text-gray-400">Итоговая цена</p>
+                            <p className="text-sm text-gray-400">╨Ш╤В╨╛╨│╨╛╨▓╨░╤П ╤Ж╨╡╨╜╨░</p>
                             <p className="text-2xl font-bold text-cyan-400">
                                 {formatPrice(selectedVariant.price_usd)}
                             </p>
@@ -178,7 +176,7 @@ function ConfigModal({ family, onClose }: ConfigModalProps) {
                             whileTap={{ scale: 0.95 }}
                             className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-xl transition-colors flex items-center gap-2"
                         >
-                            Оставить заявку
+                            ╨Ю╤Б╤В╨░╨▓╨╕╤В╤М ╨╖╨░╤П╨▓╨║╤Г
                             <ChevronRight className="w-5 h-5" />
                         </motion.button>
                     </div>
@@ -221,7 +219,7 @@ function FamilyCard({ family, onConfigure }: FamilyCardProps) {
 
                 {/* Variants Count */}
                 <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-cyan-500/20 backdrop-blur-sm border border-cyan-500/30">
-                    <span className="text-sm font-medium text-cyan-400">{variantCount} версий</span>
+                    <span className="text-sm font-medium text-cyan-400">{variantCount} ╨▓╨╡╤А╤Б╨╕╨╣</span>
                 </div>
             </div>
 
@@ -233,9 +231,9 @@ function FamilyCard({ family, onConfigure }: FamilyCardProps) {
                 {/* Price Range */}
                 <div className="flex items-center gap-2 mb-4">
                     <Zap className="w-4 h-4 text-cyan-400" />
-                    <span className="text-gray-400 text-sm">от</span>
+                    <span className="text-gray-400 text-sm">╨╛╤В</span>
                     <span className="text-xl font-bold text-white">{formatPrice(priceRange.min)}</span>
-                    <span className="text-gray-400 text-sm">до</span>
+                    <span className="text-gray-400 text-sm">╨┤╨╛</span>
                     <span className="text-xl font-bold text-white">{formatPrice(priceRange.max)}</span>
                 </div>
 
@@ -260,14 +258,14 @@ function FamilyCard({ family, onConfigure }: FamilyCardProps) {
                     className="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
                 >
                     <Car className="w-5 h-5" />
-                    Выбрать комплектацию
+                    ╨Т╤Л╨▒╤А╨░╤В╤М ╨║╨╛╨╝╨┐╨╗╨╡╨║╤В╨░╤Ж╨╕╤О
                 </motion.button>
             </div>
         </motion.div>
     );
 }
 
-export function CarCatalog() {
+export default function CarCatalog() {
     const [selectedFamily, setSelectedFamily] = useState<CarFamily | null>(null);
 
     return (
@@ -281,7 +279,7 @@ export function CarCatalog() {
                         viewport={{ once: true }}
                         className="text-cyan-400 font-medium mb-2"
                     >
-                        КАТАЛОГ
+                        ╨Ъ╨Р╨в╨Р╨Ы╨Ю╨У
                     </motion.p>
                     <motion.h2
                         initial={{ opacity: 0, y: 10 }}
@@ -290,7 +288,7 @@ export function CarCatalog() {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-5xl font-bold text-white mb-4"
                     >
-                        Модельный ряд
+                        ╨Ь╨╛╨┤╨╡╨╗╤М╨╜╤Л╨╣ ╤А╤П╨┤
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0 }}
@@ -299,8 +297,8 @@ export function CarCatalog() {
                         transition={{ delay: 0.2 }}
                         className="text-gray-400 max-w-2xl mx-auto"
                     >
-                        Выберите модель и настройте комплектацию под ваши потребности.
-                        Все цены актуальны с учётом налогов 2025 года.
+                        ╨Т╤Л╨▒╨╡╤А╨╕╤В╨╡ ╨╝╨╛╨┤╨╡╨╗╤М ╨╕ ╨╜╨░╤Б╤В╤А╨╛╨╣╤В╨╡ ╨║╨╛╨╝╨┐╨╗╨╡╨║╤В╨░╤Ж╨╕╤О ╨┐╨╛╨┤ ╨▓╨░╤И╨╕ ╨┐╨╛╤В╤А╨╡╨▒╨╜╨╛╤Б╤В╨╕.
+                        ╨Т╤Б╨╡ ╤Ж╨╡╨╜╤Л ╨░╨║╤В╤Г╨░╨╗╤М╨╜╤Л ╤Б ╤Г╤З╤С╤В╨╛╨╝ ╨╜╨░╨╗╨╛╨│╨╛╨▓ 2025 ╨│╨╛╨┤╨░.
                     </motion.p>
                 </div>
 
@@ -313,8 +311,8 @@ export function CarCatalog() {
                 >
                     <AlertTriangle className="w-5 h-5 text-amber-400" />
                     <p className="text-amber-400 text-sm">
-                        <strong>Внимание:</strong> Цены включают новые налоги 2025 (НДС).
-                        Стоимость гибридов EREV выросла на 25-30% относительно 2024 года.
+                        <strong>╨Т╨╜╨╕╨╝╨░╨╜╨╕╨╡:</strong> ╨ж╨╡╨╜╤Л ╨▓╨║╨╗╤О╤З╨░╤О╤В ╨╜╨╛╨▓╤Л╨╡ ╨╜╨░╨╗╨╛╨│╨╕ 2025 (╨Э╨Ф╨б).
+                        ╨б╤В╨╛╨╕╨╝╨╛╤Б╤В╤М ╨│╨╕╨▒╤А╨╕╨┤╨╛╨▓ EREV ╨▓╤Л╤А╨╛╤Б╨╗╨░ ╨╜╨░ 25-30% ╨╛╤В╨╜╨╛╤Б╨╕╤В╨╡╨╗╤М╨╜╨╛ 2024 ╨│╨╛╨┤╨░.
                     </p>
                 </motion.div>
 
