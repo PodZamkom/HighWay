@@ -156,7 +156,7 @@
         "id": "china",
         "name": "КИТАЙ",
         "description": "Li Auto, Zeekr, BYD. Прямые поставки с заводов. 0% пошлина на электро.",
-        "image": "/images/market-china.jpg",
+        "image": "/images/market-china.png",
         "tags": [
           "Li Auto",
           "Zeekr",
@@ -168,7 +168,7 @@
         "id": "usa",
         "name": "США",
         "description": "Страховые аукционы Copart и Manheim. Максимальная выгода для бюджетных авто.",
-        "image": "/images/market-usa.jpg",
+        "image": "/images/market-usa.png",
         "tags": [
           "Copart",
           "Tesla",
@@ -180,7 +180,7 @@
         "id": "korea",
         "name": "КОРЕЯ",
         "description": "Дизельные кроссоверы и седаны (Kia, Hyundai, BMW) в идеальном состоянии.",
-        "image": "/images/market-korea.jpg",
+        "image": "/images/market-korea.png",
         "tags": [
           "Encar",
           "Mohave",
@@ -192,7 +192,7 @@
         "id": "europe",
         "name": "ЕВРОПА",
         "description": "Премиум сегмент (BMW, Mercedes, Porsche) и возврат НДС.",
-        "image": "/images/market-europe.jpg",
+        "image": "/images/market-europe.png",
         "tags": [
           "Mobile.de",
           "Audi",

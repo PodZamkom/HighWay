@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import type { NavbarContent } from '@/types/site';
-import { Instagram, Send, Phone, ChevronDown, Menu, X } from 'lucide-react';
+import { Instagram, Send, ChevronDown, Menu, X, Calculator, User } from 'lucide-react';
 import { LeadFormModal } from './LeadFormModal';
 
 interface NavbarProps {
@@ -15,14 +15,19 @@ export function Navbar({ content }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const secondaryMenus = content.secondaryMenus ?? [];
   const secondaryLinks = content.secondaryLinks ?? [];
+  const quickLinks = [
+    { label: "Новые авто", href: "/catalog", accent: true },
+    { label: "Калькулятор расходов", href: "/#calculator", icon: Calculator },
+    { label: "Личный кабинет", href: "#", icon: User },
+  ];
 
   return (
     <>
-      <nav className="sticky top-0 z-50 shadow-md">
-        {/* Top Row — Black */}
-        <div className="bg-[#1a1a1a]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
+      <nav className="sticky top-0 z-50 border-b border-white/10 shadow-[0_12px_34px_-24px_rgba(0,0,0,0.85)]">
+        {/* Top Row */}
+        <div className="bg-gradient-to-r from-[#121722] via-[#151b29] to-[#11151f]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex h-[72px] items-center justify-between py-3">
               {/* Logo */}
               <div className="flex-shrink-0">
                 <Link href="/" className="flex items-center gap-2">
@@ -37,7 +42,7 @@ export function Navbar({ content }: NavbarProps) {
                     <Link
                       key={link.label}
                       href={link.href}
-                      className="text-gray-300 hover:text-white text-sm font-semibold transition-colors"
+                      className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
                     >
                       {link.label}
                     </Link>
@@ -48,15 +53,15 @@ export function Navbar({ content }: NavbarProps) {
               {/* Right Side */}
               <div className="flex items-center gap-6">
                 <div className="hidden md:flex flex-col items-end">
-                  <a href={content.phoneLink} className="flex items-center gap-1 text-white font-bold text-sm tracking-tight hover:text-orange-400 transition-colors">
+                  <a href={content.phoneLink} className="flex items-center gap-1 text-sm font-black tracking-tight text-orange-500 transition-colors hover:text-orange-400">
                     {content.phone}
-                    <ChevronDown className="w-3 h-3 text-gray-400" />
+                    <ChevronDown className="h-3 w-3 text-zinc-500" />
                   </a>
                   <div className="flex items-center gap-3 mt-1">
-                    <a href={content.instagram} target="_blank" className="text-gray-400 hover:text-orange-400 transition-colors">
+                    <a href={content.instagram} target="_blank" rel="noreferrer" className="text-zinc-400 transition-colors hover:text-orange-400">
                       <Instagram size={16} />
                     </a>
-                    <a href={content.whatsapp} target="_blank" className="text-gray-400 hover:text-green-400 transition-colors">
+                    <a href={content.whatsapp} target="_blank" rel="noreferrer" className="text-zinc-400 transition-colors hover:text-green-400">
                       <Send size={16} className="rotate-[-20deg]" />
                     </a>
                   </div>
@@ -64,7 +69,7 @@ export function Navbar({ content }: NavbarProps) {
 
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="bg-orange-600 text-white px-6 py-2.5 rounded-lg font-bold text-xs hover:bg-orange-500 transition-all shadow-lg active:scale-95 uppercase tracking-wider"
+                  className="rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-2.5 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-orange-600/30 transition-all hover:from-orange-400 hover:to-orange-500 active:scale-95"
                 >
                   {content.ctaLabel}
                 </button>
@@ -81,28 +86,28 @@ export function Navbar({ content }: NavbarProps) {
           </div>
         </div>
 
-        {/* Second Row — White, secondary navigation */}
+        {/* Second Row */}
         {secondaryMenus.length > 0 ? (
-          <div className="bg-white border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="border-t border-white/5 bg-[#0f141e]">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="hidden lg:flex items-center gap-6 py-3">
                 {secondaryMenus.map((menu) => (
                   <div key={menu.label} className="relative group">
                     <button
                       type="button"
-                      className="flex items-center gap-1 text-sm font-semibold text-gray-700 hover:text-orange-600 transition-colors"
+                      className="flex items-center gap-1 text-sm font-semibold text-zinc-200 transition-colors hover:text-white"
                       aria-haspopup="true"
                     >
                       {menu.label}
-                      <ChevronDown className="w-3 h-3 text-gray-400 group-hover:text-orange-600 transition-colors" />
+                      <ChevronDown className="h-3 w-3 text-zinc-500 transition-colors group-hover:text-white" />
                     </button>
-                    <div className="absolute left-0 mt-3 w-56 rounded-xl border border-gray-200 bg-white shadow-xl opacity-0 translate-y-2 pointer-events-none transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:pointer-events-auto z-50">
+                    <div className="pointer-events-none absolute left-0 z-50 mt-3 w-56 translate-y-2 rounded-xl border border-white/10 bg-[#131b28] opacity-0 shadow-xl transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
                       <div className="p-2">
                         {menu.items.map((item) => (
                           <Link
                             key={item.label}
                             href={item.href}
-                            className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-colors"
+                            className="block rounded-lg px-3 py-2 text-sm text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
                           >
                             {item.label}
                           </Link>
@@ -115,11 +120,31 @@ export function Navbar({ content }: NavbarProps) {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className="rounded-full border border-orange-200 px-4 py-1.5 text-sm font-semibold text-orange-600 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors"
+                    className="rounded-full border border-orange-500/40 px-4 py-1.5 text-sm font-semibold text-orange-400 transition-colors hover:border-orange-400 hover:bg-orange-500/20 hover:text-orange-300"
                   >
                     {link.label}
                   </Link>
                 ))}
+
+                <div className="ml-auto flex items-center gap-2">
+                  {quickLinks.map((link) => {
+                    const Icon = link.icon;
+                    return (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition ${
+                          link.accent
+                            ? "bg-white/10 text-white hover:bg-white/15"
+                            : "text-zinc-300 hover:text-white hover:bg-white/5"
+                        }`}
+                      >
+                        {Icon ? <Icon size={14} /> : null}
+                        {link.label}
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
@@ -127,13 +152,13 @@ export function Navbar({ content }: NavbarProps) {
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="lg:hidden bg-white border-b border-gray-200 shadow-lg">
+          <div className="border-b border-white/10 bg-[#101725] shadow-lg lg:hidden">
             <div className="px-4 py-4 space-y-3">
               {content.links.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="block text-gray-700 hover:text-orange-600 font-semibold text-sm py-2"
+                  className="block py-2 text-sm font-semibold text-zinc-200 transition-colors hover:text-white"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
@@ -144,7 +169,7 @@ export function Navbar({ content }: NavbarProps) {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="block text-gray-500 hover:text-orange-600 text-sm py-1 pl-4"
+                    className="block py-1 pl-4 text-sm text-zinc-400 transition-colors hover:text-orange-300"
                     onClick={() => setMobileOpen(false)}
                   >
                     {item.label}
