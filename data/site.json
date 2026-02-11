@@ -10,6 +10,10 @@
     "brandAccent": "MOTORS",
     "links": [
       {
+        "label": "Каталог",
+        "href": "/catalog"
+      },
+      {
         "label": "О компании",
         "href": "/#about"
       },

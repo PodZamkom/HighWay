@@ -11,9 +11,9 @@ interface MarketGridProps {
 
 export function MarketGrid({ content }: MarketGridProps) {
   return (
-    <section className="py-24 bg-black">
+    <section className="bg-white py-24 dark:bg-black">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-3xl md:text-5xl font-bold mb-12 tracking-tight text-white flex items-center gap-4">
+        <h2 className="mb-12 flex items-center gap-4 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl">
           <Globe className="text-red-500" size={40} /> {content.title}
         </h2>
 
@@ -25,14 +25,14 @@ export function MarketGrid({ content }: MarketGridProps) {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               viewport={{ once: true }}
-              className={`group relative rounded-3xl overflow-hidden cursor-pointer border border-white/10 h-80 ${market.bgClass}`}
+              className={`group relative h-80 cursor-pointer overflow-hidden rounded-3xl border border-black/10 dark:border-white/10 ${market.bgClass}`}
             >
               <div
                 className="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity"
                 style={{ backgroundImage: `url(${market.image})` }}
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/80" />
-              <Link href={`/catalog?market=${market.id}`} className="absolute inset-0 p-6 flex flex-col justify-between hover:bg-white/5 transition-colors">
+              <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/45 to-black/80 dark:from-black/10 dark:via-black/40 dark:to-black/80" />
+              <Link href={`/catalog?market=${market.id}`} className="absolute inset-0 flex flex-col justify-between p-6 transition-colors hover:bg-black/5 dark:hover:bg-white/5">
 
                 <div className="flex justify-between items-start">
                   <span className="text-xs font-bold px-2 py-1 bg-white/10 rounded-md text-white/70">
@@ -48,7 +48,7 @@ export function MarketGrid({ content }: MarketGridProps) {
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {market.tags.map(tag => (
-                      <span key={tag} className="text-[10px] uppercase border border-white/10 px-2 py-1 rounded text-zinc-500 group-hover:text-zinc-300 transition-colors">
+                      <span key={tag} className="rounded border border-white/15 px-2 py-1 text-[10px] uppercase text-zinc-300 transition-colors group-hover:text-white">
                         {tag}
                       </span>
                     ))}

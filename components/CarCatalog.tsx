@@ -2,11 +2,32 @@
 
 import Link from 'next/link';
 import { cars_db } from '@/data/cars_db';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export function CarCatalog() {
-    const [filterMarket, setFilterMarket] = useState<'All' | 'China' | 'USA' | 'Korea' | 'Europe'>('All');
+type MarketFilter = 'All' | 'China' | 'USA' | 'Korea' | 'Europe';
+
+function normalizeMarket(value?: string | null): MarketFilter {
+    const market = value?.toLowerCase();
+    if (market === 'china') return 'China';
+    if (market === 'usa') return 'USA';
+    if (market === 'korea') return 'Korea';
+    if (market === 'europe') return 'Europe';
+    return 'All';
+}
+
+interface CarCatalogProps {
+    initialMarket?: string | null;
+}
+
+export function CarCatalog({ initialMarket }: CarCatalogProps) {
+    const marketFilters = ['All', 'China', 'Europe', 'USA', 'Korea'] as const;
+    const [filterMarket, setFilterMarket] = useState<MarketFilter>(normalizeMarket(initialMarket));
     const [filterBrand, setFilterBrand] = useState('All');
+
+    useEffect(() => {
+        setFilterMarket(normalizeMarket(initialMarket));
+        setFilterBrand('All');
+    }, [initialMarket]);
 
     // Filter by market first
     const marketCars = filterMarket === 'All'
@@ -21,7 +42,7 @@ export function CarCatalog() {
         ? marketCars
         : marketCars.filter(car => car.brand === filterBrand);
 
-    const handleMarketChange = (m: any) => {
+    const handleMarketChange = (m: MarketFilter) => {
         setFilterMarket(m);
         setFilterBrand('All'); // Reset brand on market change
     };
@@ -82,7 +103,7 @@ export function CarCatalog() {
                         </h2>
 
                         <div className="flex bg-white/5 p-1 rounded-xl">
-                            {['All', 'China', 'Europe', 'USA', 'Korea'].map((m) => (
+                            {marketFilters.map((m) => (
                                 <button
                                     key={m}
                                     onClick={() => handleMarketChange(m)}
