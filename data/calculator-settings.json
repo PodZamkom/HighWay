@@ -1,0 +1,21 @@
+{
+    "rates": {
+        "usd_byn": 3.40,
+        "eur_usd": 1.05,
+        "cny_usd": 0.138
+    },
+    "fees": {
+        "auction_fee": 500,
+        "logistics_china_minsk": 2800,
+        "broker_fee": 250,
+        "our_commission": 500,
+        "customs_processing": 120
+    },
+    "recycling": {
+        "under_3_years": 544.5,
+        "over_3_years": 1089.0
+    },
+    "margins": {
+        "sea_freight_markup": 0
+    }
+}

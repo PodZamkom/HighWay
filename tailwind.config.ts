@@ -10,7 +10,8 @@ const config: Config = {
             colors: {
                 background: "var(--background)",
                 foreground: "var(--foreground)",
-                primary: "#ff4d00", // Highway Motors Orange/Red hint? Or maybe generic for now.
+                primary: "#FF6600",
+                accent: "#1a1a1a",
             },
         },
     },

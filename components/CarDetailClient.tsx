@@ -65,11 +65,11 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
 
     if (!resolvedId) {
         return (
-            <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
+            <div className="bg-white min-h-screen pb-20 pt-24 text-gray-900">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="bg-zinc-900 border border-white/10 rounded-2xl p-8">
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
                         <h1 className="text-2xl font-bold mb-2">Загрузка...</h1>
-                        <p className="text-zinc-400">Получаем данные автомобиля.</p>
+                        <p className="text-gray-500">Получаем данные автомобиля.</p>
                     </div>
                 </div>
             </div>
@@ -78,14 +78,14 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
 
     if (!car) {
         return (
-            <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
+            <div className="bg-white min-h-screen pb-20 pt-24 text-gray-900">
                 <div className="max-w-7xl mx-auto px-6">
-                    <Link href="/" className="inline-flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors">
+                    <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-600 mb-8 transition-colors">
                         Назад в каталог
                     </Link>
-                    <div className="bg-zinc-900 border border-white/10 rounded-2xl p-8">
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
                         <h1 className="text-2xl font-bold mb-2">Авто не найдено</h1>
-                        <p className="text-zinc-400">Проверьте ссылку или вернитесь в каталог.</p>
+                        <p className="text-gray-500">Проверьте ссылку или вернитесь в каталог.</p>
                     </div>
                 </div>
 
@@ -115,11 +115,11 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
     );
 
     return (
-        <div className="bg-zinc-950 min-h-screen pb-20 pt-24 text-white">
+        <div className="bg-white min-h-screen pb-20 pt-8 text-gray-900">
             <div className="max-w-7xl mx-auto px-6">
 
                 {/* Breadcrumb */}
-                <Link href="/" className="inline-flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors">
+                <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-600 mb-8 transition-colors">
                     <ArrowLeft size={16} /> Назад в каталог
                 </Link>
 
@@ -127,16 +127,16 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
 
                     {/* Left: Images */}
                     <div className="space-y-4 lg:col-span-7">
-                        <div className="rounded-3xl overflow-hidden border border-white/10 aspect-[4/3] relative bg-zinc-900">
+                        <div className="rounded-xl overflow-hidden border border-gray-200 aspect-[4/3] relative bg-gray-100">
                             {mainImage ? (
                                 <img src={mainImage} alt={car.model} className="w-full h-full object-cover" />
                             ) : (
-                                <div className="flex items-center justify-center h-full text-zinc-600">Нет фото</div>
+                                <div className="flex items-center justify-center h-full text-gray-400">Нет фото</div>
                             )}
-                            <div className="absolute top-4 left-4 bg-black/50 backdrop-blur px-3 py-1 rounded text-xs font-bold border border-white/10 uppercase">
+                            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded text-xs font-bold border border-gray-200 uppercase text-gray-700">
                                 {car.market} • {conditionLabel(car.condition)}
                             </div>
-                            <div className="absolute top-4 right-4 bg-black/50 backdrop-blur px-3 py-1 rounded text-xs font-bold border border-white/10 uppercase">
+                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded text-xs font-bold border border-gray-200 text-gray-700">
                                 {images.length} фото
                             </div>
                         </div>
@@ -146,7 +146,7 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                                     <button
                                         key={`${img}-${index}`}
                                         onClick={() => setActiveImageIndex(index)}
-                                        className={`relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-xl border transition-colors ${index === activeImageIndex ? 'border-white' : 'border-white/10 hover:border-white/40'}`}
+                                        className={`relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${index === activeImageIndex ? 'border-orange-500' : 'border-gray-200 hover:border-orange-300'}`}
                                         aria-label={`Фото ${index + 1}`}
                                     >
                                         <img src={img} alt={`${car.model} ${index + 1}`} className="h-full w-full object-cover" />
@@ -157,58 +157,58 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                     </div>
 
                     {/* Right: Info */}
-                    <div className="lg:col-span-5 space-y-8">
+                    <div className="lg:col-span-5 space-y-6">
                         <div>
-                            <div className="mb-2 text-red-500 font-bold tracking-wider text-sm uppercase">{car.brand}</div>
-                            <h1 className="text-4xl lg:text-5xl font-black tracking-tight">
-                                {car.model} {car.generation ? <span className="text-zinc-600">{car.generation}</span> : null}
+                            <div className="mb-2 text-orange-600 font-bold tracking-wider text-sm uppercase">{car.brand}</div>
+                            <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-gray-900">
+                                {car.model} {car.generation ? <span className="text-gray-400">{car.generation}</span> : null}
                             </h1>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3">
-                            <div className="bg-white/10 px-3 py-1 rounded-full text-sm font-medium">{car.year}</div>
-                            <div className="bg-white/10 px-3 py-1 rounded-full text-sm font-medium">{conditionLabel(car.condition)}</div>
-                            <div className="bg-white/10 px-3 py-1 rounded-full text-sm font-medium">{car.market}</div>
-                            <div className={`px-3 py-1 rounded-full text-sm font-bold ${car.availability === 'InStock' ? 'bg-green-500 text-black' : 'text-zinc-400 border border-white/20'}`}>
+                            <div className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-700">{car.year}</div>
+                            <div className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-700">{conditionLabel(car.condition)}</div>
+                            <div className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-700">{car.market}</div>
+                            <div className={`px-3 py-1 rounded-full text-sm font-bold ${car.availability === 'InStock' ? 'bg-green-500 text-white' : 'text-gray-500 border border-gray-300'}`}>
                                 {availabilityLabel(car.availability)}
                             </div>
                         </div>
 
-                        <div className="bg-zinc-900 rounded-2xl p-6 border border-white/10">
+                        <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                             <div className="flex justify-between items-end mb-2">
-                                <span className="text-zinc-400">{priceTypeLabel(car.price_type)}</span>
-                                <span className="text-3xl font-bold text-white">
+                                <span className="text-gray-500">{priceTypeLabel(car.price_type)}</span>
+                                <span className="text-3xl font-bold text-gray-900">
                                     {currencySymbol(car.price_currency)}
-                                    {formatPrice(car.price_value)} <span className="text-base text-zinc-400">{car.price_currency}</span>
+                                    {formatPrice(car.price_value)} <span className="text-base text-gray-400">{car.price_currency}</span>
                                 </span>
                             </div>
-                            <p className="text-xs text-zinc-500 text-right">Итог считается по текущему курсу</p>
+                            <p className="text-xs text-gray-400 text-right">Итог считается по текущему курсу</p>
                         </div>
 
                         <div className="flex gap-4">
                             <button
                                 onClick={() => setIsModalOpen(true)}
-                                className="flex-1 bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors"
+                                className="flex-1 bg-orange-600 text-white font-bold py-4 rounded-xl hover:bg-orange-500 transition-colors shadow-lg shadow-orange-600/20"
                             >
                                 Заказать расчет
                             </button>
                             <a
                                 href="https://wa.me/375447772224"
                                 target="_blank"
-                                className="flex-1 bg-transparent border border-white/20 text-white font-bold py-4 rounded-xl hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
+                                className="flex-1 bg-white border-2 border-green-500 text-green-600 font-bold py-4 rounded-xl hover:bg-green-50 transition-colors flex items-center justify-center gap-2"
                             >
-                                <Zap size={18} className="text-green-500" /> Написать в WhatsApp
+                                <Zap size={18} /> WhatsApp
                             </a>
                         </div>
 
                         {quickSpecs.length ? (
                             <div>
-                                <h3 className="font-bold mb-3">Ключевые параметры</h3>
+                                <h3 className="font-bold text-gray-900 mb-3">Ключевые параметры</h3>
                                 <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
                                     {quickSpecs.map((item) => (
-                                        <div key={item.label} className="flex items-start justify-between gap-3 border-b border-white/10 py-2">
-                                            <dt className="text-zinc-500">{item.label}</dt>
-                                            <dd className="text-zinc-200 text-right max-w-[60%] line-clamp-2">{item.value}</dd>
+                                        <div key={item.label} className="flex items-start justify-between gap-3 border-b border-gray-100 py-2">
+                                            <dt className="text-gray-400">{item.label}</dt>
+                                            <dd className="text-gray-800 text-right max-w-[60%] line-clamp-2">{item.value}</dd>
                                         </div>
                                     ))}
                                 </dl>
@@ -221,8 +221,8 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                 <div className="mt-14 space-y-12">
                     {descriptionSections.intro ? (
                         <div>
-                            <h3 className="font-bold mb-4">Описание</h3>
-                            <div className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
+                            <h3 className="font-bold text-gray-900 mb-4">Описание</h3>
+                            <div className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
                                 {descriptionSections.intro}
                             </div>
                         </div>
@@ -230,12 +230,12 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
 
                     {specItems.length ? (
                         <div>
-                            <h3 className="font-bold mb-4">Характеристики</h3>
+                            <h3 className="font-bold text-gray-900 mb-4">Характеристики</h3>
                             <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-3 text-sm">
                                 {specItems.map((item) => (
-                                    <div key={item.label} className="flex items-start justify-between gap-4 border-b border-white/10 py-2">
-                                        <dt className="text-zinc-500">{item.label}</dt>
-                                        <dd className="text-zinc-200 text-right max-w-[60%] line-clamp-2">{item.value}</dd>
+                                    <div key={item.label} className="flex items-start justify-between gap-4 border-b border-gray-100 py-2">
+                                        <dt className="text-gray-400">{item.label}</dt>
+                                        <dd className="text-gray-800 text-right max-w-[60%] line-clamp-2">{item.value}</dd>
                                     </div>
                                 ))}
                             </dl>
@@ -244,11 +244,11 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
 
                     {descriptionSections.sections.map((section) => (
                         <div key={section.title}>
-                            <h3 className="font-bold mb-4">{section.title}</h3>
-                            <ul className="text-sm text-zinc-300 leading-relaxed grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2">
+                            <h3 className="font-bold text-gray-900 mb-4">{section.title}</h3>
+                            <ul className="text-sm text-gray-600 leading-relaxed grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2">
                                 {section.items.map((item, index) => (
                                     <li key={`${section.title}-${index}`} className="flex gap-2">
-                                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-orange-500 flex-shrink-0" />
                                         <span>{item}</span>
                                     </li>
                                 ))}

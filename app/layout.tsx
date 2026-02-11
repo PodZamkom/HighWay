@@ -4,7 +4,6 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { getSiteContent } from "@/lib/data";
 import Script from "next/script";
-import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 
 
@@ -30,14 +29,12 @@ export default async function RootLayout({
 
     return (
         <html lang="ru">
-            <body className="antialiased min-h-screen flex flex-col">
-                <ThemeProvider>
-                    <Navbar content={siteContent.navbar} />
-                    <main className="flex-grow">
-                        {children}
-                    </main>
-                    <Footer content={siteContent.footer} />
-                </ThemeProvider>
+            <body className="antialiased min-h-screen flex flex-col bg-white text-gray-900">
+                <Navbar content={siteContent.navbar} />
+                <main className="flex-grow">
+                    {children}
+                </main>
+                <Footer content={siteContent.footer} />
                 {/* Oryntix Live Chat */}
                 <Script
                     src="https://staging.oryntix.ru/widget/430.js"
