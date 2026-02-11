@@ -17,6 +17,7 @@ export interface CarFamily {
   model: string;
   image: string;
   start_price: number;
+  market: string;
   description: string;
   variants: CarVariant[];
 }
@@ -28,6 +29,7 @@ export const carDatabase: CarFamily[] = [
     model: "L6",
     image: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Li_Auto_L6_001.jpg",
     start_price: 38500,
+    market: "China",
     description: "Ideal family SUV. EREV (Hybrid).",
     variants: [
       {
@@ -62,6 +64,7 @@ export const carDatabase: CarFamily[] = [
     model: "Free",
     image: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Voyah_Free_003.jpg",
     start_price: 20500,
+    market: "China",
     description: "Sporty EREV Crossover. 3 Generations available.",
     variants: [
       {

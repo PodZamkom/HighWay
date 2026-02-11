@@ -14,6 +14,7 @@ export function groupCarsIntoFamilies(cars: CarModel[]): CarFamily[] {
                 model: car.model,
                 image: car.images[0] || '',
                 start_price: car.price_value,
+                market: car.market,
                 description: car.description?.slice(0, 100) + '...' || '',
                 variants: []
             });

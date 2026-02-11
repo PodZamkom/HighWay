@@ -3,7 +3,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, Car, Zap, AlertTriangle, Check, Tag } from 'lucide-react';
-import { carDatabase, CarFamily, CarVariant, getPriceRange } from '../data/cars';
+import { CarFamily, CarVariant, getPriceRange } from '../data/cars';
+import { cars_db } from '../data/cars_db';
+import { groupCarsIntoFamilies } from '../utils/car_mapper';
 
 // Tag color mapping
 const tagColors: Record<string, string> = {
@@ -15,6 +17,14 @@ const tagColors: Record<string, string> = {
     'Power': 'bg-red-500/20 text-red-400 border-red-500/30',
     'Fresh': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
     'Long Range': 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
+};
+
+const MARKET_THEMES: Record<string, { bg: string, text: string, border: string, label: string }> = {
+    'China': { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/50', label: 'КИТАЙ' },
+    'USA': { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/50', label: 'США' },
+    'Europe': { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/50', label: 'ЕВРОПА' },
+    'Korea': { bg: 'bg-indigo-500/10', text: 'text-indigo-400', border: 'border-indigo-500/50', label: 'КОРЕЯ' },
+    'UAE': { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/50', label: 'ОАЭ' },
 };
 
 function formatPrice(price: number): string {
@@ -312,22 +322,47 @@ export function CarCatalog() {
                     className="mb-8 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center gap-3"
                 >
                     <AlertTriangle className="w-5 h-5 text-amber-400" />
-                    <p className="text-amber-400 text-sm">
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        className="text-amber-400 text-sm"
+                    >
                         <strong>Внимание:</strong> Цены включают новые налоги 2025 (НДС).
                         Стоимость гибридов EREV выросла на 25-30% относительно 2024 года.
-                    </p>
+                    </motion.p>
                 </motion.div>
 
-                {/* Model Family Grid */}
-                <div className="grid md:grid-cols-2 gap-6">
-                    {carDatabase.map((family) => (
-                        <FamilyCard
-                            key={family.id}
-                            family={family}
-                            onConfigure={() => setSelectedFamily(family)}
-                        />
-                    ))}
-                </div>
+                {/* Market Sections */}
+                {Object.entries(MARKET_THEMES).map(([marketName, theme]) => {
+                    const families = groupCarsIntoFamilies(cars_db).filter(f => f.market === marketName);
+                    if (families.length === 0) return null;
+
+                    return (
+                        <div key={marketName} className="mb-20">
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 mb-8 ${theme.bg} ${theme.border}`}
+                            >
+                                <span className={`text-lg font-black tracking-widest ${theme.text}`}>
+                                    {theme.label}
+                                </span>
+                                <div className={`w-2 h-2 rounded-full animate-pulse ${theme.text.replace('text-', 'bg-')}`} />
+                            </motion.div>
+
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {families.map((family) => (
+                                    <FamilyCard
+                                        key={family.id}
+                                        family={family}
+                                        onConfigure={() => setSelectedFamily(family)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
 
             {/* Configuration Modal */}
