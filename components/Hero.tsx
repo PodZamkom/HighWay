@@ -17,7 +17,7 @@ export function Hero() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(255,122,30,0.06),transparent_35%),radial-gradient(circle_at_100%_0%,rgba(8,65,149,0.08),transparent_32%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr,1.03fr]">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.03fr)]">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
