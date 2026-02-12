@@ -13,8 +13,7 @@ const HIGHLIGHTS = [
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#f2f3f5]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(255,122,30,0.06),transparent_35%),radial-gradient(circle_at_100%_0%,rgba(8,65,149,0.08),transparent_32%)]" />
+    <section className="relative overflow-hidden bg-[#f3f3f3]">
 
       <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.03fr)]">
@@ -24,7 +23,7 @@ export function Hero() {
             transition={{ duration: 0.45 }}
             className="max-w-[42rem]"
           >
-            <h1 className="text-4xl font-black tracking-tight text-[#16181f] sm:text-5xl lg:text-[52px]">
+            <h1 className="text-4xl font-black tracking-tight text-[#13151b] sm:text-5xl lg:text-[52px]">
               АВТО ИЗ США
             </h1>
 
@@ -32,13 +31,13 @@ export function Hero() {
               Хотите выгодно купить бу автомобиль из Америки
               <br />
               с доставкой в Беларусь?{" "}
-              <span className="font-black text-[#d76d20]">HIGHWAYMOTORS</span> поможет!
+              <span className="font-black text-[#e26717]">HIGHWAYMOTORS</span> поможет!
             </p>
 
             <ul className="mt-7 space-y-2.5">
               {HIGHLIGHTS.map((item) => (
-                <li key={item.label} className="flex items-center gap-2.5 text-base leading-snug text-[#242833] sm:text-lg">
-                  <Star size={19} className="fill-[#e67e22] text-[#a24f08]" />
+                <li key={item.label} className="flex items-center gap-2.5 text-base leading-snug text-[#222631] sm:text-lg">
+                  <Star size={19} className="fill-[#e27b2a] text-[#ac5412]" />
                   <span className="font-medium">{item.label}</span>
                   <span className="text-zinc-500">-</span>
                   <span className="text-zinc-600">{item.value}</span>
@@ -58,7 +57,7 @@ export function Hero() {
             <div className="mt-7">
               <Link
                 href="#calculator"
-                className="inline-flex items-center rounded-[14px] bg-gradient-to-b from-[#ff7d2e] to-[#ef5a12] px-8 py-4 text-sm font-black uppercase tracking-wide text-white shadow-[0_14px_22px_-12px_rgba(239,90,18,0.7)] transition hover:translate-y-[-1px] hover:from-[#ff873a] hover:to-[#f36a2b] sm:text-base"
+                className="inline-flex items-center rounded-[14px] bg-[#ff5a00] px-8 py-4 text-sm font-black uppercase tracking-wide text-white shadow-[0_14px_22px_-12px_rgba(255,90,0,0.65)] transition hover:translate-y-[-1px] hover:bg-[#ff7429] sm:text-base"
               >
                 Рассчитать стоимость
               </Link>
@@ -70,7 +69,7 @@ export function Hero() {
                 href="https://wa.me/375447772224"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff7c2c] text-white transition hover:bg-[#ec6518]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
                 aria-label="WhatsApp"
               >
                 <MessageCircleMore size={18} />
@@ -79,7 +78,7 @@ export function Hero() {
                 href="https://t.me/highwaymotors"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff7c2c] text-white transition hover:bg-[#ec6518]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
                 aria-label="Telegram"
               >
                 <Send size={18} />
@@ -88,7 +87,7 @@ export function Hero() {
                 href="https://instagram.com/highwaymotors"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff7c2c] text-white transition hover:bg-[#ec6518]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
                 aria-label="Instagram"
               >
                 <Instagram size={18} />
@@ -102,8 +101,8 @@ export function Hero() {
             transition={{ duration: 0.52, delay: 0.1 }}
             className="relative"
           >
-            <div className="relative overflow-hidden rounded-2xl border border-zinc-300 bg-[#151820] shadow-[0_35px_65px_-38px_rgba(0,0,0,0.95)]">
-              <div className="absolute left-0 top-0 z-20 w-full bg-gradient-to-r from-[#1b6f2a] via-[#2e9e31] to-[#0f4618] px-6 py-3">
+            <div className="relative overflow-hidden rounded-2xl border border-[#d0d5df] bg-white shadow-[0_20px_40px_-24px_rgba(16,24,40,0.45)]">
+              <div className="absolute left-0 top-0 z-20 w-full bg-gradient-to-r from-[#1d6c23] via-[#2f8f2e] to-[#15531a] px-6 py-3">
                 <p className="text-2xl font-black uppercase tracking-wide text-white sm:text-[40px]">Авто под заказ</p>
                 <p className="text-base font-bold uppercase text-emerald-100 sm:text-[22px]">Подбор и доставка</p>
               </div>
@@ -120,7 +119,7 @@ export function Hero() {
                   className="inline-flex items-center rounded-full border border-white/30 bg-black/35 px-4 py-2 backdrop-blur-sm transition hover:bg-black/45"
                   aria-label="Смотреть видео"
                 >
-                  <CirclePlay className="h-12 w-12 fill-[#ff4f00] text-[#ff4f00]" />
+                  <CirclePlay className="h-12 w-12 fill-[#ff5a00] text-[#ff5a00]" />
                 </button>
               </div>
             </div>
