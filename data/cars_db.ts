@@ -7,9 +7,10 @@
  */
 import { CarModel } from '../types/car';
 import { importedCarsDb } from './cars_imported_db';
+import { enrichCarAttributes } from '../lib/carAttributes';
 
 // Re-export the combined car database
-export const cars_db: CarModel[] = importedCarsDb;
+export const cars_db: CarModel[] = importedCarsDb.map(enrichCarAttributes);
 
 // Also export by-brand access for filtered queries
 export { carsByBrand } from './brands';

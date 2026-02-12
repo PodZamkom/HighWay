@@ -7,6 +7,7 @@ import { cars_db } from "@/data/cars_db";
 
 type MarketFilter = "All" | "USA" | "Korea" | "China" | "Europe";
 type SortMode = "price_asc" | "popular" | "newest";
+type EngineFilter = "All" | "EV" | "EREV" | "HEV" | "ICE";
 
 interface CarCatalogProps {
   initialMarket?: string;
@@ -40,10 +41,21 @@ function formatPrice(value?: number) {
   return value.toLocaleString("ru-RU");
 }
 
+function engineLabel(value: EngineFilter) {
+  if (value === "EV") return "Электро";
+  if (value === "EREV") return "EREV";
+  if (value === "HEV") return "HEV/PHEV";
+  if (value === "ICE") return "ДВС";
+  return "Любой";
+}
+
 export function CarCatalog({ initialMarket }: CarCatalogProps) {
   const [market, setMarket] = useState<MarketFilter>(normalizeMarket(initialMarket));
   const [brand, setBrand] = useState("All");
-  const [engineType, setEngineType] = useState("All");
+  const [bodyType, setBodyType] = useState("All");
+  const [engineType, setEngineType] = useState<EngineFilter>("All");
+  const [transmission, setTransmission] = useState("All");
+  const [drive, setDrive] = useState("All");
   const [yearFrom, setYearFrom] = useState("");
   const [yearTo, setYearTo] = useState("");
   const [priceFrom, setPriceFrom] = useState("");
@@ -61,6 +73,23 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
     return ["All", ...new Set(marketFiltered.map((car) => car.brand))].sort((a, b) => a.localeCompare(b));
   }, [marketFiltered]);
 
+  const bodyTypes = useMemo(() => {
+    return ["All", ...new Set(marketFiltered.map((car) => car.body_type).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  }, [marketFiltered]);
+
+  const transmissions = useMemo(() => {
+    return ["All", ...new Set(marketFiltered.map((car) => car.transmission).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  }, [marketFiltered]);
+
+  const drives = useMemo(() => {
+    return ["All", ...new Set(marketFiltered.map((car) => car.drive).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  }, [marketFiltered]);
+
+  const engines = useMemo(() => {
+    const order: EngineFilter[] = ["All", "EV", "EREV", "HEV", "ICE"];
+    return order.filter((engine) => engine === "All" || marketFiltered.some((car) => car.type === engine));
+  }, [marketFiltered]);
+
   const filteredCars = useMemo(() => {
     const yFrom = toNumber(yearFrom);
     const yTo = toNumber(yearTo);
@@ -71,19 +100,21 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
 
     const cars = marketFiltered.filter((car) => {
       if (brand !== "All" && car.brand !== brand) return false;
+      if (bodyType !== "All" && car.body_type !== bodyType) return false;
       if (engineType !== "All" && car.type !== engineType) return false;
+      if (transmission !== "All" && car.transmission !== transmission) return false;
+      if (drive !== "All" && car.drive !== drive) return false;
       if (yFrom !== null && car.year < yFrom) return false;
       if (yTo !== null && car.year > yTo) return false;
       if (pFrom !== null && car.price_value < pFrom) return false;
       if (pTo !== null && car.price_value > pTo) return false;
 
+      const mileageValue = typeof car.mileage_km === "number" ? car.mileage_km : 0;
       if (mFrom !== null) {
-        if (typeof car.mileage_km !== "number") return false;
-        if (car.mileage_km < mFrom) return false;
+        if (mileageValue < mFrom) return false;
       }
       if (mTo !== null) {
-        if (typeof car.mileage_km !== "number") return false;
-        if (car.mileage_km > mTo) return false;
+        if (mileageValue > mTo) return false;
       }
 
       return true;
@@ -102,11 +133,14 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
     }
 
     return cars;
-  }, [brand, engineType, marketFiltered, mileageFrom, mileageTo, priceFrom, priceTo, sortMode, yearFrom, yearTo]);
+  }, [bodyType, brand, drive, engineType, marketFiltered, mileageFrom, mileageTo, priceFrom, priceTo, sortMode, transmission, yearFrom, yearTo]);
 
   const resetFilters = () => {
     setBrand("All");
+    setBodyType("All");
     setEngineType("All");
+    setTransmission("All");
+    setDrive("All");
     setYearFrom("");
     setYearTo("");
     setPriceFrom("");
@@ -127,10 +161,10 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
   return (
     <section
       id="catalog"
-      className="min-h-screen bg-[radial-gradient(circle_at_top,#0e1422_0%,#060910_45%,#04060c_100%)] py-10 text-white"
+      className="min-h-screen bg-[radial-gradient(circle_at_top,#0e1422_0%,#060910_45%,#04060c_100%)] py-8 text-white"
     >
       <div className="mx-auto max-w-6xl px-4">
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
             {marketTabs.map((tab) => (
               <button
@@ -138,6 +172,10 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                 onClick={() => {
                   setMarket(tab.id);
                   setBrand("All");
+                  setBodyType("All");
+                  setEngineType("All");
+                  setTransmission("All");
+                  setDrive("All");
                 }}
                 className={`flex items-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold uppercase tracking-wide transition ${
                   market === tab.id
@@ -151,8 +189,8 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
             ))}
           </div>
 
-          <div className="rounded-2xl border border-[#1b2232] bg-[linear-gradient(180deg,#0d1220_0%,#0a101c_100%)] p-4">
-            <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.24em] text-[#8f97ab]">
+          <div className="rounded-2xl border border-[#1b2232] bg-[linear-gradient(180deg,#0d1220_0%,#0a101c_100%)] p-3">
+            <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.24em] text-[#8f97ab]">
               <div className="flex items-center gap-2">
                 <Search size={13} />
                 Марки
@@ -164,69 +202,84 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                 <button
                   key={item}
                   onClick={() => setBrand(item)}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase transition ${
-                      brand === item
-                        ? "border-[#404b67] bg-[#2b3448] text-white"
-                        : "border-[#2a3244] bg-[#151c2b] text-[#b5bccd] hover:text-white"
-                    }`}
-                  >
-                    {item === "All" ? "Все" : item}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase transition ${
+                    brand === item
+                      ? "border-[#404b67] bg-[#2b3448] text-white"
+                      : "border-[#2a3244] bg-[#151c2b] text-[#b5bccd] hover:text-white"
+                  }`}
+                >
+                  {item === "All" ? "Все" : item}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="rounded-3xl border border-[#1b2232] bg-[linear-gradient(180deg,#0d1220_0%,#0a101c_100%)] p-4 md:p-5">
-            <div className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-[#8f97ab]">
+          <div className="rounded-3xl border border-[#1b2232] bg-[linear-gradient(180deg,#0d1220_0%,#0a101c_100%)] p-3 md:p-4">
+            <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-[#8f97ab]">
               <SlidersHorizontal size={13} />
               Фильтры
             </div>
 
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
               <div>
                 <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Тип кузова</label>
-                <select className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none">
-                  <option>Любой</option>
+                <select
+                  value={bodyType}
+                  onChange={(e) => setBodyType(e.target.value)}
+                  className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none"
+                >
+                  {bodyTypes.map((item) => (
+                    <option key={item} value={item}>
+                      {item === "All" ? "Любой" : item}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
                 <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Двигатель</label>
                 <select
                   value={engineType}
-                  onChange={(e) => setEngineType(e.target.value)}
+                  onChange={(e) => setEngineType(e.target.value as EngineFilter)}
                   className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none"
                 >
-                  <option value="All">Любой</option>
-                  <option value="EV">Электро</option>
-                  <option value="EREV">Гибрид</option>
-                  <option value="ICE">ДВС</option>
-                  <option value="HEV">HEV</option>
+                  {engines.map((item) => (
+                    <option key={item} value={item}>
+                      {engineLabel(item)}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
                 <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Коробка</label>
-                <select className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none">
-                  <option>Любой</option>
+                <select
+                  value={transmission}
+                  onChange={(e) => setTransmission(e.target.value)}
+                  className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none"
+                >
+                  {transmissions.map((item) => (
+                    <option key={item} value={item}>
+                      {item === "All" ? "Любой" : item}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
                 <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Привод</label>
-                <select className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none">
-                  <option>Любой</option>
+                <select
+                  value={drive}
+                  onChange={(e) => setDrive(e.target.value)}
+                  className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none"
+                >
+                  {drives.map((item) => (
+                    <option key={item} value={item}>
+                      {item === "All" ? "Любой" : item}
+                    </option>
+                  ))}
                 </select>
-              </div>
-              <div>
-                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Год от</label>
-                <input
-                  value={yearFrom}
-                  onChange={(e) => setYearFrom(e.target.value)}
-                  placeholder="-"
-                  className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
-                />
               </div>
             </div>
 
-            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
+            <div className="mt-2 grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
               <div>
                 <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Год от</label>
                 <div className="grid grid-cols-2 gap-2">
@@ -328,7 +381,7 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredCars.map((car) => (
             <Link
               key={car.id}
