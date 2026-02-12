@@ -18,9 +18,9 @@ export function Navbar({ content }: NavbarProps) {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 border-b border-[#242b3a] shadow-[0_10px_26px_-18px_rgba(0,0,0,0.85)]">
+      <nav className="sticky top-0 z-50 border-b border-[#242424] shadow-[0_10px_26px_-18px_rgba(0,0,0,0.85)]">
         {/* Top Row */}
-        <div className="bg-[#111827]">
+        <div className="bg-[#111111]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-[72px] items-center justify-between py-3">
               {/* Logo */}
@@ -83,7 +83,7 @@ export function Navbar({ content }: NavbarProps) {
 
         {/* Second Row */}
         {secondaryMenus.length > 0 ? (
-          <div className="border-t border-[#232a3a] bg-[#0c1320]">
+          <div className="border-t border-[#252525] bg-[#0a0a0a]">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="hidden lg:flex items-center gap-6 py-3">
                 {secondaryMenus.map((menu) => (
@@ -96,7 +96,7 @@ export function Navbar({ content }: NavbarProps) {
                       {menu.label}
                       <ChevronDown className="h-3 w-3 text-[#8d95a6] transition-colors group-hover:text-white" />
                     </button>
-                    <div className="pointer-events-none absolute left-0 z-50 mt-3 w-56 translate-y-2 rounded-xl border border-[#2a3244] bg-[#131b2a] opacity-0 shadow-xl transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                    <div className="pointer-events-none absolute left-0 z-50 mt-3 w-56 translate-y-2 rounded-xl border border-[#303030] bg-[#141414] opacity-0 shadow-xl transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
                       <div className="p-2">
                         {menu.items.map((item) => (
                           <Link
@@ -128,7 +128,7 @@ export function Navbar({ content }: NavbarProps) {
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="border-b border-[#242b3a] bg-[#101828] shadow-lg lg:hidden">
+          <div className="border-b border-[#252525] bg-[#111111] shadow-lg lg:hidden">
             <div className="px-4 py-4 space-y-3">
               {content.links.map((link) => (
                 <Link
