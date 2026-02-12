@@ -1,394 +1,381 @@
-﻿"use client";
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, Car, Zap, AlertTriangle, Check, Tag, LayoutGrid, Info } from 'lucide-react';
-import { CarFamily, CarVariant, getPriceRange } from '../data/cars';
-import { cars_db } from '../data/cars_db';
-import { groupCarsIntoFamilies } from '../utils/car_mapper';
-import siteContent from '../data/site.json';
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { ArrowUpDown, Search, SlidersHorizontal, X } from "lucide-react";
+import { cars_db } from "@/data/cars_db";
 
-// Get market themes from site.json
-const MARKETS_CONFIG = siteContent.marketSection.markets;
+type MarketFilter = "All" | "USA" | "Korea" | "China" | "Europe";
+type SortMode = "price_asc" | "popular" | "newest";
 
-const MARKET_THEMES: Record<string, { bg: string, text: string, border: string, label: string, image: string, description: string }> = {
-    'China': {
-        bg: 'bg-red-900/20',
-        text: 'text-red-400',
-        border: 'border-red-500/30',
-        label: 'КИТАЙ',
-        image: '/images/market-china.jpg',
-        description: 'Лидеры технологий: Li Auto, Zeekr, Xiaomi. 0% пошлина на электромобили.'
-    },
-    'USA': {
-        bg: 'bg-blue-900/20',
-        text: 'text-blue-400',
-        border: 'border-blue-500/30',
-        label: 'США',
-        image: '/images/market-usa.jpg',
-        description: 'Аукционы Copart и Manheim. Лучшие предложения на Tesla, BMW и Ford.'
-    },
-    'Europe': {
-        bg: 'bg-emerald-900/20',
-        text: 'text-emerald-400',
-        border: 'border-emerald-500/30',
-        label: 'ЕВРОПА',
-        image: '/images/market-europe.jpg',
-        description: 'Премиум бренды и идеальное состояние. BMW, Mercedes, Porsche.'
-    },
-    'Korea': {
-        bg: 'bg-indigo-900/20',
-        text: 'text-indigo-400',
-        border: 'border-indigo-500/30',
-        label: 'КОРЕЯ',
-        image: '/images/market-korea.jpg',
-        description: 'Прямой доступ к Encar. Популярные дизельные и электрические кроссоверы.'
-    }
-};
-
-const tagColors: Record<string, string> = {
-    'Электро': 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-    'Гибрид': 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-    'ДВС': 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-    'В наличии': 'bg-green-500/20 text-green-400 border-green-500/30',
-    'Под заказ': 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',
-};
-
-function formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumFractionDigits: 0,
-    }).format(price);
+interface CarCatalogProps {
+  initialMarket?: string;
 }
 
-interface VariantCardProps {
-    variant: CarVariant;
-    isSelected: boolean;
-    onSelect: () => void;
+function normalizeMarket(value?: string): MarketFilter {
+  const v = value?.toLowerCase();
+  if (v === "usa") return "USA";
+  if (v === "korea") return "Korea";
+  if (v === "china") return "China";
+  if (v === "europe") return "Europe";
+  return "All";
 }
 
-function VariantCard({ variant, isSelected, onSelect }: VariantCardProps) {
-    return (
-        <motion.button
-            onClick={onSelect}
-            className={`w-full p-4 rounded-xl border-2 transition-all duration-300 text-left ${isSelected
-                ? 'border-cyan-500 bg-cyan-500/10'
-                : 'border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/10'
-                }`}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-        >
-            <div className="flex items-start justify-between gap-3">
-                <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                        {isSelected && (
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="w-5 h-5 rounded-full bg-cyan-500 flex items-center justify-center"
-                            >
-                                <Check className="w-3 h-3 text-black" />
-                            </motion.div>
-                        )}
-                        <h4 className="font-semibold text-white">{variant.name}</h4>
-                    </div>
-                    <p className="text-sm text-gray-400 mb-2">{variant.specs}</p>
-                    <p className="text-xs text-gray-500">{variant.condition}</p>
-
-                    <div className="flex flex-wrap gap-1.5 mt-3">
-                        {variant.tags.map((tag) => (
-                            <span
-                                key={tag}
-                                className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded border ${tagColors[tag] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
-                                    }`}
-                            >
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="text-right">
-                    <span className="text-xl font-bold text-white">
-                        {formatPrice(variant.price_usd)}
-                    </span>
-                </div>
-            </div>
-        </motion.button>
-    );
+function toNumber(input: string): number | null {
+  if (!input.trim()) return null;
+  const parsed = Number(input);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
-interface ConfigModalProps {
-    family: CarFamily;
-    onClose: () => void;
+function marketBadge(market: string) {
+  if (market === "USA") return "bg-red-500/20 text-red-300 border-red-500/30";
+  if (market === "Korea") return "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
+  if (market === "China") return "bg-amber-500/20 text-amber-300 border-amber-500/30";
+  if (market === "Europe") return "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+  return "bg-zinc-600/20 text-zinc-300 border-zinc-500/30";
 }
 
-function ConfigModal({ family, onClose }: ConfigModalProps) {
-    const [selectedVariant, setSelectedVariant] = useState<CarVariant>(family.variants[0]);
-
-    return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
-            onClick={onClose}
-        >
-            <motion.div
-                initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                className="bg-zinc-900 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-white/10 shadow-2xl shadow-black/50"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Header Image */}
-                <div className="relative h-72 overflow-hidden">
-                    <img
-                        src={family.image}
-                        alt={family.model}
-                        className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/40 to-transparent" />
-
-                    <button
-                        onClick={onClose}
-                        className="absolute top-6 right-6 p-2 rounded-full bg-black/50 hover:bg-black/80 text-white transition-all hover:rotate-90"
-                    >
-                        <X size={24} />
-                    </button>
-
-                    <div className="absolute bottom-6 left-8">
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="px-2 py-0.5 bg-cyan-500 text-black text-[10px] font-bold rounded uppercase">
-                                {family.market}
-                            </span>
-                        </div>
-                        <h2 className="text-4xl font-black text-white tracking-tighter uppercase">{family.brand} {family.model}</h2>
-                    </div>
-                </div>
-
-                {/* Taxes Banner */}
-                <div className="px-8 py-3 bg-amber-500/10 border-y border-amber-500/20 flex items-center gap-3">
-                    <AlertTriangle size={18} className="text-amber-500" />
-                    <p className="text-amber-500 text-xs font-bold uppercase tracking-widest">
-                        ВНИМАНИЕ: Цены включают НДС 20%. Доставка рассчитывается отдельно.
-                    </p>
-                </div>
-
-                {/* Variants List */}
-                <div className="p-8 pb-32 overflow-y-auto max-h-[calc(90vh-320px)] custom-scrollbar">
-                    <div className="flex items-center gap-2 mb-6">
-                        <LayoutGrid size={20} className="text-cyan-500" />
-                        <h3 className="text-lg font-bold text-white uppercase tracking-tight">Доступные модификации</h3>
-                    </div>
-
-                    <div className="grid gap-3">
-                        {family.variants.map((variant) => (
-                            <VariantCard
-                                key={variant.id}
-                                variant={variant}
-                                isSelected={selectedVariant.id === variant.id}
-                                onSelect={() => setSelectedVariant(variant)}
-                            />
-                        ))}
-                    </div>
-                </div>
-
-                {/* Fixed Footer */}
-                <div className="absolute bottom-0 left-0 right-0 p-8 pt-6 border-t border-white/10 bg-zinc-900/95 backdrop-blur-sm flex items-center justify-between">
-                    <div>
-                        <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Выбранная версия</p>
-                        <p className="text-white font-bold">{selectedVariant.name}</p>
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                        <div className="text-right">
-                            <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Стоимость</p>
-                            <p className="text-3xl font-black text-cyan-400 leading-none">
-                                {formatPrice(selectedVariant.price_usd)}
-                            </p>
-                        </div>
-                        <button className="h-14 px-8 bg-white text-black font-black uppercase text-sm rounded-2xl hover:bg-cyan-500 transition-all flex items-center gap-2 group">
-                            ЗАКАЗАТЬ РАСЧЕТ
-                            <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                        </button>
-                    </div>
-                </div>
-            </motion.div>
-        </motion.div>
-    );
+function formatPrice(value?: number) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "-";
+  return value.toLocaleString("ru-RU");
 }
 
-interface FamilyCardProps {
-    family: CarFamily;
-    onConfigure: () => void;
-}
+export function CarCatalog({ initialMarket }: CarCatalogProps) {
+  const [market, setMarket] = useState<MarketFilter>(normalizeMarket(initialMarket));
+  const [brand, setBrand] = useState("All");
+  const [engineType, setEngineType] = useState("All");
+  const [yearFrom, setYearFrom] = useState("");
+  const [yearTo, setYearTo] = useState("");
+  const [priceFrom, setPriceFrom] = useState("");
+  const [priceTo, setPriceTo] = useState("");
+  const [mileageFrom, setMileageFrom] = useState("");
+  const [mileageTo, setMileageTo] = useState("");
+  const [sortMode, setSortMode] = useState<SortMode>("price_asc");
 
-function FamilyCard({ family, onConfigure }: FamilyCardProps) {
-    const priceRange = getPriceRange(family);
-    const variantCount = family.variants.length;
+  const marketFiltered = useMemo(() => {
+    if (market === "All") return cars_db;
+    return cars_db.filter((car) => car.market === market);
+  }, [market]);
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="group relative bg-zinc-900/40 border border-white/5 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500"
-        >
-            <div className="relative h-60 overflow-hidden">
-                <img
-                    src={family.image}
-                    alt={family.model}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
+  const brands = useMemo(() => {
+    return ["All", ...new Set(marketFiltered.map((car) => car.brand))].sort((a, b) => a.localeCompare(b));
+  }, [marketFiltered]);
 
-                <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10">
-                    <span className="text-xs font-bold text-white uppercase tracking-wider">{family.brand}</span>
-                </div>
+  const filteredCars = useMemo(() => {
+    const yFrom = toNumber(yearFrom);
+    const yTo = toNumber(yearTo);
+    const pFrom = toNumber(priceFrom);
+    const pTo = toNumber(priceTo);
+    const mFrom = toNumber(mileageFrom);
+    const mTo = toNumber(mileageTo);
 
-                <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-cyan-500/20 backdrop-blur-md border border-cyan-500/30">
-                    <span className="text-xs font-bold text-cyan-400">{variantCount} версия</span>
-                </div>
-            </div>
+    const cars = marketFiltered.filter((car) => {
+      if (brand !== "All" && car.brand !== brand) return false;
+      if (engineType !== "All" && car.type !== engineType) return false;
+      if (yFrom !== null && car.year < yFrom) return false;
+      if (yTo !== null && car.year > yTo) return false;
+      if (pFrom !== null && car.price_value < pFrom) return false;
+      if (pTo !== null && car.price_value > pTo) return false;
 
-            <div className="p-6">
-                <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{family.model}</h3>
-                <p className="text-zinc-500 text-sm mb-6 line-clamp-2 h-10">{family.description}</p>
+      if (mFrom !== null) {
+        if (typeof car.mileage_km !== "number") return false;
+        if (car.mileage_km < mFrom) return false;
+      }
+      if (mTo !== null) {
+        if (typeof car.mileage_km !== "number") return false;
+        if (car.mileage_km > mTo) return false;
+      }
 
-                <div className="flex items-baseline gap-2 mb-6">
-                    <span className="text-zinc-500 text-xs font-bold uppercase">от</span>
-                    <span className="text-2xl font-black text-white">{formatPrice(priceRange.min)}</span>
-                </div>
-
-                <button
-                    onClick={onConfigure}
-                    className="w-full py-4 bg-white/5 border border-white/10 text-white font-bold uppercase text-xs tracking-widest rounded-2xl hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2"
-                >
-                    <Car size={16} />
-                    Смотреть цены
-                </button>
-            </div>
-        </motion.div>
-    );
-}
-
-export function CarCatalog() {
-    const [selectedFamily, setSelectedFamily] = useState<CarFamily | null>(null);
-
-    const groupedFamilies = useMemo(() => {
-        const families = groupCarsIntoFamilies(cars_db);
-        const grouped: Record<string, CarFamily[]> = {};
-
-        families.forEach(f => {
-            if (!grouped[f.market]) grouped[f.market] = [];
-            grouped[f.market].push(f);
-        });
-
-        return grouped;
-    }, []);
-
-    const markets = Object.keys(groupedFamilies).sort((a, b) => {
-        const order = ['China', 'USA', 'Europe', 'Korea'];
-        return order.indexOf(a) - order.indexOf(b);
+      return true;
     });
 
-    return (
-        <section id="catalog" className="py-24 bg-black">
-            <div className="max-w-7xl mx-auto px-4">
+    if (sortMode === "price_asc") {
+      cars.sort((a, b) => a.price_value - b.price_value);
+    } else if (sortMode === "newest") {
+      cars.sort((a, b) => b.year - a.year);
+    } else {
+      cars.sort((a, b) => {
+        const aStock = a.availability === "InStock" ? 1 : 0;
+        const bStock = b.availability === "InStock" ? 1 : 0;
+        return bStock - aStock || b.year - a.year;
+      });
+    }
 
-                {/* Section Header */}
-                <div className="max-w-2xl mb-20">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-12 h-1 bg-cyan-500" />
-                        <span className="text-cyan-500 font-bold uppercase tracking-[0.3em] text-sm">
-                            КАТАЛОГ 2026
-                        </span>
-                    </div>
-                    <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase mb-6">
-                        ВЫБЕРИ <br />СВОЙ <span className="text-outline-white text-transparent">АВТОМОБИЛЬ</span>
-                    </h2>
-                    <p className="text-zinc-500 text-lg">
-                        Актуальные цены со всех мировых рынков. Мы отобрали лучшие модели по соотношению цены и качества.
-                    </p>
-                </div>
+    return cars;
+  }, [brand, engineType, marketFiltered, mileageFrom, mileageTo, priceFrom, priceTo, sortMode, yearFrom, yearTo]);
 
-                {/* Market Groups */}
-                {markets.map((market) => {
-                    const theme = MARKET_THEMES[market] || {
-                        bg: 'bg-zinc-900/40',
-                        text: 'text-zinc-400',
-                        border: 'border-white/10',
-                        label: market.toUpperCase(),
-                        image: '',
-                        description: 'Автомобили с рынка ' + market
-                    };
-                    const families = groupedFamilies[market];
+  const resetFilters = () => {
+    setBrand("All");
+    setEngineType("All");
+    setYearFrom("");
+    setYearTo("");
+    setPriceFrom("");
+    setPriceTo("");
+    setMileageFrom("");
+    setMileageTo("");
+    setSortMode("price_asc");
+  };
 
-                    return (
-                        <div key={market} className="mb-32">
-                            {/* Market Header Banner */}
-                            <div className={`relative mb-12 rounded-[2.5rem] overflow-hidden border ${theme.border} min-h-[300px] flex items-center`}>
-                                {theme.image && (
-                                    <>
-                                        <img src={theme.image} alt={market} className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-luminosity" />
-                                        <div className={`absolute inset-0 ${theme.bg} opacity-100`} />
-                                    </>
-                                )}
-                                <div className="relative p-12 w-full">
-                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-                                        <div className="max-w-xl">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <span className={`px-4 py-1 rounded-full border ${theme.border} ${theme.bg} ${theme.text} text-xs font-black tracking-[0.2em]`}>
-                                                    РЫНОК
-                                                </span>
-                                                <div className={`w-2 h-2 rounded-full animate-pulse ${theme.text.replace('text-', 'bg-')}`} />
-                                            </div>
-                                            <h3 className={`text-6xl md:text-8xl font-black ${theme.text} tracking-tighter uppercase mb-4`}>
-                                                {theme.label}
-                                            </h3>
-                                            <p className="text-white/60 text-lg md:text-xl font-medium max-w-lg leading-relaxed">
-                                                {theme.description}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-4 bg-black/40 backdrop-blur-sm p-4 rounded-3xl border border-white/5">
-                                            <div className="text-right">
-                                                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1">Всего моделей</p>
-                                                <p className="text-3xl font-black text-white leading-none">{families.length}</p>
-                                            </div>
-                                            <div className="w-px h-10 bg-white/10" />
-                                            <Info size={24} className={theme.text} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+  const marketTabs: Array<{ id: MarketFilter; label: string; dot: string }> = [
+    { id: "All", label: "Все", dot: "bg-blue-500" },
+    { id: "USA", label: "США", dot: "bg-red-500" },
+    { id: "Korea", label: "Корея", dot: "bg-cyan-500" },
+    { id: "China", label: "Китай", dot: "bg-amber-500" },
+    { id: "Europe", label: "Европа", dot: "bg-emerald-500" },
+  ];
 
-                            {/* Families Grid */}
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {families.map((family) => (
-                                    <FamilyCard
-                                        key={family.id}
-                                        family={family}
-                                        onConfigure={() => setSelectedFamily(family)}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    );
-                })}
+  return (
+    <section
+      id="catalog"
+      className="min-h-screen bg-[radial-gradient(circle_at_top,#0e1422_0%,#060910_45%,#04060c_100%)] py-10 text-white"
+    >
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
+            {marketTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setMarket(tab.id);
+                  setBrand("All");
+                }}
+                className={`flex items-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold uppercase tracking-wide transition ${
+                  market === tab.id
+                    ? "border-[#3a445d] bg-[linear-gradient(180deg,#202838_0%,#191f2d_100%)] text-white"
+                    : "border-[#242c3f] bg-[linear-gradient(180deg,#151b29_0%,#111725_100%)] text-[#8f97ab] hover:text-white"
+                }`}
+              >
+                <span className={`h-2.5 w-2.5 rounded-full ${tab.dot}`} />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="rounded-2xl border border-[#1b2232] bg-[linear-gradient(180deg,#0d1220_0%,#0a101c_100%)] p-4">
+            <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.24em] text-[#8f97ab]">
+              <div className="flex items-center gap-2">
+                <Search size={13} />
+                Марки
+              </div>
+              <span className="tracking-normal text-[#6f778c]">Все марки</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {brands.map((item) => (
+                <button
+                  key={item}
+                  onClick={() => setBrand(item)}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase transition ${
+                      brand === item
+                        ? "border-[#404b67] bg-[#2b3448] text-white"
+                        : "border-[#2a3244] bg-[#151c2b] text-[#b5bccd] hover:text-white"
+                    }`}
+                  >
+                    {item === "All" ? "Все" : item}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#1b2232] bg-[linear-gradient(180deg,#0d1220_0%,#0a101c_100%)] p-4 md:p-5">
+            <div className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-[#8f97ab]">
+              <SlidersHorizontal size={13} />
+              Фильтры
             </div>
 
-            {/* Configuration Modal */}
-            <AnimatePresence>
-                {selectedFamily && (
-                    <ConfigModal
-                        family={selectedFamily}
-                        onClose={() => setSelectedFamily(null)}
-                    />
-                )}
-            </AnimatePresence>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
+              <div>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Тип кузова</label>
+                <select className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none">
+                  <option>Любой</option>
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Двигатель</label>
+                <select
+                  value={engineType}
+                  onChange={(e) => setEngineType(e.target.value)}
+                  className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none"
+                >
+                  <option value="All">Любой</option>
+                  <option value="EV">Электро</option>
+                  <option value="EREV">Гибрид</option>
+                  <option value="ICE">ДВС</option>
+                  <option value="HEV">HEV</option>
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Коробка</label>
+                <select className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none">
+                  <option>Любой</option>
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Привод</label>
+                <select className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none">
+                  <option>Любой</option>
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Год от</label>
+                <input
+                  value={yearFrom}
+                  onChange={(e) => setYearFrom(e.target.value)}
+                  placeholder="-"
+                  className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                />
+              </div>
+            </div>
 
-        </section>
-    );
+            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
+              <div>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Год от</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    value={yearFrom}
+                    onChange={(e) => setYearFrom(e.target.value)}
+                    placeholder="от"
+                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                  />
+                  <input
+                    value={yearTo}
+                    onChange={(e) => setYearTo(e.target.value)}
+                    placeholder="до"
+                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Цена от</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    value={priceFrom}
+                    onChange={(e) => setPriceFrom(e.target.value)}
+                    placeholder="-"
+                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                  />
+                  <input
+                    value={priceTo}
+                    onChange={(e) => setPriceTo(e.target.value)}
+                    placeholder="-"
+                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Пробег от</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    value={mileageFrom}
+                    onChange={(e) => setMileageFrom(e.target.value)}
+                    placeholder="пробег от"
+                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                  />
+                  <input
+                    value={mileageTo}
+                    onChange={(e) => setMileageTo(e.target.value)}
+                    placeholder="до"
+                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={resetFilters}
+                className="mt-6 inline-flex items-center justify-center gap-1 px-2 py-2 text-sm font-semibold uppercase tracking-wide text-[#cfd5e4] transition hover:text-white"
+              >
+                <X size={14} />
+                Сбросить
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-[#8f97ab]">
+              <ArrowUpDown size={13} />
+              Сортировка
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSortMode("price_asc")}
+                className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase transition ${
+                  sortMode === "price_asc"
+                    ? "border-[#404b67] bg-[#2b3448] text-white"
+                    : "border-[#2a3244] bg-[#151c2c] text-[#b5bccd] hover:text-white"
+                }`}
+              >
+                По цене ↑
+              </button>
+              <button
+                onClick={() => setSortMode("popular")}
+                className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase transition ${
+                  sortMode === "popular"
+                    ? "border-[#404b67] bg-[#2b3448] text-white"
+                    : "border-[#2a3244] bg-[#151c2c] text-[#b5bccd] hover:text-white"
+                }`}
+              >
+                Популярности
+              </button>
+              <button
+                onClick={() => setSortMode("newest")}
+                className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase transition ${
+                  sortMode === "newest"
+                    ? "border-[#404b67] bg-[#2b3448] text-white"
+                    : "border-[#2a3244] bg-[#151c2c] text-[#b5bccd] hover:text-white"
+                }`}
+              >
+                Новизне
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {filteredCars.map((car) => (
+            <Link
+              key={car.id}
+              href={`/catalog/${car.id}`}
+              className="group overflow-hidden rounded-2xl border border-[#1f2634] bg-[#0b111d] transition hover:border-[#39445c]"
+            >
+              <div className="relative aspect-[16/10] bg-[#121927]">
+                {car.images[0] ? (
+                  <img
+                    src={car.images[0]}
+                    alt={`${car.brand} ${car.model}`}
+                    className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-sm text-[#8891a7]">Нет фото</div>
+                )}
+                <div className="absolute left-3 top-3 flex gap-2">
+                  <span className={`rounded-full border px-2 py-1 text-[10px] font-semibold uppercase ${marketBadge(car.market)}`}>
+                    {car.market}
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-3 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">
+                      {car.brand} {car.model}
+                    </h3>
+                    <p className="text-sm text-[#9ba3b8]">
+                      {car.year} • {car.condition === "Used" ? "Б/У" : car.condition === "New" ? "Новый" : "Битый"}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-black text-[#ff6f1d]">${formatPrice(car.price_value)}</div>
+                    <div className="text-[10px] uppercase text-[#788198]">{car.price_type}</div>
+                  </div>
+                </div>
+
+                <button className="w-full rounded-xl border border-[#2a3244] bg-[#151c2c] py-2 text-sm font-semibold text-[#d4d9e4] transition group-hover:border-white/25 group-hover:text-white">
+                  Подробнее
+                </button>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
