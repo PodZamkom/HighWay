@@ -1,30 +1,57 @@
 ﻿"use client";
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, Car, Zap, AlertTriangle, Check, Tag } from 'lucide-react';
+import { X, ChevronRight, Car, Zap, AlertTriangle, Check, Tag, LayoutGrid, Info } from 'lucide-react';
 import { CarFamily, CarVariant, getPriceRange } from '../data/cars';
 import { cars_db } from '../data/cars_db';
 import { groupCarsIntoFamilies } from '../utils/car_mapper';
+import siteContent from '../data/site.json';
 
-// Tag color mapping
-const tagColors: Record<string, string> = {
-    'Bestseller': 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-    'Value': 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-    'Tech Choice': 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-    'New': 'bg-violet-500/20 text-violet-400 border-violet-500/30',
-    'Budget King': 'bg-green-500/20 text-green-400 border-green-500/30',
-    'Power': 'bg-red-500/20 text-red-400 border-red-500/30',
-    'Fresh': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    'Long Range': 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
+// Get market themes from site.json
+const MARKETS_CONFIG = siteContent.marketSection.markets;
+
+const MARKET_THEMES: Record<string, { bg: string, text: string, border: string, label: string, image: string, description: string }> = {
+    'China': {
+        bg: 'bg-red-900/20',
+        text: 'text-red-400',
+        border: 'border-red-500/30',
+        label: 'КИТАЙ',
+        image: '/images/market-china.jpg',
+        description: 'Лидеры технологий: Li Auto, Zeekr, Xiaomi. 0% пошлина на электромобили.'
+    },
+    'USA': {
+        bg: 'bg-blue-900/20',
+        text: 'text-blue-400',
+        border: 'border-blue-500/30',
+        label: 'США',
+        image: '/images/market-usa.jpg',
+        description: 'Аукционы Copart и Manheim. Лучшие предложения на Tesla, BMW и Ford.'
+    },
+    'Europe': {
+        bg: 'bg-emerald-900/20',
+        text: 'text-emerald-400',
+        border: 'border-emerald-500/30',
+        label: 'ЕВРОПА',
+        image: '/images/market-europe.jpg',
+        description: 'Премиум бренды и идеальное состояние. BMW, Mercedes, Porsche.'
+    },
+    'Korea': {
+        bg: 'bg-indigo-900/20',
+        text: 'text-indigo-400',
+        border: 'border-indigo-500/30',
+        label: 'КОРЕЯ',
+        image: '/images/market-korea.jpg',
+        description: 'Прямой доступ к Encar. Популярные дизельные и электрические кроссоверы.'
+    }
 };
 
-const MARKET_THEMES: Record<string, { bg: string, text: string, border: string, label: string }> = {
-    'China': { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/50', label: 'КИТАЙ' },
-    'USA': { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/50', label: 'США' },
-    'Europe': { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/50', label: 'ЕВРОПА' },
-    'Korea': { bg: 'bg-indigo-500/10', text: 'text-indigo-400', border: 'border-indigo-500/50', label: 'КОРЕЯ' },
-    'UAE': { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/50', label: 'ОАЭ' },
+const tagColors: Record<string, string> = {
+    'Электро': 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
+    'Гибрид': 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+    'ДВС': 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+    'В наличии': 'bg-green-500/20 text-green-400 border-green-500/30',
+    'Под заказ': 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',
 };
 
 function formatPrice(price: number): string {
@@ -49,8 +76,8 @@ function VariantCard({ variant, isSelected, onSelect }: VariantCardProps) {
                 ? 'border-cyan-500 bg-cyan-500/10'
                 : 'border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/10'
                 }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
         >
             <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
@@ -69,12 +96,11 @@ function VariantCard({ variant, isSelected, onSelect }: VariantCardProps) {
                     <p className="text-sm text-gray-400 mb-2">{variant.specs}</p>
                     <p className="text-xs text-gray-500">{variant.condition}</p>
 
-                    {/* Tags */}
                     <div className="flex flex-wrap gap-1.5 mt-3">
                         {variant.tags.map((tag) => (
                             <span
                                 key={tag}
-                                className={`px-2 py-0.5 text-xs rounded-full border ${tagColors[tag] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+                                className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded border ${tagColors[tag] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
                                     }`}
                             >
                                 {tag}
@@ -106,59 +132,58 @@ function ConfigModal({ family, onClose }: ConfigModalProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
             onClick={onClose}
         >
             <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                initial={{ scale: 0.95, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-white/10"
+                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                className="bg-zinc-900 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-white/10 shadow-2xl shadow-black/50"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Header */}
-                <div className="relative h-64 overflow-hidden">
+                {/* Header Image */}
+                <div className="relative h-72 overflow-hidden">
                     <img
                         src={family.image}
-                        alt={`${family.brand} ${family.model}`}
+                        alt={family.model}
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/40 to-transparent" />
 
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
+                        className="absolute top-6 right-6 p-2 rounded-full bg-black/50 hover:bg-black/80 text-white transition-all hover:rotate-90"
                     >
-                        <X className="w-5 h-5 text-white" />
+                        <X size={24} />
                     </button>
 
-                    <div className="absolute bottom-4 left-6">
-                        <p className="text-cyan-400 text-sm font-medium mb-1">{family.brand}</p>
-                        <h2 className="text-3xl font-bold text-white">{family.model}</h2>
-                        <p className="text-gray-400 mt-1">{family.description}</p>
+                    <div className="absolute bottom-6 left-8">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="px-2 py-0.5 bg-cyan-500 text-black text-[10px] font-bold rounded uppercase">
+                                {family.market}
+                            </span>
+                        </div>
+                        <h2 className="text-4xl font-black text-white tracking-tighter uppercase">{family.brand} {family.model}</h2>
                     </div>
                 </div>
 
-                {/* Tax Warning Banner */}
-                <div className="mx-6 mt-4 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
-                    <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-                    <div>
-                        <p className="text-amber-400 font-medium text-sm">Цены включают налоги 2025 (НДС)</p>
-                        <p className="text-amber-400/70 text-xs mt-0.5">
-                            Стоимость гибридов (EREV) выросла на 25-30% из-за новых акцизов
-                        </p>
-                    </div>
+                {/* Taxes Banner */}
+                <div className="px-8 py-3 bg-amber-500/10 border-y border-amber-500/20 flex items-center gap-3">
+                    <AlertTriangle size={18} className="text-amber-500" />
+                    <p className="text-amber-500 text-xs font-bold uppercase tracking-widest">
+                        ВНИМАНИЕ: Цены включают НДС 20%. Доставка рассчитывается отдельно.
+                    </p>
                 </div>
 
-                {/* Variants */}
-                <div className="p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <Tag className="w-5 h-5 text-cyan-400" />
-                        Выберите комплектацию
-                    </h3>
+                {/* Variants List */}
+                <div className="p-8 pb-32 overflow-y-auto max-h-[calc(90vh-320px)] custom-scrollbar">
+                    <div className="flex items-center gap-2 mb-6">
+                        <LayoutGrid size={20} className="text-cyan-500" />
+                        <h3 className="text-lg font-bold text-white uppercase tracking-tight">Доступные модификации</h3>
+                    </div>
 
-                    <div className="grid gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="grid gap-3">
                         {family.variants.map((variant) => (
                             <VariantCard
                                 key={variant.id}
@@ -170,27 +195,24 @@ function ConfigModal({ family, onClose }: ConfigModalProps) {
                     </div>
                 </div>
 
-                {/* Footer with Selected Price */}
-                <div className="px-6 py-4 border-t border-white/10 bg-black/20 flex items-center justify-between">
+                {/* Fixed Footer */}
+                <div className="absolute bottom-0 left-0 right-0 p-8 pt-6 border-t border-white/10 bg-zinc-900/95 backdrop-blur-sm flex items-center justify-between">
                     <div>
-                        <p className="text-sm text-gray-400">Выбрано:</p>
-                        <p className="text-white font-medium">{selectedVariant.name}</p>
+                        <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Выбранная версия</p>
+                        <p className="text-white font-bold">{selectedVariant.name}</p>
                     </div>
-                    <div className="flex items-center gap-4">
+
+                    <div className="flex items-center gap-6">
                         <div className="text-right">
-                            <p className="text-sm text-gray-400">Итоговая цена</p>
-                            <p className="text-2xl font-bold text-cyan-400">
+                            <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Стоимость</p>
+                            <p className="text-3xl font-black text-cyan-400 leading-none">
                                 {formatPrice(selectedVariant.price_usd)}
                             </p>
                         </div>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-xl transition-colors flex items-center gap-2"
-                        >
-                            Оставить заявку
-                            <ChevronRight className="w-5 h-5" />
-                        </motion.button>
+                        <button className="h-14 px-8 bg-white text-black font-black uppercase text-sm rounded-2xl hover:bg-cyan-500 transition-all flex items-center gap-2 group">
+                            ЗАКАЗАТЬ РАСЧЕТ
+                            <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        </button>
                     </div>
                 </div>
             </motion.div>
@@ -212,66 +234,41 @@ function FamilyCard({ family, onConfigure }: FamilyCardProps) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl overflow-hidden border border-white/10 hover:border-cyan-500/50 transition-all duration-300"
+            className="group relative bg-zinc-900/40 border border-white/5 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500"
         >
-            {/* Image Section */}
-            <div className="relative h-56 overflow-hidden">
+            <div className="relative h-60 overflow-hidden">
                 <img
                     src={family.image}
-                    alt={`${family.brand} ${family.model}`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    alt={family.model}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
 
-                {/* Brand Badge */}
-                <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-white/20">
-                    <span className="text-sm font-medium text-white">{family.brand}</span>
+                <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10">
+                    <span className="text-xs font-bold text-white uppercase tracking-wider">{family.brand}</span>
                 </div>
 
-                {/* Variants Count */}
-                <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-cyan-500/20 backdrop-blur-sm border border-cyan-500/30">
-                    <span className="text-sm font-medium text-cyan-400">{variantCount} версий</span>
+                <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-cyan-500/20 backdrop-blur-md border border-cyan-500/30">
+                    <span className="text-xs font-bold text-cyan-400">{variantCount} версия</span>
                 </div>
             </div>
 
-            {/* Content Section */}
-            <div className="p-5">
-                <h3 className="text-2xl font-bold text-white mb-2">{family.model}</h3>
-                <p className="text-gray-400 text-sm mb-4">{family.description}</p>
+            <div className="p-6">
+                <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{family.model}</h3>
+                <p className="text-zinc-500 text-sm mb-6 line-clamp-2 h-10">{family.description}</p>
 
-                {/* Price Range */}
-                <div className="flex items-center gap-2 mb-4">
-                    <Zap className="w-4 h-4 text-cyan-400" />
-                    <span className="text-gray-400 text-sm">от</span>
-                    <span className="text-xl font-bold text-white">{formatPrice(priceRange.min)}</span>
-                    <span className="text-gray-400 text-sm">до</span>
-                    <span className="text-xl font-bold text-white">{formatPrice(priceRange.max)}</span>
+                <div className="flex items-baseline gap-2 mb-6">
+                    <span className="text-zinc-500 text-xs font-bold uppercase">от</span>
+                    <span className="text-2xl font-black text-white">{formatPrice(priceRange.min)}</span>
                 </div>
 
-                {/* Quick Tags Preview */}
-                <div className="flex flex-wrap gap-1.5 mb-5">
-                    {family.variants.slice(0, 3).flatMap(v => v.tags.slice(0, 1)).map((tag, i) => (
-                        <span
-                            key={`${tag}-${i}`}
-                            className={`px-2 py-0.5 text-xs rounded-full border ${tagColors[tag] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
-                                }`}
-                        >
-                            {tag}
-                        </span>
-                    ))}
-                </div>
-
-                {/* Configure Button */}
-                <motion.button
+                <button
                     onClick={onConfigure}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-white/5 border border-white/10 text-white font-bold uppercase text-xs tracking-widest rounded-2xl hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2"
                 >
-                    <Car className="w-5 h-5" />
-                    Выбрать комплектацию
-                </motion.button>
+                    <Car size={16} />
+                    Смотреть цены
+                </button>
             </div>
         </motion.div>
     );
@@ -280,78 +277,95 @@ function FamilyCard({ family, onConfigure }: FamilyCardProps) {
 export function CarCatalog() {
     const [selectedFamily, setSelectedFamily] = useState<CarFamily | null>(null);
 
+    const groupedFamilies = useMemo(() => {
+        const families = groupCarsIntoFamilies(cars_db);
+        const grouped: Record<string, CarFamily[]> = {};
+
+        families.forEach(f => {
+            if (!grouped[f.market]) grouped[f.market] = [];
+            grouped[f.market].push(f);
+        });
+
+        return grouped;
+    }, []);
+
+    const markets = Object.keys(groupedFamilies).sort((a, b) => {
+        const order = ['China', 'USA', 'Europe', 'Korea'];
+        return order.indexOf(a) - order.indexOf(b);
+    });
+
     return (
-        <section id="catalog" className="py-20 px-4 bg-gradient-to-b from-black to-gray-900">
-            <div className="max-w-7xl mx-auto">
+        <section id="catalog" className="py-24 bg-black">
+            <div className="max-w-7xl mx-auto px-4">
+
                 {/* Section Header */}
-                <div className="text-center mb-12">
-                    <motion.p
-                        initial={{ opacity: 0, y: -10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-cyan-400 font-medium mb-2"
-                    >
-                        КАТАЛОГ
-                    </motion.p>
-                    <motion.h2
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-bold text-white mb-4"
-                    >
-                        Модельный ряд
-                    </motion.h2>
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                        className="text-gray-400 max-w-2xl mx-auto"
-                    >
-                        Выберите модель и настройте комплектацию под ваши потребности.
-                        Все цены актуальны с учётом налогов 2025 года.
-                    </motion.p>
+                <div className="max-w-2xl mb-20">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-12 h-1 bg-cyan-500" />
+                        <span className="text-cyan-500 font-bold uppercase tracking-[0.3em] text-sm">
+                            КАТАЛОГ 2026
+                        </span>
+                    </div>
+                    <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase mb-6">
+                        ВЫБЕРИ <br />СВОЙ <span className="text-outline-white text-transparent">АВТОМОБИЛЬ</span>
+                    </h2>
+                    <p className="text-zinc-500 text-lg">
+                        Актуальные цены со всех мировых рынков. Мы отобрали лучшие модели по соотношению цены и качества.
+                    </p>
                 </div>
 
-                {/* Tax Notice */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="mb-8 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center gap-3"
-                >
-                    <AlertTriangle className="w-5 h-5 text-amber-400" />
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        className="text-amber-400 text-sm"
-                    >
-                        <strong>Внимание:</strong> Цены включают новые налоги 2025 (НДС).
-                        Стоимость гибридов EREV выросла на 25-30% относительно 2024 года.
-                    </motion.p>
-                </motion.div>
-
-                {/* Market Sections */}
-                {Object.entries(MARKET_THEMES).map(([marketName, theme]) => {
-                    const families = groupCarsIntoFamilies(cars_db).filter(f => f.market === marketName);
-                    if (families.length === 0) return null;
+                {/* Market Groups */}
+                {markets.map((market) => {
+                    const theme = MARKET_THEMES[market] || {
+                        bg: 'bg-zinc-900/40',
+                        text: 'text-zinc-400',
+                        border: 'border-white/10',
+                        label: market.toUpperCase(),
+                        image: '',
+                        description: 'Автомобили с рынка ' + market
+                    };
+                    const families = groupedFamilies[market];
 
                     return (
-                        <div key={marketName} className="mb-20">
-                            <motion.div
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 mb-8 ${theme.bg} ${theme.border}`}
-                            >
-                                <span className={`text-lg font-black tracking-widest ${theme.text}`}>
-                                    {theme.label}
-                                </span>
-                                <div className={`w-2 h-2 rounded-full animate-pulse ${theme.text.replace('text-', 'bg-')}`} />
-                            </motion.div>
+                        <div key={market} className="mb-32">
+                            {/* Market Header Banner */}
+                            <div className={`relative mb-12 rounded-[2.5rem] overflow-hidden border ${theme.border} min-h-[300px] flex items-center`}>
+                                {theme.image && (
+                                    <>
+                                        <img src={theme.image} alt={market} className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-luminosity" />
+                                        <div className={`absolute inset-0 ${theme.bg} opacity-100`} />
+                                    </>
+                                )}
+                                <div className="relative p-12 w-full">
+                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                                        <div className="max-w-xl">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <span className={`px-4 py-1 rounded-full border ${theme.border} ${theme.bg} ${theme.text} text-xs font-black tracking-[0.2em]`}>
+                                                    РЫНОК
+                                                </span>
+                                                <div className={`w-2 h-2 rounded-full animate-pulse ${theme.text.replace('text-', 'bg-')}`} />
+                                            </div>
+                                            <h3 className={`text-6xl md:text-8xl font-black ${theme.text} tracking-tighter uppercase mb-4`}>
+                                                {theme.label}
+                                            </h3>
+                                            <p className="text-white/60 text-lg md:text-xl font-medium max-w-lg leading-relaxed">
+                                                {theme.description}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-4 bg-black/40 backdrop-blur-sm p-4 rounded-3xl border border-white/5">
+                                            <div className="text-right">
+                                                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1">Всего моделей</p>
+                                                <p className="text-3xl font-black text-white leading-none">{families.length}</p>
+                                            </div>
+                                            <div className="w-px h-10 bg-white/10" />
+                                            <Info size={24} className={theme.text} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <div className="grid md:grid-cols-2 gap-6">
+                            {/* Families Grid */}
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {families.map((family) => (
                                     <FamilyCard
                                         key={family.id}
@@ -375,23 +389,6 @@ export function CarCatalog() {
                 )}
             </AnimatePresence>
 
-            {/* Custom Scrollbar Styles */}
-            <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(6, 182, 212, 0.5);
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(6, 182, 212, 0.7);
-        }
-      `}</style>
         </section>
     );
 }
