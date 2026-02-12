@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import type { NavbarContent } from '@/types/site';
-import { Instagram, Send, ChevronDown, Menu, X, Calculator, User } from 'lucide-react';
+import { Instagram, Send, ChevronDown, Menu, X } from 'lucide-react';
 import { LeadFormModal } from './LeadFormModal';
 
 interface NavbarProps {
@@ -15,11 +15,6 @@ export function Navbar({ content }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const secondaryMenus = content.secondaryMenus ?? [];
   const secondaryLinks = content.secondaryLinks ?? [];
-  const quickLinks = [
-    { label: "Новые авто", href: "/catalog", accent: true },
-    { label: "Калькулятор расходов", href: "/#calculator", icon: Calculator },
-    { label: "Личный кабинет", href: "#", icon: User },
-  ];
 
   return (
     <>
@@ -126,25 +121,6 @@ export function Navbar({ content }: NavbarProps) {
                   </Link>
                 ))}
 
-                <div className="ml-auto flex items-center gap-2">
-                  {quickLinks.map((link) => {
-                    const Icon = link.icon;
-                    return (
-                      <Link
-                        key={link.label}
-                        href={link.href}
-                        className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition ${
-                          link.accent
-                            ? "bg-white/10 text-white hover:bg-white/15"
-                            : "text-zinc-300 hover:text-white hover:bg-white/5"
-                        }`}
-                      >
-                        {Icon ? <Icon size={14} /> : null}
-                        {link.label}
-                      </Link>
-                    );
-                  })}
-                </div>
               </div>
             </div>
           </div>
