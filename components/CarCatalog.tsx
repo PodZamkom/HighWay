@@ -29,11 +29,11 @@ function toNumber(input: string): number | null {
 }
 
 function marketBadge(market: string) {
-  if (market === "USA") return "bg-red-500/20 text-red-300 border-red-500/30";
-  if (market === "Korea") return "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
-  if (market === "China") return "bg-amber-500/20 text-amber-300 border-amber-500/30";
-  if (market === "Europe") return "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
-  return "bg-zinc-600/20 text-zinc-300 border-zinc-500/30";
+  if (market === "USA") return "bg-red-50 text-red-700 border-red-200";
+  if (market === "Korea") return "bg-cyan-50 text-cyan-700 border-cyan-200";
+  if (market === "China") return "bg-amber-50 text-amber-700 border-amber-200";
+  if (market === "Europe") return "bg-emerald-50 text-emerald-700 border-emerald-200";
+  return "bg-slate-100 text-slate-600 border-slate-200";
 }
 
 function formatPrice(value?: number) {
@@ -161,7 +161,7 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
   return (
     <section
       id="catalog"
-      className="min-h-screen bg-[radial-gradient(circle_at_top,#0e1422_0%,#060910_45%,#04060c_100%)] py-8 text-white"
+      className="min-h-screen bg-[#f3f4f6] py-8 text-slate-900"
     >
       <div className="mx-auto max-w-6xl px-4">
         <div className="space-y-3">
@@ -179,8 +179,8 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                 }}
                 className={`flex items-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold uppercase tracking-wide transition ${
                   market === tab.id
-                    ? "border-[#3a445d] bg-[linear-gradient(180deg,#202838_0%,#191f2d_100%)] text-white"
-                    : "border-[#242c3f] bg-[linear-gradient(180deg,#151b29_0%,#111725_100%)] text-[#8f97ab] hover:text-white"
+                    ? "border-orange-300 bg-white text-slate-900 shadow-sm"
+                    : "border-slate-200 bg-[#f7f8fb] text-slate-600 hover:border-slate-300 hover:text-slate-900"
                 }`}
               >
                 <span className={`h-2.5 w-2.5 rounded-full ${tab.dot}`} />
@@ -189,13 +189,13 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
             ))}
           </div>
 
-          <div className="rounded-2xl border border-[#1b2232] bg-[linear-gradient(180deg,#0d1220_0%,#0a101c_100%)] p-3">
-            <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.24em] text-[#8f97ab]">
+          <div className="rounded-2xl border border-slate-200 bg-white p-3">
+            <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.24em] text-slate-500">
               <div className="flex items-center gap-2">
                 <Search size={13} />
                 Марки
               </div>
-              <span className="tracking-normal text-[#6f778c]">Все марки</span>
+              <span className="tracking-normal text-slate-400">Все марки</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {brands.map((item) => (
@@ -204,8 +204,8 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                   onClick={() => setBrand(item)}
                   className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase transition ${
                     brand === item
-                      ? "border-[#404b67] bg-[#2b3448] text-white"
-                      : "border-[#2a3244] bg-[#151c2b] text-[#b5bccd] hover:text-white"
+                      ? "border-orange-300 bg-orange-50 text-orange-700"
+                      : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:text-slate-900"
                   }`}
                 >
                   {item === "All" ? "Все" : item}
@@ -214,19 +214,19 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-[#1b2232] bg-[linear-gradient(180deg,#0d1220_0%,#0a101c_100%)] p-3 md:p-4">
-            <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-[#8f97ab]">
+          <div className="rounded-3xl border border-slate-200 bg-white p-3 md:p-4">
+            <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-slate-500">
               <SlidersHorizontal size={13} />
               Фильтры
             </div>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
               <div>
-                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Тип кузова</label>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-slate-500">Тип кузова</label>
                 <select
                   value={bodyType}
                   onChange={(e) => setBodyType(e.target.value)}
-                  className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-orange-300"
                 >
                   {bodyTypes.map((item) => (
                     <option key={item} value={item}>
@@ -236,11 +236,11 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Двигатель</label>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-slate-500">Двигатель</label>
                 <select
                   value={engineType}
                   onChange={(e) => setEngineType(e.target.value as EngineFilter)}
-                  className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-orange-300"
                 >
                   {engines.map((item) => (
                     <option key={item} value={item}>
@@ -250,11 +250,11 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Коробка</label>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-slate-500">Коробка</label>
                 <select
                   value={transmission}
                   onChange={(e) => setTransmission(e.target.value)}
-                  className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-orange-300"
                 >
                   {transmissions.map((item) => (
                     <option key={item} value={item}>
@@ -264,11 +264,11 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Привод</label>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-slate-500">Привод</label>
                 <select
                   value={drive}
                   onChange={(e) => setDrive(e.target.value)}
-                  className="w-full rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white outline-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-orange-300"
                 >
                   {drives.map((item) => (
                     <option key={item} value={item}>
@@ -281,59 +281,59 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
 
             <div className="mt-2 grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
               <div>
-                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Год от</label>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-slate-500">Год от</label>
                 <div className="grid grid-cols-2 gap-2">
                   <input
                     value={yearFrom}
                     onChange={(e) => setYearFrom(e.target.value)}
                     placeholder="от"
-                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-orange-300"
                   />
                   <input
                     value={yearTo}
                     onChange={(e) => setYearTo(e.target.value)}
                     placeholder="до"
-                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-orange-300"
                   />
                 </div>
               </div>
               <div>
-                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Цена от</label>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-slate-500">Цена от</label>
                 <div className="grid grid-cols-2 gap-2">
                   <input
                     value={priceFrom}
                     onChange={(e) => setPriceFrom(e.target.value)}
                     placeholder="-"
-                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-orange-300"
                   />
                   <input
                     value={priceTo}
                     onChange={(e) => setPriceTo(e.target.value)}
                     placeholder="-"
-                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-orange-300"
                   />
                 </div>
               </div>
               <div>
-                <label className="mb-1 block text-xs uppercase tracking-wide text-[#7f889f]">Пробег от</label>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-slate-500">Пробег от</label>
                 <div className="grid grid-cols-2 gap-2">
                   <input
                     value={mileageFrom}
                     onChange={(e) => setMileageFrom(e.target.value)}
                     placeholder="пробег от"
-                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-orange-300"
                   />
                   <input
                     value={mileageTo}
                     onChange={(e) => setMileageTo(e.target.value)}
                     placeholder="до"
-                    className="rounded-xl border border-[#242d3f] bg-[#121929] px-3 py-2 text-sm text-white placeholder:text-[#7f889f] outline-none"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-orange-300"
                   />
                 </div>
               </div>
               <button
                 onClick={resetFilters}
-                className="mt-6 inline-flex items-center justify-center gap-1 px-2 py-2 text-sm font-semibold uppercase tracking-wide text-[#cfd5e4] transition hover:text-white"
+                className="mt-6 inline-flex items-center justify-center gap-1 px-2 py-2 text-sm font-semibold uppercase tracking-wide text-slate-500 transition hover:text-slate-900"
               >
                 <X size={14} />
                 Сбросить
@@ -342,7 +342,7 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
           </div>
 
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-[#8f97ab]">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-slate-500">
               <ArrowUpDown size={13} />
               Сортировка
             </div>
@@ -351,8 +351,8 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                 onClick={() => setSortMode("price_asc")}
                 className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase transition ${
                   sortMode === "price_asc"
-                    ? "border-[#404b67] bg-[#2b3448] text-white"
-                    : "border-[#2a3244] bg-[#151c2c] text-[#b5bccd] hover:text-white"
+                    ? "border-orange-300 bg-orange-50 text-orange-700"
+                    : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:text-slate-900"
                 }`}
               >
                 По цене ↑
@@ -361,8 +361,8 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                 onClick={() => setSortMode("popular")}
                 className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase transition ${
                   sortMode === "popular"
-                    ? "border-[#404b67] bg-[#2b3448] text-white"
-                    : "border-[#2a3244] bg-[#151c2c] text-[#b5bccd] hover:text-white"
+                    ? "border-orange-300 bg-orange-50 text-orange-700"
+                    : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:text-slate-900"
                 }`}
               >
                 Популярности
@@ -371,8 +371,8 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                 onClick={() => setSortMode("newest")}
                 className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase transition ${
                   sortMode === "newest"
-                    ? "border-[#404b67] bg-[#2b3448] text-white"
-                    : "border-[#2a3244] bg-[#151c2c] text-[#b5bccd] hover:text-white"
+                    ? "border-orange-300 bg-orange-50 text-orange-700"
+                    : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:text-slate-900"
                 }`}
               >
                 Новизне
@@ -386,9 +386,9 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
             <Link
               key={car.id}
               href={`/catalog/${car.id}`}
-              className="group overflow-hidden rounded-2xl border border-[#1f2634] bg-[#0b111d] transition hover:border-[#39445c]"
+              className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-orange-300"
             >
-              <div className="relative aspect-[16/10] bg-[#121927]">
+              <div className="relative aspect-[16/10] bg-slate-100">
                 {car.images[0] ? (
                   <img
                     src={car.images[0]}
@@ -396,7 +396,7 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-sm text-[#8891a7]">Нет фото</div>
+                  <div className="flex h-full w-full items-center justify-center text-sm text-slate-400">Нет фото</div>
                 )}
                 <div className="absolute left-3 top-3 flex gap-2">
                   <span className={`rounded-full border px-2 py-1 text-[10px] font-semibold uppercase ${marketBadge(car.market)}`}>
@@ -408,20 +408,20 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
               <div className="space-y-3 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-bold text-white">
+                    <h3 className="text-lg font-bold text-slate-900">
                       {car.brand} {car.model}
                     </h3>
-                    <p className="text-sm text-[#9ba3b8]">
+                    <p className="text-sm text-slate-500">
                       {car.year} • {car.condition === "Used" ? "Б/У" : car.condition === "New" ? "Новый" : "Битый"}
                     </p>
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-black text-[#ff6f1d]">${formatPrice(car.price_value)}</div>
-                    <div className="text-[10px] uppercase text-[#788198]">{car.price_type}</div>
+                    <div className="text-[10px] uppercase text-slate-400">{car.price_type}</div>
                   </div>
                 </div>
 
-                <button className="w-full rounded-xl border border-[#2a3244] bg-[#151c2c] py-2 text-sm font-semibold text-[#d4d9e4] transition group-hover:border-white/25 group-hover:text-white">
+                <button className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 text-sm font-semibold text-slate-700 transition group-hover:border-orange-300 group-hover:text-orange-700">
                   Подробнее
                 </button>
               </div>
