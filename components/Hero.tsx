@@ -151,7 +151,7 @@ export function Hero() {
                 <iframe
                   src={embedUrl}
                   title="Видео о подборе авто"
-                  className="aspect-video w-full"
+                  className="aspect-square w-full"
                   allow="autoplay; encrypted-media; picture-in-picture"
                   allowFullScreen
                 />
@@ -169,7 +169,7 @@ export function Hero() {
                   <img
                     src={thumbnailUrl}
                     alt="Авто под заказ"
-                    className="aspect-video w-full object-cover object-center"
+                    className="aspect-square w-full object-cover object-center"
                   />
 
                   <div className="absolute inset-0 bg-black/20" />
