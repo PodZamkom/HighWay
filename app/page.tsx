@@ -1,6 +1,7 @@
 import { LandingPriceCalculator } from "@/components/calculator/LandingPriceCalculator";
 import { Hero } from "@/components/Hero";
 import { MarketGrid } from "@/components/MarketGrid";
+import { TeamSection } from "@/components/TeamSection";
 import { getSiteContent } from "@/lib/data";
 
 export default async function Home() {
@@ -24,6 +25,8 @@ export default async function Home() {
                     <LandingPriceCalculator />
                 </div>
             </section>
+
+            <TeamSection />
         </div>
     );
 }

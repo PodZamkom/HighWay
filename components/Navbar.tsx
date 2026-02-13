@@ -18,26 +18,26 @@ export function Navbar({ content }: NavbarProps) {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 border-b border-[#242424] shadow-[0_10px_26px_-18px_rgba(0,0,0,0.85)]">
+      <nav className="sticky top-0 z-50 border-b border-[#202735] shadow-[0_10px_26px_-18px_rgba(0,0,0,0.85)]">
         {/* Top Row */}
-        <div className="bg-[#111111]">
+        <div className="bg-gradient-to-r from-[#111722] via-[#151d2c] to-[#111722]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-[72px] items-center justify-between py-3">
+            <div className="flex h-[70px] items-center justify-between">
               {/* Logo */}
               <div className="flex-shrink-0">
                 <Link href="/" className="flex items-center gap-2">
-                  <img src="/images/logo.png" alt="Highway Motors" className="h-9 w-auto object-contain" />
+                  <img src="/images/logo.png" alt="Highway Motors" className="h-8 w-auto object-contain sm:h-9" />
                 </Link>
               </div>
 
               {/* Nav Links */}
-              <div className="hidden lg:block ml-10">
-                <div className="flex items-center space-x-6">
+              <div className="ml-10 hidden lg:block">
+                <div className="flex items-center space-x-7">
                   {content.links.map((link) => (
                     <Link
                       key={link.label}
                       href={link.href}
-                      className="text-sm font-semibold text-[#e5e7eb] transition-colors hover:text-white"
+                      className="text-[15px] font-semibold text-[#e6ebf3] transition-colors hover:text-white"
                     >
                       {link.label}
                     </Link>
@@ -46,13 +46,13 @@ export function Navbar({ content }: NavbarProps) {
               </div>
 
               {/* Right Side */}
-              <div className="flex items-center gap-6">
-                <div className="hidden md:flex flex-col items-end">
-                  <a href={content.phoneLink} className="flex items-center gap-1 text-sm font-black tracking-tight text-[#ff5a00] transition-colors hover:text-[#ff7a33]">
+              <div className="flex items-center gap-5">
+                <div className="hidden flex-col items-end md:flex">
+                  <a href={content.phoneLink} className="flex items-center gap-1 text-[1.08rem] font-black tracking-tight text-[#ff6f1d] transition-colors hover:text-[#ff8b46]">
                     {content.phone}
                     <ChevronDown className="h-3 w-3 text-[#8d95a6]" />
                   </a>
-                  <div className="flex items-center gap-3 mt-1">
+                  <div className="mt-1 flex items-center gap-3">
                     <a href={content.instagram} target="_blank" rel="noreferrer" className="text-[#a4acbb] transition-colors hover:text-[#ff7a33]">
                       <Instagram size={16} />
                     </a>
@@ -83,14 +83,14 @@ export function Navbar({ content }: NavbarProps) {
 
         {/* Second Row */}
         {secondaryMenus.length > 0 ? (
-          <div className="border-t border-[#252525] bg-[#0a0a0a]">
+          <div className="border-t border-[#202735] bg-gradient-to-r from-[#0f1521] via-[#111a2a] to-[#0f1521]">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="hidden lg:flex items-center gap-6 py-3">
+              <div className="hidden items-center gap-7 py-2.5 lg:flex">
                 {secondaryMenus.map((menu) => (
                   <div key={menu.label} className="relative group">
                     <button
                       type="button"
-                      className="flex items-center gap-1 text-sm font-semibold text-[#e5e7eb] transition-colors hover:text-white"
+                      className="flex items-center gap-1 text-[0.95rem] font-semibold text-[#e6ebf3] transition-colors hover:text-white"
                       aria-haspopup="true"
                     >
                       {menu.label}
@@ -111,15 +111,34 @@ export function Navbar({ content }: NavbarProps) {
                     </div>
                   </div>
                 ))}
-                {secondaryLinks.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className="rounded-full border border-[#ff5a00] px-4 py-1.5 text-sm font-semibold text-[#ff6f1d] transition-colors hover:bg-[#ff5a00] hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {secondaryLinks.map((link) => {
+                  const isFeatured = /нов/i.test(link.label);
+
+                  if (isFeatured) {
+                    return (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        className="inline-flex items-center gap-2 text-[0.95rem] font-semibold text-white transition-colors hover:text-[#ff9a56]"
+                      >
+                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-sm bg-[#ff5a00] text-[9px] font-black text-white">
+                          N
+                        </span>
+                        {link.label}
+                      </Link>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className="text-[0.95rem] font-semibold text-[#d9dfeb] transition-colors hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
 
               </div>
             </div>
@@ -152,6 +171,16 @@ export function Navbar({ content }: NavbarProps) {
                   </Link>
                 ))
               )}
+              {secondaryLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="block py-2 text-sm font-semibold text-[#e5e7eb] transition-colors hover:text-white"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
         )}

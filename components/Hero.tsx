@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { CirclePlay, Instagram, MessageCircleMore, Send, Star } from "lucide-react";
@@ -12,32 +13,48 @@ const HIGHLIGHTS = [
 ];
 
 export function Hero() {
-  return (
-    <section className="relative overflow-hidden bg-[#f3f3f3]">
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const youtubeId = process.env.NEXT_PUBLIC_HERO_YOUTUBE_ID;
+  const embedUrl = useMemo(() => {
+    if (!youtubeId) {
+      return null;
+    }
 
-      <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.03fr)]">
+    const params = new URLSearchParams({
+      autoplay: "1",
+      rel: "0",
+      modestbranding: "1",
+      playsinline: "1",
+    });
+
+    return `https://www.youtube-nocookie.com/embed/${youtubeId}?${params.toString()}`;
+  }, [youtubeId]);
+
+  return (
+    <section className="relative overflow-hidden bg-[#f2f3f5]">
+      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+        <div className="grid items-center gap-9 lg:grid-cols-[minmax(0,0.98fr)_minmax(0,1.02fr)]">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
-            className="max-w-[42rem]"
+            className="max-w-[41rem]"
           >
-            <h1 className="text-4xl font-black tracking-tight text-[#13151b] sm:text-5xl lg:text-[52px]">
+            <h1 className="text-4xl font-black tracking-tight text-[#141821] sm:text-5xl lg:text-[58px]">
               АВТО ИЗ США
             </h1>
 
-            <p className="mt-4 text-lg font-semibold leading-snug text-[#171a21] sm:text-2xl lg:text-[30px]">
+            <p className="mt-3.5 text-[1.33rem] font-semibold leading-[1.18] text-[#171a21] sm:text-[1.65rem] lg:text-[2.03rem]">
               Хотите выгодно купить бу автомобиль из Америки
               <br />
               с доставкой в Беларусь?{" "}
               <span className="font-black text-[#e26717]">HIGHWAYMOTORS</span> поможет!
             </p>
 
-            <ul className="mt-7 space-y-2.5">
+            <ul className="mt-6 space-y-2.5">
               {HIGHLIGHTS.map((item) => (
-                <li key={item.label} className="flex items-center gap-2.5 text-base leading-snug text-[#222631] sm:text-lg">
-                  <Star size={19} className="fill-[#e27b2a] text-[#ac5412]" />
+                <li key={item.label} className="flex items-center gap-2.5 text-[1rem] leading-snug text-[#222631] sm:text-[1.09rem]">
+                  <Star size={17} className="fill-[#e27b2a] text-[#ac5412]" />
                   <span className="font-medium">{item.label}</span>
                   <span className="text-zinc-500">-</span>
                   <span className="text-zinc-600">{item.value}</span>
@@ -46,51 +63,51 @@ export function Hero() {
             </ul>
 
             <div className="mt-8">
-              <h2 className="text-2xl font-black text-[#171a21] sm:text-[30px]">Консультация эксперта</h2>
-              <p className="mt-2 max-w-xl text-base leading-snug text-[#444b59] sm:text-lg">
+              <h2 className="text-[1.95rem] font-black text-[#171a21] sm:text-[2.26rem]">Консультация эксперта</h2>
+              <p className="mt-1.5 max-w-xl text-[1rem] leading-snug text-[#444b59] sm:text-[1.08rem]">
                 Перезвоним за 1 минуту и расскажем о выгодных авто.
                 <br />
                 Подберем лучшие варианты под ваш бюджет.
               </p>
             </div>
 
-            <div className="mt-7">
+            <div className="mt-6">
               <Link
                 href="#calculator"
-                className="inline-flex items-center rounded-[14px] bg-[#ff5a00] px-8 py-4 text-sm font-black uppercase tracking-wide text-white shadow-[0_14px_22px_-12px_rgba(255,90,0,0.65)] transition hover:translate-y-[-1px] hover:bg-[#ff7429] sm:text-base"
+                className="inline-flex items-center rounded-xl bg-[#ff5a00] px-7 py-3 text-xs font-black uppercase tracking-wide text-white shadow-[0_13px_20px_-12px_rgba(255,90,0,0.65)] transition hover:translate-y-[-1px] hover:bg-[#ff7429] sm:px-8 sm:py-3.5 sm:text-[0.95rem]"
               >
                 Рассчитать стоимость
               </Link>
             </div>
 
-            <div className="mt-7 flex items-center gap-3">
-              <span className="text-sm font-medium text-[#535b6a] sm:text-base">Пишите нам:</span>
+            <div className="mt-6 flex items-center gap-2.5">
+              <span className="text-sm font-medium text-[#535b6a] sm:text-[0.95rem]">Пишите нам:</span>
               <a
                 href="https://wa.me/375447772224"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
                 aria-label="WhatsApp"
               >
-                <MessageCircleMore size={18} />
+                <MessageCircleMore size={16} />
               </a>
               <a
                 href="https://t.me/highwaymotors"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
                 aria-label="Telegram"
               >
-                <Send size={18} />
+                <Send size={16} />
               </a>
               <a
                 href="https://instagram.com/highwaymotors"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
                 aria-label="Instagram"
               >
-                <Instagram size={18} />
+                <Instagram size={16} />
               </a>
             </div>
           </motion.div>
@@ -101,27 +118,50 @@ export function Hero() {
             transition={{ duration: 0.52, delay: 0.1 }}
             className="relative"
           >
-            <div className="relative overflow-hidden rounded-2xl border border-[#d0d5df] bg-white shadow-[0_20px_40px_-24px_rgba(16,24,40,0.45)]">
-              <div className="absolute left-0 top-0 z-20 w-full bg-gradient-to-r from-[#1d6c23] via-[#2f8f2e] to-[#15531a] px-6 py-3">
-                <p className="text-2xl font-black uppercase tracking-wide text-white sm:text-[40px]">Авто под заказ</p>
-                <p className="text-base font-bold uppercase text-emerald-100 sm:text-[22px]">Подбор и доставка</p>
-              </div>
-
-              <img
-                src="/images/cars/ford/mustang_mach_e/main.webp"
-                alt="Авто под заказ"
-                className="aspect-[16/9] w-full object-cover object-center pt-[88px]"
-              />
-
-              <div className="absolute inset-0 z-20 flex items-center justify-center pt-16">
+            <div className="relative overflow-hidden rounded-2xl border border-[#d0d5df] bg-white shadow-[0_20px_36px_-24px_rgba(16,24,40,0.45)]">
+              {isVideoOpen && embedUrl ? (
+                <iframe
+                  src={embedUrl}
+                  title="Видео о подборе авто"
+                  className="aspect-video w-full"
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
                 <button
                   type="button"
-                  className="inline-flex items-center rounded-full border border-white/30 bg-black/35 px-4 py-2 backdrop-blur-sm transition hover:bg-black/45"
-                  aria-label="Смотреть видео"
+                  onClick={() => {
+                    if (embedUrl) {
+                      setIsVideoOpen(true);
+                    }
+                  }}
+                  className={`group relative block w-full ${embedUrl ? "cursor-pointer" : "cursor-default"}`}
+                  aria-label={embedUrl ? "Смотреть видео" : "Видео пока недоступно"}
                 >
-                  <CirclePlay className="h-12 w-12 fill-[#ff5a00] text-[#ff5a00]" />
+                  <img
+                    src="/images/cars/ford/mustang_mach_e/main.webp"
+                    alt="Авто под заказ"
+                    className="aspect-video w-full object-cover object-center"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-black/20" />
+                  <div className="absolute left-0 top-0 z-20 w-full px-5 pt-4 text-left">
+                    <p className="text-[2rem] font-black uppercase tracking-tight text-white [text-shadow:_0_2px_12px_rgba(0,0,0,0.45)] sm:text-[2.5rem]">
+                      Авто под заказ
+                    </p>
+                    <p className="text-[1rem] font-black uppercase text-white/95 [text-shadow:_0_2px_8px_rgba(0,0,0,0.45)] sm:text-[1.35rem]">
+                      Подбор и доставка
+                    </p>
+                  </div>
+
+                  <div className="absolute inset-0 z-20 flex items-center justify-center">
+                    <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#ff5a00] shadow-[0_12px_26px_-10px_rgba(255,90,0,0.8)] transition group-hover:scale-105">
+                      <CirclePlay className="h-11 w-11 fill-white text-white" />
+                    </span>
+                  </div>
                 </button>
-              </div>
+              )}
+
             </div>
           </motion.div>
         </div>
