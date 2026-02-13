@@ -19,6 +19,9 @@ export interface CarModel {
     availability: Availability;
     market: Market;
     type?: CarType;
+    body_type?: string;
+    transmission?: string;
+    drive?: string;
     images: string[];
     description?: string;
 }

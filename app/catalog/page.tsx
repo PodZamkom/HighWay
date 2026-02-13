@@ -6,5 +6,5 @@ export default async function CatalogPage({
     searchParams: Promise<{ market?: string }>;
 }) {
     const { market } = await searchParams;
-    return <CarCatalog />;
+    return <CarCatalog initialMarket={market} />;
 }
