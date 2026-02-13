@@ -94,16 +94,8 @@
     ],
     "secondaryLinks": [
       {
-        "label": "НОВЫЕ АВТО",
-        "href": "/catalog"
-      },
-      {
         "label": "Калькулятор расходов",
         "href": "/#calculator"
-      },
-      {
-        "label": "Личный кабинет",
-        "href": "/#contacts"
       }
     ],
     "ctaLabel": "ОБРАТНЫЙ ЗВОНОК",

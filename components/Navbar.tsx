@@ -111,34 +111,15 @@ export function Navbar({ content }: NavbarProps) {
                     </div>
                   </div>
                 ))}
-                {secondaryLinks.map((link) => {
-                  const isFeatured = /нов/i.test(link.label);
-
-                  if (isFeatured) {
-                    return (
-                      <Link
-                        key={link.label}
-                        href={link.href}
-                        className="inline-flex items-center gap-2 text-[0.95rem] font-semibold text-white transition-colors hover:text-[#ff9a56]"
-                      >
-                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-sm bg-[#ff5a00] text-[9px] font-black text-white">
-                          N
-                        </span>
-                        {link.label}
-                      </Link>
-                    );
-                  }
-
-                  return (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      className="text-[0.95rem] font-semibold text-[#d8d8d8] transition-colors hover:text-white"
-                    >
-                      {link.label}
-                    </Link>
-                  );
-                })}
+                {secondaryLinks.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-[0.95rem] font-semibold text-[#d8d8d8] transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
 
               </div>
             </div>
