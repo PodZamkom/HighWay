@@ -5,6 +5,25 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { CirclePlay, Instagram, MessageCircleMore, Send, Star } from "lucide-react";
 
+const DEFAULT_HERO_YOUTUBE_SOURCE = "https://youtube.com/shorts/8zO8IhwdVWo";
+
+function extractYoutubeId(source: string): string | null {
+  const normalized = source.trim();
+  if (!normalized) {
+    return null;
+  }
+
+  if (/^[a-zA-Z0-9_-]{11}$/.test(normalized)) {
+    return normalized;
+  }
+
+  const match = normalized.match(
+    /(?:youtube\.com\/shorts\/|youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+  );
+
+  return match?.[1] ?? null;
+}
+
 const HIGHLIGHTS = [
   { label: "Экономия от", value: "10-15% стоимости авто" },
   { label: "Доставка от", value: "60 рабочих дней" },
@@ -14,7 +33,8 @@ const HIGHLIGHTS = [
 
 export function Hero() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
-  const youtubeId = process.env.NEXT_PUBLIC_HERO_YOUTUBE_ID;
+  const youtubeSource = process.env.NEXT_PUBLIC_HERO_YOUTUBE_ID ?? DEFAULT_HERO_YOUTUBE_SOURCE;
+  const youtubeId = useMemo(() => extractYoutubeId(youtubeSource), [youtubeSource]);
   const embedUrl = useMemo(() => {
     if (!youtubeId) {
       return null;
@@ -22,12 +42,20 @@ export function Hero() {
 
     const params = new URLSearchParams({
       autoplay: "1",
+      controls: "1",
       rel: "0",
       modestbranding: "1",
       playsinline: "1",
+      hl: "ru",
     });
 
     return `https://www.youtube-nocookie.com/embed/${youtubeId}?${params.toString()}`;
+  }, [youtubeId]);
+  const thumbnailUrl = useMemo(() => {
+    if (!youtubeId) {
+      return "/images/cars/ford/mustang_mach_e/main.webp";
+    }
+    return `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
   }, [youtubeId]);
 
   return (
@@ -139,20 +167,12 @@ export function Hero() {
                   aria-label={embedUrl ? "Смотреть видео" : "Видео пока недоступно"}
                 >
                   <img
-                    src="/images/cars/ford/mustang_mach_e/main.webp"
+                    src={thumbnailUrl}
                     alt="Авто под заказ"
                     className="aspect-video w-full object-cover object-center"
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-black/20" />
-                  <div className="absolute left-0 top-0 z-20 w-full px-5 pt-4 text-left">
-                    <p className="text-[2rem] font-black uppercase tracking-tight text-white [text-shadow:_0_2px_12px_rgba(0,0,0,0.45)] sm:text-[2.5rem]">
-                      Авто под заказ
-                    </p>
-                    <p className="text-[1rem] font-black uppercase text-white/95 [text-shadow:_0_2px_8px_rgba(0,0,0,0.45)] sm:text-[1.35rem]">
-                      Подбор и доставка
-                    </p>
-                  </div>
+                  <div className="absolute inset-0 bg-black/20" />
 
                   <div className="absolute inset-0 z-20 flex items-center justify-center">
                     <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#ff5a00] shadow-[0_12px_26px_-10px_rgba(255,90,0,0.8)] transition group-hover:scale-105">
