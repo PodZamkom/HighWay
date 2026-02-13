@@ -18,9 +18,9 @@ export function Navbar({ content }: NavbarProps) {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 border-b border-[#202735] shadow-[0_10px_26px_-18px_rgba(0,0,0,0.85)]">
+      <nav className="sticky top-0 z-50 border-b border-[#2a2a2a] shadow-[0_10px_26px_-18px_rgba(0,0,0,0.85)]">
         {/* Top Row */}
-        <div className="bg-gradient-to-r from-[#111722] via-[#151d2c] to-[#111722]">
+        <div className="bg-gradient-to-r from-[#111111] via-[#171717] to-[#111111]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-[70px] items-center justify-between">
               {/* Logo */}
@@ -37,7 +37,7 @@ export function Navbar({ content }: NavbarProps) {
                     <Link
                       key={link.label}
                       href={link.href}
-                      className="text-[15px] font-semibold text-[#e6ebf3] transition-colors hover:text-white"
+                      className="text-[15px] font-semibold text-[#e5e7eb] transition-colors hover:text-white"
                     >
                       {link.label}
                     </Link>
@@ -50,13 +50,13 @@ export function Navbar({ content }: NavbarProps) {
                 <div className="hidden flex-col items-end md:flex">
                   <a href={content.phoneLink} className="flex items-center gap-1 text-[1.08rem] font-black tracking-tight text-[#ff6f1d] transition-colors hover:text-[#ff8b46]">
                     {content.phone}
-                    <ChevronDown className="h-3 w-3 text-[#8d95a6]" />
+                    <ChevronDown className="h-3 w-3 text-[#8f8f8f]" />
                   </a>
                   <div className="mt-1 flex items-center gap-3">
-                    <a href={content.instagram} target="_blank" rel="noreferrer" className="text-[#a4acbb] transition-colors hover:text-[#ff7a33]">
+                    <a href={content.instagram} target="_blank" rel="noreferrer" className="text-[#a9a9a9] transition-colors hover:text-[#ff7a33]">
                       <Instagram size={16} />
                     </a>
-                    <a href={content.whatsapp} target="_blank" rel="noreferrer" className="text-[#a4acbb] transition-colors hover:text-[#45d07f]">
+                    <a href={content.whatsapp} target="_blank" rel="noreferrer" className="text-[#a9a9a9] transition-colors hover:text-[#45d07f]">
                       <Send size={16} className="rotate-[-20deg]" />
                     </a>
                   </div>
@@ -83,18 +83,18 @@ export function Navbar({ content }: NavbarProps) {
 
         {/* Second Row */}
         {secondaryMenus.length > 0 ? (
-          <div className="border-t border-[#202735] bg-gradient-to-r from-[#0f1521] via-[#111a2a] to-[#0f1521]">
+          <div className="border-t border-[#2a2a2a] bg-gradient-to-r from-[#0d0d0d] via-[#121212] to-[#0d0d0d]">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="hidden items-center gap-7 py-2.5 lg:flex">
                 {secondaryMenus.map((menu) => (
                   <div key={menu.label} className="relative group">
                     <button
                       type="button"
-                      className="flex items-center gap-1 text-[0.95rem] font-semibold text-[#e6ebf3] transition-colors hover:text-white"
+                      className="flex items-center gap-1 text-[0.95rem] font-semibold text-[#e5e7eb] transition-colors hover:text-white"
                       aria-haspopup="true"
                     >
                       {menu.label}
-                      <ChevronDown className="h-3 w-3 text-[#8d95a6] transition-colors group-hover:text-white" />
+                      <ChevronDown className="h-3 w-3 text-[#8f8f8f] transition-colors group-hover:text-white" />
                     </button>
                     <div className="pointer-events-none absolute left-0 z-50 mt-3 w-56 translate-y-2 rounded-xl border border-[#303030] bg-[#141414] opacity-0 shadow-xl transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
                       <div className="p-2">
@@ -133,7 +133,7 @@ export function Navbar({ content }: NavbarProps) {
                     <Link
                       key={link.label}
                       href={link.href}
-                      className="text-[0.95rem] font-semibold text-[#d9dfeb] transition-colors hover:text-white"
+                      className="text-[0.95rem] font-semibold text-[#d8d8d8] transition-colors hover:text-white"
                     >
                       {link.label}
                     </Link>
