@@ -28,19 +28,19 @@ export function MarketGrid({ content }: MarketGridProps) {
           {content.markets.map((market, index) => (
             <motion.div
               key={market.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.15, ease: "easeOut" }}
+              viewport={{ once: true, margin: "-50px" }}
             >
               <Link
                 href={`/catalog?market=${market.id}`}
-                className={`group block bg-white rounded-xl overflow-hidden border border-gray-200 border-t-4 ${MARKET_COLORS[market.id] || 'border-t-gray-400'} shadow-sm hover:shadow-lg transition-all hover:-translate-y-1`}
+                className={`group block bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(255,102,0,0.15)] hover:border-orange-200 transition-all duration-300 hover:-translate-y-1.5`}
               >
                 {/* Image */}
                 <div className="aspect-[16/10] relative overflow-hidden">
                   <div
-                    className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+                    className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700 ease-in-out"
                     style={{ backgroundImage: `url(${market.image})` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

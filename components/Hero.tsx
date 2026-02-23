@@ -59,7 +59,8 @@ export function Hero() {
   }, [youtubeId]);
 
   return (
-    <section className="relative overflow-hidden bg-[#f2f3f5]">
+    <section className="relative overflow-hidden bg-gradient-to-br from-[#f8f9fa] via-[#f1f3f5] to-[#eceef1]">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
       <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
         <div className="grid items-center gap-9 lg:grid-cols-[minmax(0,0.98fr)_minmax(0,1.02fr)]">
           <motion.div
@@ -99,10 +100,11 @@ export function Hero() {
               </p>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-8 relative inline-block group">
+              <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-[#ff5a00] to-[#ff8c00] opacity-30 blur transition duration-500 group-hover:opacity-60"></div>
               <Link
                 href="#calculator"
-                className="inline-flex items-center rounded-xl bg-[#ff5a00] px-7 py-3 text-xs font-black uppercase tracking-wide text-white shadow-[0_13px_20px_-12px_rgba(255,90,0,0.65)] transition hover:translate-y-[-1px] hover:bg-[#ff7429] sm:px-8 sm:py-3.5 sm:text-[0.95rem]"
+                className="relative inline-flex items-center rounded-xl bg-[#ff5a00] px-7 py-3 text-xs font-black uppercase tracking-wide text-white shadow-[0_8px_16px_-6px_rgba(255,90,0,0.5)] transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[0_12px_20px_-8px_rgba(255,90,0,0.6)] sm:px-8 sm:py-3.5 sm:text-[0.95rem]"
               >
                 Рассчитать стоимость
               </Link>
@@ -141,9 +143,13 @@ export function Hero() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.52, delay: 0.1 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1, y: [0, -8, 0] }}
+            transition={{
+              opacity: { duration: 0.6, delay: 0.2 },
+              scale: { duration: 0.6, delay: 0.2 },
+              y: { repeat: Infinity, duration: 6, ease: "easeInOut" }
+            }}
             className="relative"
           >
             <div className="relative overflow-hidden rounded-2xl border border-[#d0d5df] bg-white shadow-[0_20px_36px_-24px_rgba(16,24,40,0.45)]">

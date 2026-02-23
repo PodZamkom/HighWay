@@ -20,7 +20,7 @@ export function Navbar({ content }: NavbarProps) {
     <>
       <nav className="sticky top-0 z-50 border-b border-[#2a2a2a] shadow-[0_10px_26px_-18px_rgba(0,0,0,0.85)]">
         {/* Top Row */}
-        <div className="bg-gradient-to-r from-[#111111] via-[#171717] to-[#111111]">
+        <div className="bg-black/70 backdrop-blur-md">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-[70px] items-center justify-between">
               {/* Logo */}
@@ -83,7 +83,7 @@ export function Navbar({ content }: NavbarProps) {
 
         {/* Second Row */}
         {secondaryMenus.length > 0 ? (
-          <div className="border-t border-[#2a2a2a] bg-gradient-to-r from-[#0d0d0d] via-[#121212] to-[#0d0d0d]">
+          <div className="border-t border-white/5 bg-black/50 backdrop-blur-md">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="hidden items-center gap-7 py-2.5 lg:flex">
                 {secondaryMenus.map((menu) => (
@@ -128,7 +128,7 @@ export function Navbar({ content }: NavbarProps) {
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="border-b border-[#252525] bg-[#111111] shadow-lg lg:hidden">
+          <div className="border-b border-white/10 bg-black/90 backdrop-blur-xl shadow-lg lg:hidden">
             <div className="px-4 py-4 space-y-3">
               {content.links.map((link) => (
                 <Link
