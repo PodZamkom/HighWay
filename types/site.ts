@@ -2,8 +2,10 @@ export interface SiteContent {
   seo: SeoContent;
   navbar: NavbarContent;
   hero: HeroContent;
+  promoBanners: PromoBannerSection;
   calculator: CalculatorContent;
   marketSection: MarketSection;
+  teamSection: TeamSectionContent;
   catalogSection: CatalogSection;
   carDetail: CarDetailLabels;
   footer: FooterContent;
@@ -40,15 +42,42 @@ export interface NavbarMenu {
 }
 
 export interface HeroContent {
-  badge: string;
-  titlePrimary: string;
-  titleAccent: string;
-  subtitleLine1: string;
-  subtitleLine2Emphasis: string;
-  subtitleLine2Rest: string;
-  marqueeLine: string;
-  primaryCta: CtaLink;
-  secondaryCta: CtaLink;
+  title: string;
+  descriptionBeforeBrand: string;
+  brand: string;
+  descriptionAfterBrand: string;
+  highlights: HeroHighlight[];
+  consultationTitle: string;
+  consultationDescriptionLine1: string;
+  consultationDescriptionLine2: string;
+  primaryButtonLabel: string;
+  primaryButtonHref: string;
+  contactsLabel: string;
+  whatsappLink: string;
+  telegramLink: string;
+  instagramLink: string;
+  youtubeSource: string;
+  fallbackImage: string;
+  videoTitle: string;
+}
+
+export interface HeroHighlight {
+  label: string;
+  value: string;
+}
+
+export interface PromoBannerSection {
+  gapPx: number;
+  banners: PromoBanner[];
+}
+
+export interface PromoBanner {
+  id: string;
+  title: string;
+  buttonLabel: string;
+  href: string;
+  image: string;
+  alt: string;
 }
 
 export interface CtaLink {
@@ -60,26 +89,67 @@ export interface CalculatorContent {
   sectionTitle: string;
   sectionHighlight: string;
   sectionDescription: string;
-  engineTypeLabel: string;
-  engineTypeOptions: Record<'EV' | 'EREV' | 'HEV' | 'ICE', string>;
-  engineTypeHint: Record<'EV' | 'OTHER', string>;
-  priceLabel: string;
-  engineVolumeLabel: string;
-  carAgeLabel: string;
-  carAgeOptions: Record<'0-3' | '3-5' | '5+', string>;
-  legalEntityLabel: string;
-  decreeLabel: string;
-  breakdownTitle: string;
-  breakdownLabels: {
-    price: string;
-    duty: string;
-    vat: string;
-    recycling: string;
-    processing: string;
+  form: CalculatorFormContent;
+}
+
+export interface CalculatorSelectOption {
+  key: string;
+  name: string;
+}
+
+export interface CalculatorDeliveryOption extends CalculatorSelectOption {
+  cityName: string;
+  cityNameOld?: string;
+}
+
+export interface CalculatorFormContent {
+  labels: {
+    transport: string;
+    carPrice: string;
+    age: string;
+    engine: string;
+    platform: string;
+    platformFallback: string;
+    auction: string;
+    deliveryTo: string;
+    preferential: string;
+    offsite: string;
+    purchaseAndDelivery: string;
+    customsAndClearance: string;
     total: string;
+    disclaimer: string;
+    downloadPdfTitle: string;
+    downloadPdfButton: string;
+    priceMin: string;
+    priceMax: string;
   };
-  ctaLabel: string;
-  approxLabel: string;
+  options: {
+    transports: CalculatorSelectOption[];
+    auctions: CalculatorSelectOption[];
+    deliveries: CalculatorDeliveryOption[];
+    ages: CalculatorSelectOption[];
+    platformDefault: CalculatorSelectOption;
+  };
+  errors: {
+    calculationFailed: string;
+    connectionFailed: string;
+  };
+  rowLabels: {
+    carPrice: string;
+    auctionFee: string;
+    deliveryToUsaPort: string;
+    deliveryFromPortToPoti: string;
+    deliveryFromPortDefault: string;
+    deliveryFromPortToCityTemplate: string;
+    deliveryFromPotiToTemplate: string;
+    deliveryFromKlaipedaToTemplate: string;
+    deliveryToDestinationDefault: string;
+    ourServicePrice: string;
+    customDuty: string;
+    customFee: string;
+    junkFee: string;
+    svxServicePrice: string;
+  };
 }
 
 export interface MarketSection {
@@ -94,6 +164,23 @@ export interface MarketCard {
   image: string;
   tags: string[];
   bgClass: string;
+}
+
+export interface TeamSectionContent {
+  eyebrow: string;
+  title: string;
+  description: string;
+  badge: string;
+  members: TeamMember[];
+  stats: string[];
+}
+
+export interface TeamMember {
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+  position: string;
 }
 
 export interface CatalogSection {

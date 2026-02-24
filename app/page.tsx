@@ -1,6 +1,7 @@
 import { LandingPriceCalculator } from "@/components/calculator/LandingPriceCalculator";
 import { Hero } from "@/components/Hero";
 import { MarketGrid } from "@/components/MarketGrid";
+import { PromoBanners } from "@/components/PromoBanners";
 import { TeamSection } from "@/components/TeamSection";
 import { getSiteContent } from "@/lib/data";
 
@@ -9,7 +10,9 @@ export default async function Home() {
 
     return (
         <div className="pb-16">
-            <Hero />
+            <Hero content={siteContent.hero} />
+
+            <PromoBanners content={siteContent.promoBanners} />
 
             <MarketGrid content={siteContent.marketSection} />
 
@@ -17,16 +20,17 @@ export default async function Home() {
             <section id="calculator" className="relative z-20 mx-auto max-w-7xl px-4 py-20">
                 <div className="rounded-2xl border border-[#d8dce3] bg-[#f6f7f9] p-8 shadow-sm">
                     <h2 className="mb-4 text-center text-3xl font-bold text-gray-900">
-                        Честный калькулятор <span className="text-orange-600">под ключ</span>
+                        {siteContent.calculator.sectionTitle}{" "}
+                        <span className="text-orange-600">{siteContent.calculator.sectionHighlight}</span>
                     </h2>
                     <p className="mx-auto mb-10 max-w-2xl text-center text-gray-500">
-                        Выберите параметры автомобиля и получите точную цену в Минске с учетом таможенных платежей, утильсбора и нашей комиссии.
+                        {siteContent.calculator.sectionDescription}
                     </p>
-                    <LandingPriceCalculator />
+                    <LandingPriceCalculator content={siteContent.calculator.form} />
                 </div>
             </section>
 
-            <TeamSection />
+            <TeamSection content={siteContent.teamSection} />
         </div>
     );
 }

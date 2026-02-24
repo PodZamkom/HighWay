@@ -105,58 +105,335 @@
     "whatsapp": "https://wa.me/375447772224"
   },
   "hero": {
-    "badge": "СИСТЕМА АКТИВНА • LIVE DATA",
-    "titlePrimary": "HIGHWAY",
-    "titleAccent": "MOTORS",
-    "subtitleLine1": "Хватит переплачивать посредникам.",
-    "subtitleLine2Emphasis": "Честный импорт авто",
-    "subtitleLine2Rest": " из Китая, Европы и США.",
-    "marqueeLine": "ДАННЫЕ АУКЦИОНОВ США В РЕАЛЬНОМ ВРЕМЕНИ • ПРЯМОЙ ДОСТУП К ENCAR КОРЕЯ • ЭКСПОРТ ЭЛЕКТРОКАРОВ ИЗ КИТАЯ • ",
-    "primaryCta": {
-      "label": "ВЫБРАТЬ АВТО",
-      "href": "/catalog"
-    },
-    "secondaryCta": {
-      "label": "РАССЧИТАТЬ ЦЕНУ",
-      "href": "#calculator"
-    }
+    "title": "АВТО ИЗ США",
+    "descriptionBeforeBrand": "Хотите выгодно купить бу автомобиль из Америки с доставкой в Беларусь?",
+    "brand": "HIGHWAYMOTORS",
+    "descriptionAfterBrand": " поможет!",
+    "highlights": [
+      {
+        "label": "Экономия от",
+        "value": "10-15% стоимости авто"
+      },
+      {
+        "label": "Доставка от",
+        "value": "60 рабочих дней"
+      },
+      {
+        "label": "Экспертиза",
+        "value": "14 лет на рынке"
+      },
+      {
+        "label": "Репутация",
+        "value": "1500 отзывов"
+      }
+    ],
+    "consultationTitle": "Консультация эксперта",
+    "consultationDescriptionLine1": "Перезвоним за 1 минуту и расскажем о выгодных авто.",
+    "consultationDescriptionLine2": "Подберем лучшие варианты под ваш бюджет.",
+    "primaryButtonLabel": "Рассчитать стоимость",
+    "primaryButtonHref": "#calculator",
+    "contactsLabel": "Пишите нам:",
+    "whatsappLink": "https://wa.me/375447772224",
+    "telegramLink": "https://t.me/highwaymotors",
+    "instagramLink": "https://instagram.com/highwaymotors",
+    "youtubeSource": "https://youtube.com/shorts/8zO8IhwdVWo",
+    "fallbackImage": "/images/cars/ford/mustang_mach_e/main.webp",
+    "videoTitle": "Видео о подборе авто"
+  },
+  "promoBanners": {
+    "gapPx": 28,
+    "banners": [
+      {
+        "id": "main",
+        "title": "Авто из Китая: Скидка 30%.",
+        "buttonLabel": "Узнать больше",
+        "href": "/catalog?market=china",
+        "image": "/images/market-china.png",
+        "alt": "Авто из Китая"
+      },
+      {
+        "id": "europe",
+        "title": "Авто из Европы",
+        "buttonLabel": "Перейти",
+        "href": "/catalog?market=europe",
+        "image": "/images/market-europe.png",
+        "alt": "Авто из Европы"
+      },
+      {
+        "id": "usa-parts",
+        "title": "Запчасти из США",
+        "buttonLabel": "Смотреть каталог",
+        "href": "/catalog?market=usa",
+        "image": "/images/market-usa.png",
+        "alt": "Запчасти из США"
+      }
+    ]
   },
   "calculator": {
     "sectionTitle": "Честный калькулятор",
     "sectionHighlight": "под ключ",
-    "sectionDescription": "Выберите параметры автомобиля и получите расчет государственных таможенных платежей в РБ.",
-    "engineTypeLabel": "Тип двигателя",
-    "engineTypeOptions": {
-      "EV": "Электро",
-      "EREV": "Гибрид (REEV)",
-      "HEV": "Гибрид (классич.)",
-      "ICE": "ДВС"
-    },
-    "engineTypeHint": {
-      "EV": "0% таможенная пошлина.",
-      "OTHER": "Таможня + НДС (или льгота)."
-    },
-    "priceLabel": "Стоимость авто в Китае ($)",
-    "engineVolumeLabel": "Объем двигателя (см³)",
-    "carAgeLabel": "Возраст автомобиля",
-    "carAgeOptions": {
-      "0-3": "0-3 года",
-      "3-5": "3-5 лет",
-      "5+": "5+ лет"
-    },
-    "legalEntityLabel": "Юр. лицо",
-    "decreeLabel": "Льгота (Указ 140)",
-    "breakdownTitle": "Таможенные платежи (РБ)",
-    "breakdownLabels": {
-      "price": "Цена авто (USD)",
-      "duty": "Пошлина (EUR)",
-      "vat": "НДС (EUR)",
-      "recycling": "Утильсбор (BYN)",
-      "processing": "Сбор за оформление (BYN)",
-      "total": "Итого таможенные платежи"
-    },
-    "ctaLabel": "Получить детальный расчет",
-    "approxLabel": "≈"
+    "sectionDescription": "Выберите параметры автомобиля и получите точную цену в Минске с учетом таможенных платежей, утильсбора и нашей комиссии.",
+    "form": {
+      "labels": {
+        "transport": "Тип транспорта",
+        "carPrice": "Стоимость авто, $",
+        "age": "Возраст авто, лет",
+        "engine": "Объем двигателя, куб.см.",
+        "platform": "Площадка",
+        "platformFallback": "Выберите площадку",
+        "auction": "Выбор аукциона",
+        "deliveryTo": "Доставка в",
+        "preferential": "Льготная растаможка",
+        "offsite": "Offsite",
+        "purchaseAndDelivery": "Покупка и доставка",
+        "customsAndClearance": "Растаможка и оформление",
+        "total": "ИТОГО",
+        "disclaimer": "* В расчет не входят комиссии за переводы. Все суммы действительны на дату расчёта и могут изменяться.",
+        "downloadPdfTitle": "Скачать PDF",
+        "downloadPdfButton": "PDF",
+        "priceMin": "0 $",
+        "priceMax": "100 000 $"
+      },
+      "options": {
+        "transports": [
+          {
+            "key": "auto",
+            "name": "Автомобиль"
+          },
+          {
+            "key": "electro",
+            "name": "Электромобиль"
+          },
+          {
+            "key": "electro_suv",
+            "name": "Электромобиль SUV"
+          },
+          {
+            "key": "auto_suv",
+            "name": "Внедорожник SUV"
+          },
+          {
+            "key": "hybrid",
+            "name": "Гибрид"
+          },
+          {
+            "key": "hybrid_suv",
+            "name": "Гибрид SUV"
+          },
+          {
+            "key": "moto",
+            "name": "Мотоцикл"
+          },
+          {
+            "key": "moto-big",
+            "name": "Большой мотоцикл"
+          },
+          {
+            "key": "quadro",
+            "name": "Квадроцикл"
+          },
+          {
+            "key": "baggi",
+            "name": "Багги"
+          },
+          {
+            "key": "tricycle",
+            "name": "Трицикл"
+          }
+        ],
+        "auctions": [
+          {
+            "key": "Copart",
+            "name": "Copart"
+          },
+          {
+            "key": "CrashedToys",
+            "name": "CrashedToys (Copart)"
+          },
+          {
+            "key": "Iaai",
+            "name": "IAAI"
+          },
+          {
+            "key": "RecRides",
+            "name": "RecRides (IAAI)"
+          },
+          {
+            "key": "Impact_canada",
+            "name": "Impact (Канада)"
+          },
+          {
+            "key": "Copart_canada",
+            "name": "Copart Canada"
+          }
+        ],
+        "deliveries": [
+          {
+            "key": "by",
+            "name": "Беларусь, Минск",
+            "cityName": "Клайпеды",
+            "cityNameOld": "Минска"
+          },
+          {
+            "key": "ru",
+            "name": "Россия, Москва",
+            "cityName": "Клайпеды",
+            "cityNameOld": "Москвы"
+          },
+          {
+            "key": "ru_spb",
+            "name": "Россия, Санкт-Петербург",
+            "cityName": "Клайпеды",
+            "cityNameOld": "Санкт-Петербурга"
+          },
+          {
+            "key": "ru_krd",
+            "name": "Россия, Краснодар",
+            "cityName": "Клайпеды",
+            "cityNameOld": "Краснодара"
+          },
+          {
+            "key": "ua",
+            "name": "Украина, Одесса",
+            "cityName": "Одессы"
+          },
+          {
+            "key": "kg",
+            "name": "Киргизия, Бишкек",
+            "cityName": "Поти",
+            "cityNameOld": "Бишкека"
+          },
+          {
+            "key": "uz",
+            "name": "Узбекистан, Ташкент",
+            "cityName": "Поти",
+            "cityNameOld": "Ташкента"
+          },
+          {
+            "key": "az",
+            "name": "Азербайджан, Баку",
+            "cityName": "Поти",
+            "cityNameOld": "Баку"
+          },
+          {
+            "key": "kz",
+            "name": "Казахстан, Алматы",
+            "cityName": "Поти",
+            "cityNameOld": "Алматы"
+          },
+          {
+            "key": "kz_as",
+            "name": "Казахстан, Астана",
+            "cityName": "Поти",
+            "cityNameOld": "Астаны"
+          },
+          {
+            "key": "pl",
+            "name": "Польша, Варшава",
+            "cityName": "порта Бременхафен (Германия)"
+          },
+          {
+            "key": "ge",
+            "name": "Грузия, Поти",
+            "cityName": "Поти"
+          }
+        ],
+        "ages": [
+          {
+            "key": "0",
+            "name": "Менее года"
+          },
+          {
+            "key": "1",
+            "name": "1"
+          },
+          {
+            "key": "2",
+            "name": "2"
+          },
+          {
+            "key": "3",
+            "name": "3"
+          },
+          {
+            "key": "4",
+            "name": "4"
+          },
+          {
+            "key": "5",
+            "name": "5"
+          },
+          {
+            "key": "6",
+            "name": "6"
+          },
+          {
+            "key": "7",
+            "name": "7"
+          },
+          {
+            "key": "8",
+            "name": "8"
+          },
+          {
+            "key": "9",
+            "name": "9"
+          },
+          {
+            "key": "10",
+            "name": "10"
+          },
+          {
+            "key": "11",
+            "name": "11"
+          },
+          {
+            "key": "12",
+            "name": "12"
+          },
+          {
+            "key": "13",
+            "name": "13"
+          },
+          {
+            "key": "14",
+            "name": "14"
+          },
+          {
+            "key": "15",
+            "name": "15"
+          },
+          {
+            "key": "16",
+            "name": "Более 15"
+          }
+        ],
+        "platformDefault": {
+          "key": "",
+          "name": "Выберите площадку"
+        }
+      },
+      "errors": {
+        "calculationFailed": "Не удалось получить расчет. Проверьте параметры и попробуйте снова.",
+        "connectionFailed": "Ошибка соединения с калькулятором."
+      },
+      "rowLabels": {
+        "carPrice": "Стоимость авто",
+        "auctionFee": "Аукционный сбор",
+        "deliveryToUsaPort": "Транспортировка в порт США",
+        "deliveryFromPortToPoti": "Доставка от порта до Поти",
+        "deliveryFromPortDefault": "Доставка от порта",
+        "deliveryFromPortToCityTemplate": "Доставка от порта до {city}",
+        "deliveryFromPotiToTemplate": "Доставка от Поти до {city}",
+        "deliveryFromKlaipedaToTemplate": "Доставка от Клайпеды до {city}",
+        "deliveryToDestinationDefault": "Доставка до конечного пункта",
+        "ourServicePrice": "Стоимость наших услуг",
+        "customDuty": "Таможенная пошлина",
+        "customFee": "Таможенный сбор",
+        "junkFee": "Утилизационный сбор",
+        "svxServicePrice": "Расходы на СВХ"
+      }
+    }
   },
   "marketSection": {
     "title": "ГЛОБАЛЬНЫЙ РЫНОК",
@@ -209,6 +486,40 @@
         ],
         "bgClass": "bg-emerald-900/20"
       }
+    ]
+  },
+  "teamSection": {
+    "eyebrow": "Highway Motors",
+    "title": "Наша команда",
+    "description": "Специалисты, которые ведут сделку аккуратно и прозрачно: от подбора до передачи авто.",
+    "badge": "14+ лет опыта",
+    "members": [
+      {
+        "name": "Илья",
+        "role": "Эксперт по подбору",
+        "bio": "Подбор авто, проверка лотов и оценка рисков перед покупкой.",
+        "image": "/images/team/member-1.jpeg",
+        "position": "object-[52%_46%]"
+      },
+      {
+        "name": "Сергей",
+        "role": "Менеджер логистики",
+        "bio": "Контролирует доставку, сроки и этапы движения авто до выдачи клиенту.",
+        "image": "/images/team/member-2.jpeg",
+        "position": "object-[51%_38%]"
+      },
+      {
+        "name": "Тома",
+        "role": "Клиентский сервис",
+        "bio": "Сопровождает клиента по всем вопросам сделки и документов.",
+        "image": "/images/team/member-3.jpeg",
+        "position": "object-[50%_28%]"
+      }
+    ],
+    "stats": [
+      "1500+ отзывов и повторных клиентов",
+      "24/7 контроль статуса и этапов сделки",
+      "100% прозрачность расчета и сроков"
     ]
   },
   "catalogSection": {

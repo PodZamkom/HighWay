@@ -1,4 +1,5 @@
 import { LandingPriceCalculator } from '@/components/calculator/LandingPriceCalculator';
+import { getSiteContent } from '@/lib/data';
 import { ChevronRight } from 'lucide-react';
 
 export const metadata = {
@@ -7,7 +8,9 @@ export const metadata = {
         'Рассчитайте ориентировочную стоимость покупки и доставки авто из США в Беларусь: аукционный сбор, логистика, растаможка, оформление и итоговая цена.',
 };
 
-export default function CalculatorPage() {
+export default async function CalculatorPage() {
+    const siteContent = await getSiteContent();
+
     return (
         <div className="min-h-screen bg-[#f3f4f6] text-slate-900">
             <section className="px-4 pb-14 pt-28">
@@ -33,7 +36,7 @@ export default function CalculatorPage() {
                     </p>
 
                     <div className="mt-10 rounded-3xl border border-slate-200 bg-[#f6f6f7] p-5 md:p-8">
-                        <LandingPriceCalculator />
+                        <LandingPriceCalculator content={siteContent.calculator.form} />
                     </div>
                 </div>
             </section>

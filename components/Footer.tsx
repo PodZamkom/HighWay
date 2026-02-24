@@ -34,6 +34,9 @@ export function Footer({ content }: FooterProps) {
       <div className="max-w-7xl mx-auto px-4 text-center border-t border-white/10 pt-8">
         <p className="text-sm">{content.copyright}</p>
         <p className="text-xs mt-2">{content.tagline} <span className="text-gray-600">{content.version}</span></p>
+        <a href="/admin" className="mt-3 inline-block text-xs text-zinc-500 transition-colors hover:text-orange-400">
+          {content.adminLinkLabel}
+        </a>
       </div>
     </footer>
   );

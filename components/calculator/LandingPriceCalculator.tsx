@@ -2,16 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Download, Info, Loader2 } from 'lucide-react';
-
-type SelectOption = {
-    key: string;
-    name: string;
-};
-
-type DeliveryOption = SelectOption & {
-    cityName: string;
-    cityNameOld?: string;
-};
+import type { CalculatorDeliveryOption, CalculatorFormContent, CalculatorSelectOption } from '@/types/site';
 
 type CalculatorForm = {
     transport: string;
@@ -75,50 +66,6 @@ type CalculatorApiResponse = {
 
 const API_BASE = 'https://old.westmotors.by/themes/autousa/is/wm-calculator/calculator/api';
 
-const TRANSPORTS: SelectOption[] = [
-    { key: 'auto', name: 'Автомобиль' },
-    { key: 'electro', name: 'Электромобиль' },
-    { key: 'electro_suv', name: 'Электромобиль SUV' },
-    { key: 'auto_suv', name: 'Внедорожник SUV' },
-    { key: 'hybrid', name: 'Гибрид' },
-    { key: 'hybrid_suv', name: 'Гибрид SUV' },
-    { key: 'moto', name: 'Мотоцикл' },
-    { key: 'moto-big', name: 'Большой мотоцикл' },
-    { key: 'quadro', name: 'Квадроцикл' },
-    { key: 'baggi', name: 'Багги' },
-    { key: 'tricycle', name: 'Трицикл' },
-];
-
-const AUCTIONS: SelectOption[] = [
-    { key: 'Copart', name: 'Copart' },
-    { key: 'CrashedToys', name: 'CrashedToys (Copart)' },
-    { key: 'Iaai', name: 'IAAI' },
-    { key: 'RecRides', name: 'RecRides (IAAI)' },
-    { key: 'Impact_canada', name: 'Impact (Канада)' },
-    { key: 'Copart_canada', name: 'Copart Canada' },
-];
-
-const DELIVERIES: DeliveryOption[] = [
-    { key: 'by', name: 'Беларусь, Минск', cityName: 'Клайпеды', cityNameOld: 'Минска' },
-    { key: 'ru', name: 'Россия, Москва', cityName: 'Клайпеды', cityNameOld: 'Москвы' },
-    { key: 'ru_spb', name: 'Россия, Санкт-Петербург', cityName: 'Клайпеды', cityNameOld: 'Санкт-Петербурга' },
-    { key: 'ru_krd', name: 'Россия, Краснодар', cityName: 'Клайпеды', cityNameOld: 'Краснодара' },
-    { key: 'ua', name: 'Украина, Одесса', cityName: 'Одессы' },
-    { key: 'kg', name: 'Киргизия, Бишкек', cityName: 'Поти', cityNameOld: 'Бишкека' },
-    { key: 'uz', name: 'Узбекистан, Ташкент', cityName: 'Поти', cityNameOld: 'Ташкента' },
-    { key: 'az', name: 'Азербайджан, Баку', cityName: 'Поти', cityNameOld: 'Баку' },
-    { key: 'kz', name: 'Казахстан, Алматы', cityName: 'Поти', cityNameOld: 'Алматы' },
-    { key: 'kz_as', name: 'Казахстан, Астана', cityName: 'Поти', cityNameOld: 'Астаны' },
-    { key: 'pl', name: 'Польша, Варшава', cityName: 'порта Бременхафен (Германия)' },
-    { key: 'ge', name: 'Грузия, Поти', cityName: 'Поти' },
-];
-
-const AGES: SelectOption[] = [
-    { key: '0', name: 'Менее года' },
-    ...Array.from({ length: 15 }, (_, index) => ({ key: String(index + 1), name: String(index + 1) })),
-    { key: '16', name: 'Более 15' },
-];
-
 const DEFAULT_FORM: CalculatorForm = {
     transport: 'auto',
     platform: '',
@@ -149,6 +96,10 @@ const DEFAULT_FORM: CalculatorForm = {
     commercialRecyclingFee: 0,
 };
 
+interface LandingPriceCalculatorProps {
+    content: CalculatorFormContent;
+}
+
 function parseNumber(value: string | number | null | undefined): number {
     if (value == null) return 0;
     if (typeof value === 'number') return value;
@@ -162,21 +113,33 @@ function isPositive(value: string | number | null | undefined): boolean {
     return parseNumber(value) > 0;
 }
 
-function rowLabelDeliveryFromPort(form: CalculatorForm, delivery: DeliveryOption | undefined): string {
-    if (form.deliveryViaPoti) return 'Доставка от порта до Поти';
-    if (!delivery) return 'Доставка от порта';
-
-    return `Доставка от порта до ${delivery.cityName}`;
+function applyTemplate(template: string, city: string): string {
+    return template.replace('{city}', city);
 }
 
-function rowLabelFromKlaipeda(form: CalculatorForm, delivery: DeliveryOption | undefined): string {
-    if (!delivery) return 'Доставка до конечного пункта';
+function rowLabelDeliveryFromPort(
+    form: CalculatorForm,
+    delivery: CalculatorDeliveryOption | undefined,
+    content: CalculatorFormContent
+): string {
+    if (form.deliveryViaPoti) return content.rowLabels.deliveryFromPortToPoti;
+    if (!delivery) return content.rowLabels.deliveryFromPortDefault;
+    return applyTemplate(content.rowLabels.deliveryFromPortToCityTemplate, delivery.cityName);
+}
+
+function rowLabelFromKlaipeda(
+    form: CalculatorForm,
+    delivery: CalculatorDeliveryOption | undefined,
+    content: CalculatorFormContent
+): string {
+    if (!delivery) return content.rowLabels.deliveryToDestinationDefault;
+    const destination = delivery.cityNameOld ?? delivery.name;
 
     if (form.deliveryViaPoti || form.deliveryTo === 'kz' || form.deliveryTo === 'kz_as') {
-        return `Доставка от Поти до ${delivery.cityNameOld ?? delivery.name}`;
+        return applyTemplate(content.rowLabels.deliveryFromPotiToTemplate, destination);
     }
 
-    return `Доставка от Клайпеды до ${delivery.cityNameOld ?? delivery.name}`;
+    return applyTemplate(content.rowLabels.deliveryFromKlaipedaToTemplate, destination);
 }
 
 function sanitizePriceInput(value: number): number {
@@ -184,9 +147,9 @@ function sanitizePriceInput(value: number): number {
     return Math.max(0, Math.min(100000, Math.round(value)));
 }
 
-export function LandingPriceCalculator() {
+export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps) {
     const [form, setForm] = useState<CalculatorForm>(DEFAULT_FORM);
-    const [platforms, setPlatforms] = useState<SelectOption[]>([{ key: '', name: 'Выберите площадку' }]);
+    const [platforms, setPlatforms] = useState<CalculatorSelectOption[]>([content.options.platformDefault]);
     const [result, setResult] = useState<CalculatorResult | null>(null);
     const [isLoadingResult, setIsLoadingResult] = useState(false);
     const [isLoadingPlatforms, setIsLoadingPlatforms] = useState(false);
@@ -194,9 +157,13 @@ export function LandingPriceCalculator() {
     const [error, setError] = useState<string | null>(null);
 
     const deliveryOption = useMemo(
-        () => DELIVERIES.find((item) => item.key === form.deliveryTo),
-        [form.deliveryTo]
+        () => content.options.deliveries.find((item) => item.key === form.deliveryTo),
+        [form.deliveryTo, content.options.deliveries]
     );
+
+    useEffect(() => {
+        setPlatforms([content.options.platformDefault]);
+    }, [content.options.platformDefault]);
 
     useEffect(() => {
         let isMounted = true;
@@ -208,13 +175,13 @@ export function LandingPriceCalculator() {
                 const response = await fetch(`${API_BASE}/getPlatforms.php?auction=${encodeURIComponent(form.auction)}`, {
                     signal: controller.signal,
                 });
-                const data = (await response.json()) as SelectOption[];
+                const data = (await response.json()) as CalculatorSelectOption[];
 
                 if (!isMounted) return;
 
                 const safeData = Array.isArray(data) && data.length > 0
                     ? data
-                    : [{ key: '', name: 'Выберите площадку' }];
+                    : [content.options.platformDefault];
 
                 setPlatforms(safeData);
 
@@ -226,7 +193,7 @@ export function LandingPriceCalculator() {
                 if (controller.signal.aborted) return;
                 if (!isMounted) return;
 
-                setPlatforms([{ key: '', name: 'Выберите площадку' }]);
+                setPlatforms([content.options.platformDefault]);
                 setForm((prev) => ({ ...prev, platform: '' }));
             } finally {
                 if (isMounted) {
@@ -241,7 +208,7 @@ export function LandingPriceCalculator() {
             isMounted = false;
             controller.abort();
         };
-    }, [form.auction]);
+    }, [form.auction, content.options.platformDefault]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -267,11 +234,11 @@ export function LandingPriceCalculator() {
                 if (data.success && data.data) {
                     setResult(data.data);
                 } else {
-                    setError('Не удалось получить расчет. Проверьте параметры и попробуйте снова.');
+                    setError(content.errors.calculationFailed);
                 }
             } catch (fetchError) {
                 if (!controller.signal.aborted) {
-                    setError('Ошибка соединения с калькулятором.');
+                    setError(content.errors.connectionFailed);
                 }
             } finally {
                 if (!controller.signal.aborted) {
@@ -284,7 +251,7 @@ export function LandingPriceCalculator() {
             clearTimeout(timer);
             controller.abort();
         };
-    }, [form]);
+    }, [form, content.errors.calculationFailed, content.errors.connectionFailed]);
 
     const updateForm = (patch: Partial<CalculatorForm>) => {
         setForm((prev) => ({ ...prev, ...patch }));
@@ -333,27 +300,17 @@ export function LandingPriceCalculator() {
     return (
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="space-y-7">
-                <div>
-                    <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
-                        Тип транспорта
-                        <Info size={12} />
-                    </label>
-                    <select
-                        className="w-full rounded-none border-b border-slate-300 bg-transparent px-0 py-3 text-3xl font-light text-slate-900 outline-none"
-                        value={form.transport}
-                        onChange={(event) => onTransportChange(event.target.value)}
-                    >
-                        {TRANSPORTS.map((item) => (
-                            <option key={item.key} value={item.key}>
-                                {item.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <CalculatorSelect
+                    label={content.labels.transport}
+                    value={form.transport}
+                    onChange={(value) => onTransportChange(value)}
+                    options={content.options.transports}
+                    withInfoIcon
+                />
 
                 <div>
                     <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
-                        Стоимость авто, $
+                        {content.labels.carPrice}
                         <Info size={12} />
                     </label>
                     <div className="mb-2 text-4xl font-light text-slate-900">{form.carPrice.toLocaleString('ru-RU')}</div>
@@ -367,32 +324,23 @@ export function LandingPriceCalculator() {
                         className="w-full accent-rose-500"
                     />
                     <div className="mt-1 flex justify-between text-sm text-slate-400">
-                        <span>0 $</span>
-                        <span>100 000 $</span>
+                        <span>{content.labels.priceMin}</span>
+                        <span>{content.labels.priceMax}</span>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <CalculatorSelect
+                        label={content.labels.age}
+                        value={String(form.age)}
+                        onChange={(value) => updateForm({ age: Number(value) })}
+                        options={content.options.ages}
+                        withInfoIcon
+                    />
+
                     <div>
                         <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
-                            Возраст авто, лет
-                            <Info size={12} />
-                        </label>
-                        <select
-                            className="w-full rounded-none border-b border-slate-300 bg-transparent px-0 py-2 text-3xl font-light text-slate-900 outline-none"
-                            value={String(form.age)}
-                            onChange={(event) => updateForm({ age: Number(event.target.value) })}
-                        >
-                            {AGES.map((item) => (
-                                <option key={item.key} value={item.key}>
-                                    {item.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
-                            Объем двигателя, куб.см.
+                            {content.labels.engine}
                         </label>
                         <input
                             type="number"
@@ -406,60 +354,31 @@ export function LandingPriceCalculator() {
                     </div>
                 </div>
 
-                <div>
-                    <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
-                        Площадка
-                        <Info size={12} />
-                    </label>
-                    <select
-                        className="w-full rounded-none border-b border-slate-300 bg-transparent px-0 py-3 text-3xl font-light text-slate-900 outline-none"
-                        value={form.platform}
-                        onChange={(event) => updateForm({ platform: event.target.value })}
-                        disabled={isLoadingPlatforms}
-                    >
-                        {platforms.map((item, index) => (
-                            <option key={`${item.key}-${index}`} value={item.key}>
-                                {item.name || 'Выберите площадку'}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <CalculatorSelect
+                    label={content.labels.platform}
+                    value={form.platform}
+                    onChange={(value) => updateForm({ platform: value })}
+                    options={platforms}
+                    fallbackLabel={content.labels.platformFallback}
+                    disabled={isLoadingPlatforms}
+                    withInfoIcon
+                />
 
-                <div>
-                    <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
-                        Выбор аукциона
-                        <Info size={12} />
-                    </label>
-                    <select
-                        className="w-full rounded-none border-b border-slate-300 bg-transparent px-0 py-3 text-3xl font-light text-slate-900 outline-none"
-                        value={form.auction}
-                        onChange={(event) => updateForm({ auction: event.target.value })}
-                    >
-                        {AUCTIONS.map((item) => (
-                            <option key={item.key} value={item.key}>
-                                {item.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <CalculatorSelect
+                    label={content.labels.auction}
+                    value={form.auction}
+                    onChange={(value) => updateForm({ auction: value })}
+                    options={content.options.auctions}
+                    withInfoIcon
+                />
 
-                <div>
-                    <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
-                        Доставка в
-                        <Info size={12} />
-                    </label>
-                    <select
-                        className="w-full rounded-none border-b border-slate-300 bg-transparent px-0 py-3 text-3xl font-light text-slate-900 outline-none"
-                        value={form.deliveryTo}
-                        onChange={(event) => updateForm({ deliveryTo: event.target.value })}
-                    >
-                        {DELIVERIES.map((item) => (
-                            <option key={item.key} value={item.key}>
-                                {item.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <CalculatorSelect
+                    label={content.labels.deliveryTo}
+                    value={form.deliveryTo}
+                    onChange={(value) => updateForm({ deliveryTo: value })}
+                    options={content.options.deliveries}
+                    withInfoIcon
+                />
 
                 <div className="space-y-3 pt-1 text-lg text-slate-800">
                     <label className="flex cursor-pointer items-center gap-3">
@@ -469,7 +388,7 @@ export function LandingPriceCalculator() {
                             onChange={(event) => updateForm({ preferential: event.target.checked })}
                             className="h-4 w-4"
                         />
-                        <span>Льготная растаможка</span>
+                        <span>{content.labels.preferential}</span>
                     </label>
                     <label className="flex cursor-pointer items-center gap-3">
                         <input
@@ -478,7 +397,7 @@ export function LandingPriceCalculator() {
                             onChange={(event) => updateForm({ isOffside: event.target.checked })}
                             className="h-4 w-4"
                         />
-                        <span>Offsite</span>
+                        <span>{content.labels.offsite}</span>
                     </label>
                 </div>
             </div>
@@ -498,41 +417,39 @@ export function LandingPriceCalculator() {
 
                 {resultReady && result && (
                     <div className="space-y-4 text-base leading-[1.2] sm:text-xl">
-                        <h3 className="border-b border-rose-300 pb-2 text-2xl font-light text-slate-900 sm:text-3xl">Покупка и доставка</h3>
+                        <h3 className="border-b border-rose-300 pb-2 text-2xl font-light text-slate-900 sm:text-3xl">{content.labels.purchaseAndDelivery}</h3>
 
-                        <ResultRow label="Стоимость авто" value={result.carPrice} currency={result.carPrice_CUR} />
-                        <ResultRow label="Аукционный сбор" value={result.auctionFee} currency={result.auctionFee_CUR} />
-                        <ResultRow label="Транспортировка в порт США" value={result.deliveryToPortUSA} currency={result.deliveryToPortUSA_CUR} />
+                        <ResultRow label={content.rowLabels.carPrice} value={result.carPrice} currency={result.carPrice_CUR} />
+                        <ResultRow label={content.rowLabels.auctionFee} value={result.auctionFee} currency={result.auctionFee_CUR} />
+                        <ResultRow label={content.rowLabels.deliveryToUsaPort} value={result.deliveryToPortUSA} currency={result.deliveryToPortUSA_CUR} />
                         <ResultRow
-                            label={rowLabelDeliveryFromPort(form, deliveryOption)}
+                            label={rowLabelDeliveryFromPort(form, deliveryOption, content)}
                             value={result.deliveryFromPortUSA}
                             currency={result.deliveryFromPortUSA_CUR}
                         />
                         <ResultRow
-                            label={rowLabelFromKlaipeda(form, deliveryOption)}
+                            label={rowLabelFromKlaipeda(form, deliveryOption, content)}
                             value={result.fromKlaipeda}
                             currency={result.fromKlaipeda_CUR}
                             show={isPositive(result.fromKlaipeda)}
                         />
-                        <ResultRow label="Стоимость наших услуг" value={result.ourServicePrice} currency={result.ourServicePrice_CUR} />
+                        <ResultRow label={content.rowLabels.ourServicePrice} value={result.ourServicePrice} currency={result.ourServicePrice_CUR} />
 
-                        <h3 className="border-b border-rose-300 pb-2 pt-4 text-2xl font-light text-slate-900 sm:text-3xl">Растаможка и оформление</h3>
+                        <h3 className="border-b border-rose-300 pb-2 pt-4 text-2xl font-light text-slate-900 sm:text-3xl">{content.labels.customsAndClearance}</h3>
 
-                        <ResultRow label="Таможенная пошлина" value={result.customDuty} currency={result.customDuty_CUR} />
-                        <ResultRow label="Таможенный сбор" value={result.customFee} currency={result.customFee_CUR} show={isPositive(result.customFee)} />
-                        <ResultRow label="Утилизационный сбор" value={result.junkFee} currency={result.junkFee_CUR} show={isPositive(result.junkFee)} />
-                        <ResultRow label="Расходы на СВХ" value={result.svxServicePrice} currency={result.svxServicePrice_CUR} show={isPositive(result.svxServicePrice)} />
+                        <ResultRow label={content.rowLabels.customDuty} value={result.customDuty} currency={result.customDuty_CUR} />
+                        <ResultRow label={content.rowLabels.customFee} value={result.customFee} currency={result.customFee_CUR} show={isPositive(result.customFee)} />
+                        <ResultRow label={content.rowLabels.junkFee} value={result.junkFee} currency={result.junkFee_CUR} show={isPositive(result.junkFee)} />
+                        <ResultRow label={content.rowLabels.svxServicePrice} value={result.svxServicePrice} currency={result.svxServicePrice_CUR} show={isPositive(result.svxServicePrice)} />
 
                         <div className="flex items-end justify-between border-t border-slate-200 pt-4 text-2xl font-medium sm:text-3xl">
-                            <span className="text-slate-900">ИТОГО</span>
+                            <span className="text-slate-900">{content.labels.total}</span>
                             <span className="text-rose-500">
                                 {result.resultPrice} {result.resultPrice_CUR}
                             </span>
                         </div>
 
-                        <p className="text-lg text-rose-500">
-                            * В расчет не входят комиссии за переводы. Все суммы действительны на дату расчёта и могут изменяться.
-                        </p>
+                        <p className="text-lg text-rose-500">{content.labels.disclaimer}</p>
 
                         <div className="flex justify-end">
                             <button
@@ -540,15 +457,54 @@ export function LandingPriceCalculator() {
                                 onClick={onDownloadPdf}
                                 disabled={isDownloadingPdf || isLoadingResult}
                                 className="inline-flex items-center gap-2 rounded-md border border-blue-600 px-3 py-2 text-sm text-blue-600 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-60"
-                                title="Скачать PDF"
+                                title={content.labels.downloadPdfTitle}
                             >
                                 {isDownloadingPdf ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
-                                PDF
+                                {content.labels.downloadPdfButton}
                             </button>
                         </div>
                     </div>
                 )}
             </div>
+        </div>
+    );
+}
+
+function CalculatorSelect({
+    label,
+    value,
+    onChange,
+    options,
+    fallbackLabel,
+    disabled,
+    withInfoIcon = false,
+}: {
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    options: CalculatorSelectOption[];
+    fallbackLabel?: string;
+    disabled?: boolean;
+    withInfoIcon?: boolean;
+}) {
+    return (
+        <div>
+            <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
+                {label}
+                {withInfoIcon ? <Info size={12} /> : null}
+            </label>
+            <select
+                className="w-full rounded-none border-b border-slate-300 bg-transparent px-0 py-3 text-3xl font-light text-slate-900 outline-none"
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                disabled={disabled}
+            >
+                {options.map((item, index) => (
+                    <option key={`${item.key}-${index}`} value={item.key}>
+                        {item.name || fallbackLabel}
+                    </option>
+                ))}
+            </select>
         </div>
     );
 }
