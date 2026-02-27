@@ -26,7 +26,7 @@ export function Navbar({ content }: NavbarProps) {
               {/* Logo */}
               <div className="flex-shrink-0">
                 <Link href="/" className="flex items-center gap-2">
-                  <img src="/images/logo-new.jpeg" alt="Highway Motors" className="h-8 w-auto object-contain sm:h-9" />
+                  <img src="/images/logo2.png" alt="Highway Motors" className="h-8 w-auto object-contain sm:h-9" />
                 </Link>
               </div>
 

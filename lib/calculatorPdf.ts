@@ -38,10 +38,10 @@ export async function buildCalculatorPdf(result: CalculatorResultPayload) {
   page.drawRectangle({ x: 0, y: 545, width: 842, height: 50, color: rgb(0.13, 0.14, 0.16) });
   page.drawRectangle({ x: 0, y: 0, width: 842, height: 6, color: rgb(0.95, 0.43, 0.09) });
 
-  const logoPath = path.join(process.cwd(), 'public', 'images', 'logo-new.jpeg');
+  const logoPath = path.join(process.cwd(), 'public', 'images', 'logo2.png');
   try {
     const logoBytes = await fs.readFile(logoPath);
-    const image = await pdf.embedJpg(logoBytes);
+    const image = await pdf.embedPng(logoBytes);
     page.drawImage(image, { x: 28, y: 548, width: 132, height: 40 });
   } catch {
     page.drawText('Highway Motors', { x: 28, y: 563, size: 18, font: fontBold, color: rgb(0.95, 0.43, 0.09) });
