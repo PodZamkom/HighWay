@@ -42,7 +42,7 @@ export async function buildCalculatorPdf(result: CalculatorResultPayload) {
   try {
     const logoBytes = await fs.readFile(logoPath);
     const image = await pdf.embedPng(logoBytes);
-    page.drawImage(image, { x: 28, y: 548, width: 132, height: 40 });
+    page.drawImage(image, { x: 28, y: 546, width: 146, height: 44 });
   } catch {
     page.drawText('Highway Motors', { x: 28, y: 563, size: 18, font: fontBold, color: rgb(0.95, 0.43, 0.09) });
   }
