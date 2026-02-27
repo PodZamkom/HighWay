@@ -8,6 +8,7 @@ Before sending results or links to the user:
 
 ## Deploy Source
 - Always deploy from `origin/main`.
+- For calculator persistence, run container with volume: `-v highway-runtime:/app/runtime`.
 
 ## Verification
 - Use `curl -I https://highwaymotors.site/catalog/<slug>` for each new item.

@@ -61,7 +61,6 @@ export default async function CalculatorPage() {
                     <p className="mb-2 mt-6 text-lg font-medium text-slate-900">Дополнительные опции:</p>
                     <ul className="list-disc space-y-1 pl-5 text-base">
                         <li>Льготная растаможка.</li>
-                        <li>Offsite (авто вне основного склада аукциона).</li>
                     </ul>
                 </div>
             </section>

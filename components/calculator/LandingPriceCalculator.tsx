@@ -2,534 +2,459 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Download, Info, Loader2 } from 'lucide-react';
-import type { CalculatorDeliveryOption, CalculatorFormContent, CalculatorSelectOption } from '@/types/site';
+import { AGE_PRESETS } from '@/lib/calculatorDefaults';
+import type {
+  AgePreset,
+  CalculatorOptionsResponse,
+  CalculatorResultPayload,
+  LocalCalculatorForm,
+} from '@/types/calculator';
+import type { CalculatorFormContent } from '@/types/site';
 
-type CalculatorForm = {
-    transport: string;
-    platform: string;
-    auction: string;
-    deliveryTo: string;
-    carPrice: number;
-    year: number | null;
-    age: number;
-    engine: number;
-    enginePower: number;
-    preferential: boolean;
-    isGibrid: boolean;
-    isSUV: boolean;
-    isConnectableGibrid: boolean;
-    fuel: 'gasoline' | 'diesel';
-    weight: number;
-    length: number;
-    boatType: string;
-    trailerWithBoat: boolean;
-    NDSReturn: boolean;
-    deliveryViaGermany: boolean;
-    deliveryViaPoti: boolean;
-    deliveryMethod: 'autovoz' | 'tent' | null;
-    ptsRF: boolean;
-    isRetroAuto: boolean;
-    deliveryToHome: boolean;
-    isOffside: boolean;
-    commercialRecyclingFee: number;
-};
+const PRICE_PRESETS = [3000, 5000, 10000, 15000, 20000, 30000];
 
-type CalculatorResult = {
-    carPrice: string;
-    carPrice_CUR: string;
-    auctionFee: string;
-    auctionFee_CUR: string;
-    deliveryToPortUSA: string;
-    deliveryToPortUSA_CUR: string;
-    deliveryFromPortUSA: string;
-    deliveryFromPortUSA_CUR: string;
-    fromKlaipeda: string;
-    fromKlaipeda_CUR: string;
-    ourServicePrice: string;
-    ourServicePrice_CUR: string;
-    customDuty: string;
-    customDuty_CUR: string;
-    customFee: string;
-    customFee_CUR: string;
-    junkFee: string;
-    junkFee_CUR: string;
-    svxServicePrice: string;
-    svxServicePrice_CUR: string;
-    resultPrice: string;
-    resultPrice_CUR: string;
-};
-
-type CalculatorApiResponse = {
-    success: boolean;
-    data?: CalculatorResult;
-};
-
-const API_BASE = 'https://old.westmotors.by/themes/autousa/is/wm-calculator/calculator/api';
-
-const DEFAULT_FORM: CalculatorForm = {
-    transport: 'auto',
-    platform: '',
-    auction: 'Copart',
-    deliveryTo: 'by',
-    carPrice: 3000,
-    year: null,
-    age: 1,
-    engine: 2000,
-    enginePower: 90,
-    preferential: false,
-    isGibrid: false,
-    isSUV: false,
-    isConnectableGibrid: false,
-    fuel: 'gasoline',
-    weight: 0,
-    length: 0,
-    boatType: 'motor',
-    trailerWithBoat: true,
-    NDSReturn: false,
-    deliveryViaGermany: true,
-    deliveryViaPoti: false,
-    deliveryMethod: 'autovoz',
-    ptsRF: false,
-    isRetroAuto: false,
-    deliveryToHome: false,
-    isOffside: false,
-    commercialRecyclingFee: 0,
+const DEFAULT_FORM: LocalCalculatorForm = {
+  transport: 'auto',
+  platform: '',
+  auction: 'Copart',
+  deliveryTo: 'by',
+  carPrice: 3000,
+  age: 1,
+  agePreset: '0_3',
+  engine: 2000,
+  preferential: false,
 };
 
 interface LandingPriceCalculatorProps {
-    content: CalculatorFormContent;
+  content: CalculatorFormContent;
 }
 
-function parseNumber(value: string | number | null | undefined): number {
-    if (value == null) return 0;
-    if (typeof value === 'number') return value;
-
-    const normalized = value.replace(/\s+/g, '').replace(/,/g, '').replace(/[^\d.-]/g, '');
-    const parsed = Number(normalized);
-    return Number.isFinite(parsed) ? parsed : 0;
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
 }
 
-function isPositive(value: string | number | null | undefined): boolean {
-    return parseNumber(value) > 0;
-}
-
-function applyTemplate(template: string, city: string): string {
-    return template.replace('{city}', city);
-}
-
-function rowLabelDeliveryFromPort(
-    form: CalculatorForm,
-    delivery: CalculatorDeliveryOption | undefined,
-    content: CalculatorFormContent
-): string {
-    if (form.deliveryViaPoti) return content.rowLabels.deliveryFromPortToPoti;
-    if (!delivery) return content.rowLabels.deliveryFromPortDefault;
-    return applyTemplate(content.rowLabels.deliveryFromPortToCityTemplate, delivery.cityName);
-}
-
-function rowLabelFromKlaipeda(
-    form: CalculatorForm,
-    delivery: CalculatorDeliveryOption | undefined,
-    content: CalculatorFormContent
-): string {
-    if (!delivery) return content.rowLabels.deliveryToDestinationDefault;
-    const destination = delivery.cityNameOld ?? delivery.name;
-
-    if (form.deliveryViaPoti || form.deliveryTo === 'kz' || form.deliveryTo === 'kz_as') {
-        return applyTemplate(content.rowLabels.deliveryFromPotiToTemplate, destination);
-    }
-
-    return applyTemplate(content.rowLabels.deliveryFromKlaipedaToTemplate, destination);
-}
-
-function sanitizePriceInput(value: number): number {
-    if (!Number.isFinite(value)) return 0;
-    return Math.max(0, Math.min(100000, Math.round(value)));
+function formatMoney(value: number, currency: 'USD' | 'BYN') {
+  const amount = value.toLocaleString('ru-RU', {
+    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: value % 1 === 0 ? 0 : 2,
+  });
+  return `${amount} ${currency}`;
 }
 
 export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps) {
-    const [form, setForm] = useState<CalculatorForm>(DEFAULT_FORM);
-    const [platforms, setPlatforms] = useState<CalculatorSelectOption[]>([content.options.platformDefault]);
-    const [result, setResult] = useState<CalculatorResult | null>(null);
-    const [isLoadingResult, setIsLoadingResult] = useState(false);
-    const [isLoadingPlatforms, setIsLoadingPlatforms] = useState(false);
-    const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState<LocalCalculatorForm>(DEFAULT_FORM);
+  const [options, setOptions] = useState<CalculatorOptionsResponse | null>(null);
+  const [result, setResult] = useState<CalculatorResultPayload | null>(null);
+  const [isLoadingResult, setIsLoadingResult] = useState(false);
+  const [isLoadingOptions, setIsLoadingOptions] = useState(true);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [mobileView, setMobileView] = useState<'form' | 'result'>('form');
 
-    const deliveryOption = useMemo(
-        () => content.options.deliveries.find((item) => item.key === form.deliveryTo),
-        [form.deliveryTo, content.options.deliveries]
-    );
+  useEffect(() => {
+    let active = true;
 
-    useEffect(() => {
-        setPlatforms([content.options.platformDefault]);
-    }, [content.options.platformDefault]);
+    const loadOptions = async () => {
+      setIsLoadingOptions(true);
+      try {
+        const response = await fetch('/api/calculator/options', { cache: 'no-store' });
+        const data = await response.json();
 
-    useEffect(() => {
-        let isMounted = true;
-        const controller = new AbortController();
-
-        const fetchPlatforms = async () => {
-            setIsLoadingPlatforms(true);
-            try {
-                const response = await fetch(`${API_BASE}/getPlatforms.php?auction=${encodeURIComponent(form.auction)}`, {
-                    signal: controller.signal,
-                });
-                const data = (await response.json()) as CalculatorSelectOption[];
-
-                if (!isMounted) return;
-
-                const safeData = Array.isArray(data) && data.length > 0
-                    ? data
-                    : [content.options.platformDefault];
-
-                setPlatforms(safeData);
-
-                setForm((prev) => {
-                    const hasCurrent = safeData.some((item) => item.key === prev.platform);
-                    return hasCurrent ? prev : { ...prev, platform: safeData[0]?.key ?? '' };
-                });
-            } catch (fetchError) {
-                if (controller.signal.aborted) return;
-                if (!isMounted) return;
-
-                setPlatforms([content.options.platformDefault]);
-                setForm((prev) => ({ ...prev, platform: '' }));
-            } finally {
-                if (isMounted) {
-                    setIsLoadingPlatforms(false);
-                }
-            }
-        };
-
-        fetchPlatforms();
-
-        return () => {
-            isMounted = false;
-            controller.abort();
-        };
-    }, [form.auction, content.options.platformDefault]);
-
-    useEffect(() => {
-        const controller = new AbortController();
-
-        const timer = setTimeout(async () => {
-            setIsLoadingResult(true);
-            setError(null);
-
-            try {
-                const response = await fetch(`${API_BASE}/doCalculate.php`, {
-                    method: 'POST',
-                    cache: 'no-cache',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(form),
-                    signal: controller.signal,
-                });
-
-                const data = (await response.json()) as CalculatorApiResponse;
-
-                if (data.success && data.data) {
-                    setResult(data.data);
-                } else {
-                    setError(content.errors.calculationFailed);
-                }
-            } catch (fetchError) {
-                if (!controller.signal.aborted) {
-                    setError(content.errors.connectionFailed);
-                }
-            } finally {
-                if (!controller.signal.aborted) {
-                    setIsLoadingResult(false);
-                }
-            }
-        }, 200);
-
-        return () => {
-            clearTimeout(timer);
-            controller.abort();
-        };
-    }, [form, content.errors.calculationFailed, content.errors.connectionFailed]);
-
-    const updateForm = (patch: Partial<CalculatorForm>) => {
-        setForm((prev) => ({ ...prev, ...patch }));
-    };
-
-    const onTransportChange = (transport: string) => {
-        const isHybrid = transport.includes('hybrid');
-        const isSuv = transport.includes('suv') || transport === 'pickup';
-
-        updateForm({
-            transport,
-            isGibrid: isHybrid,
-            isSUV: isSuv,
-        });
-    };
-
-    const onDownloadPdf = async () => {
-        try {
-            setIsDownloadingPdf(true);
-            const response = await fetch(`${API_BASE}/doCalculate.php?as-pdf=1`, {
-                method: 'POST',
-                cache: 'no-cache',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(form),
-            });
-
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-
-            link.href = url;
-            link.download = `highway-calculation-${Date.now()}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        } finally {
-            setIsDownloadingPdf(false);
+        if (!response.ok) {
+          throw new Error(data?.error || 'Failed to load options');
         }
+
+        if (!active) return;
+        setOptions(data);
+        setForm((prev) => ({
+          ...prev,
+          transport: data.transports?.[0]?.key || prev.transport,
+          auction: data.auctions?.[0]?.key || prev.auction,
+          deliveryTo: data.deliveries?.[0]?.key || prev.deliveryTo,
+          platform: data.platforms?.[0]?.key || prev.platform,
+        }));
+      } catch {
+        if (active) {
+          setError(content.errors.connectionFailed);
+        }
+      } finally {
+        if (active) {
+          setIsLoadingOptions(false);
+        }
+      }
     };
 
-    const resultReady = result && !error;
+    loadOptions();
 
-    return (
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="space-y-7">
-                <CalculatorSelect
-                    label={content.labels.transport}
-                    value={form.transport}
-                    onChange={(value) => onTransportChange(value)}
-                    options={content.options.transports}
-                    withInfoIcon
-                />
+    return () => {
+      active = false;
+    };
+  }, [content.errors.connectionFailed]);
 
-                <div>
-                    <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
-                        {content.labels.carPrice}
-                        <Info size={12} />
-                    </label>
-                    <div className="mb-2 text-4xl font-light text-slate-900">{form.carPrice.toLocaleString('ru-RU')}</div>
-                    <input
-                        type="range"
-                        min={0}
-                        max={100000}
-                        step={100}
-                        value={form.carPrice}
-                        onChange={(event) => updateForm({ carPrice: sanitizePriceInput(Number(event.target.value)) })}
-                        className="w-full accent-rose-500"
-                    />
-                    <div className="mt-1 flex justify-between text-sm text-slate-400">
-                        <span>{content.labels.priceMin}</span>
-                        <span>{content.labels.priceMax}</span>
-                    </div>
-                </div>
+  useEffect(() => {
+    if (!options) return;
+    const controller = new AbortController();
 
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <CalculatorSelect
-                        label={content.labels.age}
-                        value={String(form.age)}
-                        onChange={(value) => updateForm({ age: Number(value) })}
-                        options={content.options.ages}
-                        withInfoIcon
-                    />
+    const timer = setTimeout(async () => {
+      setIsLoadingResult(true);
+      setError(null);
 
-                    <div>
-                        <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
-                            {content.labels.engine}
-                        </label>
-                        <input
-                            type="number"
-                            min={0}
-                            max={10000}
-                            step={10}
-                            value={form.engine}
-                            onChange={(event) => updateForm({ engine: sanitizePriceInput(Number(event.target.value)) })}
-                            className="w-full rounded-none border-b border-slate-300 bg-transparent px-0 py-2 text-3xl font-light text-slate-900 outline-none"
-                        />
-                    </div>
-                </div>
+      try {
+        const response = await fetch('/api/calculator/calculate', {
+          method: 'POST',
+          cache: 'no-store',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ form }),
+          signal: controller.signal,
+        });
+        const data = await response.json();
 
-                <CalculatorSelect
-                    label={content.labels.platform}
-                    value={form.platform}
-                    onChange={(value) => updateForm({ platform: value })}
-                    options={platforms}
-                    fallbackLabel={content.labels.platformFallback}
-                    disabled={isLoadingPlatforms}
-                    withInfoIcon
-                />
+        if (!response.ok || !data?.success || !data?.data) {
+          throw new Error('Calculation failed');
+        }
 
-                <CalculatorSelect
-                    label={content.labels.auction}
-                    value={form.auction}
-                    onChange={(value) => updateForm({ auction: value })}
-                    options={content.options.auctions}
-                    withInfoIcon
-                />
+        setResult(data.data);
+      } catch {
+        if (!controller.signal.aborted) {
+          setError(content.errors.calculationFailed);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoadingResult(false);
+        }
+      }
+    }, 180);
 
-                <CalculatorSelect
-                    label={content.labels.deliveryTo}
-                    value={form.deliveryTo}
-                    onChange={(value) => updateForm({ deliveryTo: value })}
-                    options={content.options.deliveries}
-                    withInfoIcon
-                />
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [form, options, content.errors.calculationFailed]);
 
-                <div className="space-y-3 pt-1 text-lg text-slate-800">
-                    <label className="flex cursor-pointer items-center gap-3">
-                        <input
-                            type="checkbox"
-                            checked={form.preferential}
-                            onChange={(event) => updateForm({ preferential: event.target.checked })}
-                            className="h-4 w-4"
-                        />
-                        <span>{content.labels.preferential}</span>
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-3">
-                        <input
-                            type="checkbox"
-                            checked={form.isOffside}
-                            onChange={(event) => updateForm({ isOffside: event.target.checked })}
-                            className="h-4 w-4"
-                        />
-                        <span>{content.labels.offsite}</span>
-                    </label>
-                </div>
-            </div>
+  const updateForm = (patch: Partial<LocalCalculatorForm>) => {
+    setForm((prev) => ({ ...prev, ...patch }));
+  };
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                {!resultReady && !error && (
-                    <div className="flex min-h-[420px] items-center justify-center">
-                        <Loader2 className="h-9 w-9 animate-spin text-rose-500" />
-                    </div>
-                )}
+  const onAgePresetClick = (preset: AgePreset) => {
+    const found = AGE_PRESETS.find((item) => item.key === preset);
+    const age = found ? found.min : form.age;
+    updateForm({ agePreset: preset, age });
+  };
 
-                {error && (
-                    <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-                        {error}
-                    </div>
-                )}
+  const onAgeInput = (value: number) => {
+    const age = clamp(value, 0, 40);
+    updateForm({ age });
+  };
 
-                {resultReady && result && (
-                    <div className="space-y-4 text-base leading-[1.2] sm:text-xl">
-                        <h3 className="border-b border-rose-300 pb-2 text-2xl font-light text-slate-900 sm:text-3xl">{content.labels.purchaseAndDelivery}</h3>
+  const onDownloadPdf = async () => {
+    try {
+      setIsDownloadingPdf(true);
+      const response = await fetch('/api/calculator/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ form }),
+      });
 
-                        <ResultRow label={content.rowLabels.carPrice} value={result.carPrice} currency={result.carPrice_CUR} />
-                        <ResultRow label={content.rowLabels.auctionFee} value={result.auctionFee} currency={result.auctionFee_CUR} />
-                        <ResultRow label={content.rowLabels.deliveryToUsaPort} value={result.deliveryToPortUSA} currency={result.deliveryToPortUSA_CUR} />
-                        <ResultRow
-                            label={rowLabelDeliveryFromPort(form, deliveryOption, content)}
-                            value={result.deliveryFromPortUSA}
-                            currency={result.deliveryFromPortUSA_CUR}
-                        />
-                        <ResultRow
-                            label={rowLabelFromKlaipeda(form, deliveryOption, content)}
-                            value={result.fromKlaipeda}
-                            currency={result.fromKlaipeda_CUR}
-                            show={isPositive(result.fromKlaipeda)}
-                        />
-                        <ResultRow label={content.rowLabels.ourServicePrice} value={result.ourServicePrice} currency={result.ourServicePrice_CUR} />
+      if (!response.ok) {
+        throw new Error('Failed to build PDF');
+      }
 
-                        <h3 className="border-b border-rose-300 pb-2 pt-4 text-2xl font-light text-slate-900 sm:text-3xl">{content.labels.customsAndClearance}</h3>
-
-                        <ResultRow label={content.rowLabels.customDuty} value={result.customDuty} currency={result.customDuty_CUR} />
-                        <ResultRow label={content.rowLabels.customFee} value={result.customFee} currency={result.customFee_CUR} show={isPositive(result.customFee)} />
-                        <ResultRow label={content.rowLabels.junkFee} value={result.junkFee} currency={result.junkFee_CUR} show={isPositive(result.junkFee)} />
-                        <ResultRow label={content.rowLabels.svxServicePrice} value={result.svxServicePrice} currency={result.svxServicePrice_CUR} show={isPositive(result.svxServicePrice)} />
-
-                        <div className="flex items-end justify-between border-t border-slate-200 pt-4 text-2xl font-medium sm:text-3xl">
-                            <span className="text-slate-900">{content.labels.total}</span>
-                            <span className="text-rose-500">
-                                {result.resultPrice} {result.resultPrice_CUR}
-                            </span>
-                        </div>
-
-                        <p className="text-lg text-rose-500">{content.labels.disclaimer}</p>
-
-                        <div className="flex justify-end">
-                            <button
-                                type="button"
-                                onClick={onDownloadPdf}
-                                disabled={isDownloadingPdf || isLoadingResult}
-                                className="inline-flex items-center gap-2 rounded-md border border-blue-600 px-3 py-2 text-sm text-blue-600 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-60"
-                                title={content.labels.downloadPdfTitle}
-                            >
-                                {isDownloadingPdf ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
-                                {content.labels.downloadPdfButton}
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-}
-
-function CalculatorSelect({
-    label,
-    value,
-    onChange,
-    options,
-    fallbackLabel,
-    disabled,
-    withInfoIcon = false,
-}: {
-    label: string;
-    value: string;
-    onChange: (value: string) => void;
-    options: CalculatorSelectOption[];
-    fallbackLabel?: string;
-    disabled?: boolean;
-    withInfoIcon?: boolean;
-}) {
-    return (
-        <div>
-            <label className="mb-2 inline-flex items-center gap-1 text-sm uppercase tracking-wide text-slate-400">
-                {label}
-                {withInfoIcon ? <Info size={12} /> : null}
-            </label>
-            <select
-                className="w-full rounded-none border-b border-slate-300 bg-transparent px-0 py-3 text-3xl font-light text-slate-900 outline-none"
-                value={value}
-                onChange={(event) => onChange(event.target.value)}
-                disabled={disabled}
-            >
-                {options.map((item, index) => (
-                    <option key={`${item.key}-${index}`} value={item.key}>
-                        {item.name || fallbackLabel}
-                    </option>
-                ))}
-            </select>
-        </div>
-    );
-}
-
-function ResultRow({
-    label,
-    value,
-    currency,
-    show = true,
-}: {
-    label: string;
-    value: string;
-    currency: string;
-    show?: boolean;
-}) {
-    if (!show) {
-        return null;
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `highway-calculation-${Date.now()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } finally {
+      setIsDownloadingPdf(false);
     }
+  };
 
-    return (
-        <div className="flex items-center justify-between gap-4 text-base font-light sm:text-xl">
-            <span className="text-slate-800">{label}</span>
-            <span className="whitespace-nowrap text-rose-500">
-                {value} {currency}
-            </span>
+  const resultRows = useMemo(() => {
+    if (!result) return [];
+    return [
+      result.carPrice,
+      result.auctionFee,
+      result.deliveryToPortUSA,
+      result.deliveryFromPortUSA,
+      result.fromKlaipeda,
+      result.ourServicePrice,
+    ];
+  }, [result]);
+
+  const customsRows = useMemo(() => {
+    if (!result) return [];
+    return [result.customDuty, result.customFee, result.junkFee, result.svxServicePrice];
+  }, [result]);
+
+  return (
+    <div className="h-[100dvh] max-h-[100dvh] min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:h-[75vh] md:min-h-[520px]">
+      <div className="flex h-full flex-col">
+        <div className="grid grid-cols-2 border-b border-slate-200 bg-slate-50 p-1 md:hidden">
+          <button
+            type="button"
+            onClick={() => setMobileView('form')}
+            className={`rounded-md px-3 py-2 text-sm font-medium transition ${
+              mobileView === 'form' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'
+            }`}
+          >
+            Параметры
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileView('result')}
+            className={`rounded-md px-3 py-2 text-sm font-medium transition ${
+              mobileView === 'result' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'
+            }`}
+          >
+            Расчет
+          </button>
         </div>
-    );
+
+        <div className="grid h-full grid-cols-1 md:grid-cols-[1.02fr_0.98fr]">
+          <div className={`h-full overflow-y-auto p-3 md:p-4 ${mobileView === 'form' ? 'block' : 'hidden md:block'}`}>
+            <div className="space-y-3">
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <label className="mb-1 inline-flex items-center gap-1 text-[11px] uppercase tracking-wide text-slate-500">
+                  {content.labels.carPrice}
+                  <Info size={11} />
+                </label>
+                <input
+                  type="number"
+                  value={form.carPrice}
+                  min={0}
+                  max={100000}
+                  step={100}
+                  onChange={(event) => updateForm({ carPrice: clamp(Number(event.target.value) || 0, 0, 100000) })}
+                  className="mb-2 w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xl font-semibold text-slate-900 outline-none focus:border-rose-400"
+                />
+                <input
+                  type="range"
+                  min={0}
+                  max={100000}
+                  step={100}
+                  value={form.carPrice}
+                  onChange={(event) => updateForm({ carPrice: clamp(Number(event.target.value), 0, 100000) })}
+                  className="w-full accent-rose-500"
+                />
+                <div className="mt-1 flex justify-between text-[11px] text-slate-400">
+                  <span>{content.labels.priceMin}</span>
+                  <span>{content.labels.priceMax}</span>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {PRICE_PRESETS.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => updateForm({ carPrice: item })}
+                      className={`rounded px-2.5 py-1 text-xs font-medium transition ${
+                        form.carPrice === item
+                          ? 'bg-rose-500 text-white'
+                          : 'border border-slate-300 bg-white text-slate-700 hover:border-rose-300'
+                      }`}
+                    >
+                      {item.toLocaleString('ru-RU')}$
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <label className="mb-1 inline-flex items-center gap-1 text-[11px] uppercase tracking-wide text-slate-500">
+                  {content.labels.age}
+                  <Info size={11} />
+                </label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {AGE_PRESETS.map((preset) => (
+                    <button
+                      key={preset.key}
+                      type="button"
+                      onClick={() => onAgePresetClick(preset.key)}
+                      className={`rounded px-2 py-1.5 text-left text-xs font-medium transition ${
+                        form.agePreset === preset.key
+                          ? 'bg-rose-500 text-white'
+                          : 'border border-slate-300 bg-white text-slate-700 hover:border-rose-300'
+                      }`}
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-2">
+                  <label className="mb-1 block text-[11px] uppercase tracking-wide text-slate-500">Точный возраст (лет)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={40}
+                    value={form.age}
+                    onChange={(event) => onAgeInput(Number(event.target.value) || 0)}
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-base text-slate-900 outline-none focus:border-rose-400"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <SelectField
+                  label={content.labels.transport}
+                  value={form.transport}
+                  onChange={(value) => updateForm({ transport: value })}
+                  options={options?.transports || []}
+                  withInfoIcon
+                  disabled={isLoadingOptions}
+                />
+                <SelectField
+                  label={content.labels.platform}
+                  value={form.platform}
+                  onChange={(value) => updateForm({ platform: value })}
+                  options={options?.platforms || []}
+                  fallbackLabel={content.labels.platformFallback}
+                  withInfoIcon
+                  disabled={isLoadingOptions}
+                />
+                <SelectField
+                  label={content.labels.auction}
+                  value={form.auction}
+                  onChange={(value) => updateForm({ auction: value })}
+                  options={options?.auctions || []}
+                  withInfoIcon
+                  disabled={isLoadingOptions}
+                />
+                <SelectField
+                  label={content.labels.deliveryTo}
+                  value={form.deliveryTo}
+                  onChange={(value) => updateForm({ deliveryTo: value })}
+                  options={options?.deliveries || []}
+                  withInfoIcon
+                  disabled={isLoadingOptions}
+                />
+                <div>
+                  <label className="mb-1 inline-flex items-center gap-1 text-[11px] uppercase tracking-wide text-slate-500">
+                    {content.labels.engine}
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={12000}
+                    step={10}
+                    value={form.engine}
+                    onChange={(event) => updateForm({ engine: clamp(Number(event.target.value) || 0, 0, 12000) })}
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-rose-400"
+                  />
+                </div>
+                <label className="mt-6 flex cursor-pointer items-center gap-2 text-xs text-slate-700 sm:mt-5">
+                  <input
+                    type="checkbox"
+                    checked={form.preferential}
+                    onChange={(event) => updateForm({ preferential: event.target.checked })}
+                    className="h-4 w-4"
+                  />
+                  <span>{content.labels.preferential}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div className={`h-full border-t border-slate-200 p-3 md:border-l md:border-t-0 md:p-4 ${mobileView === 'result' ? 'block' : 'hidden md:block'}`}>
+            <div className="h-full overflow-y-auto rounded-lg border border-slate-100 bg-white p-3">
+              {isLoadingResult && !result && (
+                <div className="flex min-h-[260px] items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-rose-500" />
+                </div>
+              )}
+
+              {error && (
+                <div className="rounded-md border border-rose-200 bg-rose-50 p-2 text-xs text-rose-700">{error}</div>
+              )}
+
+              {result && !error && (
+                <div className="space-y-3">
+                  <h3 className="border-b border-rose-300 pb-1 text-base font-semibold text-slate-900">{content.labels.purchaseAndDelivery}</h3>
+                  {resultRows.map((item, index) => (
+                    <ResultRow key={`${item.label}-${index}`} label={item.label} value={formatMoney(item.value, item.currency)} />
+                  ))}
+
+                  <h3 className="border-b border-rose-300 pb-1 pt-2 text-base font-semibold text-slate-900">{content.labels.customsAndClearance}</h3>
+                  {customsRows.map((item, index) => (
+                    <ResultRow key={`${item.label}-${index}`} label={item.label} value={formatMoney(item.value, item.currency)} />
+                  ))}
+
+                  <div className="flex items-end justify-between border-t border-slate-200 pt-3 text-xl font-semibold">
+                    <span className="text-slate-900">{content.labels.total}</span>
+                    <span className="text-rose-500">{formatMoney(result.total.value, result.total.currency)}</span>
+                  </div>
+
+                  <p className="text-[11px] text-rose-500">{content.labels.disclaimer}</p>
+
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={onDownloadPdf}
+                      disabled={isDownloadingPdf || isLoadingResult}
+                      className="inline-flex items-center gap-2 rounded-md border border-slate-900 px-3 py-1.5 text-xs text-slate-900 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                      title={content.labels.downloadPdfTitle}
+                    >
+                      {isDownloadingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                      {content.labels.downloadPdfButton}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+  fallbackLabel,
+  withInfoIcon,
+  disabled,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { key: string; name: string }[];
+  fallbackLabel?: string;
+  withInfoIcon?: boolean;
+  disabled?: boolean;
+}) {
+  return (
+    <div>
+      <label className="mb-1 inline-flex items-center gap-1 text-[11px] uppercase tracking-wide text-slate-500">
+        {label}
+        {withInfoIcon ? <Info size={12} /> : null}
+      </label>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        disabled={disabled}
+        className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-rose-400"
+      >
+        {options.length === 0 ? <option value="">{fallbackLabel || '—'}</option> : null}
+        {options.map((item, index) => (
+          <option key={`${item.key}-${index}`} value={item.key}>
+            {item.name || fallbackLabel}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function ResultRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 text-sm">
+      <span className="text-slate-700">{label}</span>
+      <span className="whitespace-nowrap font-semibold text-rose-500">{value}</span>
+    </div>
+  );
 }

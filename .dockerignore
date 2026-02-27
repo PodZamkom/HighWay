@@ -6,3 +6,4 @@ build
 .env
 *.log
 temp_*.tsx
+runtime

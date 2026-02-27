@@ -113,7 +113,6 @@ export interface CalculatorFormContent {
     auction: string;
     deliveryTo: string;
     preferential: string;
-    offsite: string;
     purchaseAndDelivery: string;
     customsAndClearance: string;
     total: string;

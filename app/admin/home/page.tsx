@@ -112,7 +112,7 @@ export default function AdminHomePage() {
                     </p>
                     <div className="mt-4 flex flex-wrap gap-3 text-sm">
                         <a href="/admin/calculator" className="rounded-lg bg-zinc-800 px-3 py-2 hover:bg-zinc-700 transition-colors">
-                            Перейти к настройкам калькулятора курсов
+                            Перейти к настройкам калькулятора
                         </a>
                         <a href="/" className="rounded-lg bg-zinc-800 px-3 py-2 hover:bg-zinc-700 transition-colors">
                             Открыть сайт
