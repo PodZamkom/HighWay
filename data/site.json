@@ -101,7 +101,7 @@
     "ctaLabel": "ОБРАТНЫЙ ЗВОНОК",
     "phone": "+375 (33) 696-22-24",
     "phoneLink": "tel:+375336962224",
-    "instagram": "https://instagram.com/highwaymotors",
+    "instagram": "https://www.instagram.com/eavto_delivery/",
     "whatsapp": "https://wa.me/375447772224"
   },
   "hero": {
@@ -135,7 +135,7 @@
     "contactsLabel": "Пишите нам:",
     "whatsappLink": "https://wa.me/375447772224",
     "telegramLink": "https://t.me/highwaymotors",
-    "instagramLink": "https://instagram.com/highwaymotors",
+    "instagramLink": "https://www.instagram.com/eavto_delivery/",
     "youtubeSource": "https://youtube.com/shorts/8zO8IhwdVWo",
     "fallbackImage": "/images/cars/ford/mustang_mach_e/main.webp",
     "videoTitle": "Видео о подборе авто"
@@ -184,7 +184,6 @@
         "auction": "Выбор аукциона",
         "deliveryTo": "Доставка в",
         "preferential": "Льготная растаможка",
-        "offsite": "Offsite",
         "purchaseAndDelivery": "Покупка и доставка",
         "customsAndClearance": "Растаможка и оформление",
         "total": "ИТОГО",
@@ -340,72 +339,20 @@
         ],
         "ages": [
           {
-            "key": "0",
-            "name": "Менее года"
+            "key": "0_3",
+            "name": "Авто от 0 до 3 лет"
           },
           {
-            "key": "1",
-            "name": "1"
+            "key": "3_5",
+            "name": "Авто от 3 до 5 лет"
           },
           {
-            "key": "2",
-            "name": "2"
+            "key": "5_7",
+            "name": "Авто 5-7 лет"
           },
           {
-            "key": "3",
-            "name": "3"
-          },
-          {
-            "key": "4",
-            "name": "4"
-          },
-          {
-            "key": "5",
-            "name": "5"
-          },
-          {
-            "key": "6",
-            "name": "6"
-          },
-          {
-            "key": "7",
-            "name": "7"
-          },
-          {
-            "key": "8",
-            "name": "8"
-          },
-          {
-            "key": "9",
-            "name": "9"
-          },
-          {
-            "key": "10",
-            "name": "10"
-          },
-          {
-            "key": "11",
-            "name": "11"
-          },
-          {
-            "key": "12",
-            "name": "12"
-          },
-          {
-            "key": "13",
-            "name": "13"
-          },
-          {
-            "key": "14",
-            "name": "14"
-          },
-          {
-            "key": "15",
-            "name": "15"
-          },
-          {
-            "key": "16",
-            "name": "Более 15"
+            "key": "7_plus",
+            "name": "Авто старше 7 лет"
           }
         ],
         "platformDefault": {
@@ -579,6 +526,10 @@
         {
           "city": "Минск",
           "address": "ул. Корш-Саблина 74, офис 8, 220100"
+        },
+        {
+          "city": "Минск",
+          "address": "ул. Максима Богдановича, 138, ТЦ Эспанада, 2-й этаж"
         }
       ]
     }

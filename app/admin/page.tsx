@@ -13,8 +13,8 @@ export default function AdminIndexPage() {
             <p className="mt-1 text-sm text-zinc-400">Все блоки и тексты, включая новые баннеры.</p>
           </Link>
           <Link href="/admin/calculator" className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-orange-500 transition-colors">
-            <h2 className="text-lg font-semibold">Калькулятор курсов</h2>
-            <p className="mt-1 text-sm text-zinc-400">Настройки коэффициентов и комиссий.</p>
+            <h2 className="text-lg font-semibold">Настройки калькулятора</h2>
+            <p className="mt-1 text-sm text-zinc-400">Файлы ставок, порты, маржи и расходы.</p>
           </Link>
         </div>
       </div>

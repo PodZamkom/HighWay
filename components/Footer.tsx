@@ -23,7 +23,7 @@ export function Footer({ content }: FooterProps) {
         {/* Offices */}
         <div className="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {content.contacts?.offices.map((office: any) => (
-            <div key={office.city} className="bg-white/5 p-4 rounded-xl border border-white/10">
+            <div key={`${office.city}-${office.address}`} className="bg-white/5 p-4 rounded-xl border border-white/10">
               <h4 className="text-white font-bold mb-1">{office.city}</h4>
               <p className="text-sm">{office.address}</p>
             </div>
