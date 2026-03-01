@@ -96,8 +96,8 @@ export function Navbar({ content }: NavbarProps) {
                       {menu.label}
                       <ChevronDown className="h-3 w-3 text-[#8f8f8f] transition-colors group-hover:text-white" />
                     </button>
-                    <div className="pointer-events-none absolute left-0 z-50 mt-3 w-56 translate-y-2 rounded-xl border border-[#303030] bg-[#141414] opacity-0 shadow-xl transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                      <div className="p-2">
+                    <div className="pointer-events-none absolute left-0 top-full z-50 w-56 pt-2 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+                      <div className="translate-y-2 rounded-xl border border-[#303030] bg-[#141414] p-2 shadow-xl transition-transform duration-200 group-hover:translate-y-0 group-focus-within:translate-y-0">
                         {menu.items.map((item) => (
                           <Link
                             key={item.label}

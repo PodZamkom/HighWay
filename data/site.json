@@ -82,10 +82,6 @@
         "label": "В наличии",
         "items": [
           {
-            "label": "В наличии в Минске",
-            "href": "/catalog"
-          },
-          {
             "label": "В наличии в Хоргосе",
             "href": "/catalog"
           }
@@ -95,7 +91,7 @@
     "secondaryLinks": [
       {
         "label": "Калькулятор расходов",
-        "href": "/#calculator"
+        "href": "/calculator"
       }
     ],
     "ctaLabel": "ОБРАТНЫЙ ЗВОНОК",
