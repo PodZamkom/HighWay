@@ -11,23 +11,23 @@
     "links": [
       {
         "label": "О компании",
-        "href": "/#about"
+        "href": "/o-kompanii"
       },
       {
         "label": "Услуги",
-        "href": "/#services"
+        "href": "/uslugi"
       },
       {
         "label": "Сервисы",
-        "href": "/#tools"
+        "href": "/servisy"
       },
       {
         "label": "Полезное",
-        "href": "/#info"
+        "href": "/poleznoe"
       },
       {
         "label": "Контакты",
-        "href": "/#contacts"
+        "href": "/kontakty"
       }
     ],
     "secondaryMenus": [

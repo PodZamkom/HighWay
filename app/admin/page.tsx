@@ -12,6 +12,10 @@ export default function AdminIndexPage() {
             <h2 className="text-lg font-semibold">Главная страница</h2>
             <p className="mt-1 text-sm text-zinc-400">Все блоки и тексты, включая новые баннеры.</p>
           </Link>
+          <Link href="/admin/pages" className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-orange-500 transition-colors">
+            <h2 className="text-lg font-semibold">Страницы и SEO</h2>
+            <p className="mt-1 text-sm text-zinc-400">Редактирование /o-kompanii, /uslugi, /servisy, /poleznoe, /kontakty и глобального SEO.</p>
+          </Link>
           <Link href="/admin/calculator" className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-orange-500 transition-colors">
             <h2 className="text-lg font-semibold">Настройки калькулятора</h2>
             <p className="mt-1 text-sm text-zinc-400">Файлы ставок, порты, маржи и расходы.</p>
