@@ -113,7 +113,7 @@ export function defaultBitrixSettings(): BitrixSettings {
     assignedById: envAssignedById && envAssignedById > 0 ? Math.trunc(envAssignedById) : null,
     phoneType: 'WORK',
     sourceDescriptionTemplate: '{pageUrl}',
-    commentsTemplate: 'Источник формы: {source}\nПредпочтительный мессенджер: {messenger}\nСтраница: {pageUrl}\nКомментарий: {comment}',
+    commentsTemplate: 'Источник формы: {source}\nПредпочтительный способ связи: {contactMethod}\nСтраница: {pageUrl}\nКомментарий: {comment}',
     additionalFieldsJson: '{}',
     registerSonetEvent: true,
   };

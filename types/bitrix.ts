@@ -31,6 +31,7 @@ export const BITRIX_TEMPLATE_VARIABLES = [
   'name',
   'phone',
   'messenger',
+  'contactMethod',
   'pageUrl',
   'comment',
 ] as const;

@@ -31,6 +31,9 @@ function normalizeMessenger(value: string): string {
   if (normalized === 'whatsapp') {
     return 'WhatsApp';
   }
+  if (normalized === 'phone' || normalized === 'call' || normalized === 'telephone') {
+    return 'Телефон';
+  }
   return value;
 }
 
@@ -133,6 +136,7 @@ export async function POST(request: Request) {
       name,
       phone,
       messenger: preferredMessenger,
+      contactMethod: preferredMessenger,
       pageUrl,
       comment,
     };

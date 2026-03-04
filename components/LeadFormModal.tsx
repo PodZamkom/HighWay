@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Send, Smartphone, X } from 'lucide-react';
+import { Phone, Send, Smartphone, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type MessengerType = 'telegram' | 'whatsapp';
+type ContactMethod = 'telegram' | 'whatsapp' | 'phone';
 
 const DEFAULT_FORM_STATE: {
     name: string;
     phone: string;
-    preferredMessenger: MessengerType;
+    preferredMessenger: ContactMethod;
 } = {
     name: '',
     phone: '',
@@ -137,7 +137,11 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <p className="text-sm text-gray-600">Выберите предпочитаемый способ связи</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, preferredMessenger: 'telegram' })}
@@ -157,6 +161,16 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
                                         }`}
                                 >
                                     <Smartphone size={16} /> WhatsApp
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, preferredMessenger: 'phone' })}
+                                    className={`flex items-center justify-center gap-2 py-3 rounded-xl border transition-all ${formData.preferredMessenger === 'phone'
+                                        ? 'bg-zinc-100 border-zinc-500 text-zinc-700'
+                                        : 'bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400'
+                                        }`}
+                                >
+                                    <Phone size={16} /> Телефон
                                 </button>
                             </div>
 
