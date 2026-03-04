@@ -22,11 +22,11 @@ export function Navbar({ content }: NavbarProps) {
         {/* Top Row */}
         <div className="bg-black/70 backdrop-blur-md">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-[80px] items-center justify-between">
+            <div className="flex h-[92px] items-center justify-between">
               {/* Logo */}
               <div className="flex-shrink-0">
                 <Link href="/" className="flex items-center gap-2">
-                  <img src="/images/logo2.png" alt="E-TRADE" className="h-11 w-auto object-contain sm:h-12" />
+                  <img src="/images/logo3.png" alt="E-TRADE" className="h-[62px] w-auto object-contain sm:h-[68px] lg:h-[74px]" />
                 </Link>
               </div>
 
