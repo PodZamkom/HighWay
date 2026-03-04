@@ -236,7 +236,7 @@ export default function AdminBitrixPage() {
                 type={showWebhookValue ? 'text' : 'password'}
                 value={draft.webhookUrl}
                 onChange={(event) => update('webhookUrl', event.target.value)}
-                placeholder="https://portal.bitrix24.ru/rest/1/xxx/crm.lead.add.json"
+                placeholder="https://portal.bitrix24.ru/rest/1/xxx/crm.deal.add.json"
                 className="w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-orange-500"
               />
               <button
@@ -300,7 +300,7 @@ export default function AdminBitrixPage() {
             </div>
           </Section>
 
-          <Section title="Заголовок и поля лида" icon={<FileJson size={18} className="text-orange-400" />}>
+          <Section title="Заголовок и поля сделки" icon={<FileJson size={18} className="text-orange-400" />}>
             <Input
               label="TITLE префикс"
               value={draft.titlePrefix}

@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: additionalFieldsIssue }, { status: 400 });
     }
 
-    const fieldsMethodUrl = resolveBitrixMethodUrl(settings.webhookUrl, 'crm.lead.fields');
+    const fieldsMethodUrl = resolveBitrixMethodUrl(settings.webhookUrl, 'crm.deal.fields');
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), settings.timeoutMs);
 
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Webhook доступен, метод crm.lead.fields отвечает корректно.',
+      message: 'Webhook доступен, метод crm.deal.fields отвечает корректно.',
     });
   } catch (error: any) {
     if (error?.name === 'AbortError') {

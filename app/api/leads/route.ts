@@ -38,12 +38,40 @@ function applyTemplate(template: string, variables: Record<string, string>): str
   return template.replace(/\{([a-zA-Z0-9_]+)\}/g, (_, variableName: string) => variables[variableName] || '');
 }
 
-function parseAdditionalFields(raw: string): AnyObject {
-  const parsed = JSON.parse(raw || '{}');
+function parseAdditionalFields(raw: unknown): AnyObject {
+  let parsed: unknown = {};
+  if (typeof raw === 'string') {
+    parsed = JSON.parse(raw || '{}');
+  } else {
+    parsed = raw ?? {};
+  }
+
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
     throw new Error('Additional fields must be JSON object');
   }
   return parsed as AnyObject;
+}
+
+function resolveDealStageDefaults(additionalFields: AnyObject): { stageId: string; categoryId: number | null } {
+  const rawCategory = additionalFields.CATEGORY_ID;
+  let categoryId: number | null = null;
+  if (typeof rawCategory === 'number' && Number.isFinite(rawCategory)) {
+    categoryId = Math.trunc(rawCategory);
+  } else if (typeof rawCategory === 'string' && rawCategory.trim()) {
+    const parsed = Number(rawCategory.trim());
+    if (Number.isFinite(parsed)) {
+      categoryId = Math.trunc(parsed);
+    }
+  }
+
+  const rawStage = additionalFields.STAGE_ID;
+  const stageIdFromAdditional = typeof rawStage === 'string' ? rawStage.trim() : '';
+  const defaultStageId = categoryId && categoryId > 0 ? `C${categoryId}:NEW` : 'NEW';
+
+  return {
+    stageId: stageIdFromAdditional || defaultStageId,
+    categoryId,
+  };
 }
 
 function resolveCustomHeaders(headers: Array<{ name: string; value: string; enabled: boolean }>): Record<string, string> {
@@ -112,26 +140,15 @@ export async function POST(request: Request) {
     const title = applyTemplate(settings.titleTemplate, templateVars).trim() || `${settings.titlePrefix}: ${source}`;
     const sourceDescription = applyTemplate(settings.sourceDescriptionTemplate, templateVars).trim() || source;
     const comments = applyTemplate(settings.commentsTemplate, templateVars).trim();
+    const commentsWithContact = [
+      `Имя: ${name}`,
+      `Телефон: ${phone}`,
+      comments,
+    ].filter(Boolean).join('\n');
 
-    const fields: AnyObject = {
-      TITLE: title,
-      NAME: name,
-      PHONE: [{ VALUE: phone, VALUE_TYPE: settings.phoneType }],
-      SOURCE_DESCRIPTION: sourceDescription,
-    };
-
-    if (settings.sourceId) {
-      fields.SOURCE_ID = settings.sourceId;
-    }
-    if (comments) {
-      fields.COMMENTS = comments;
-    }
-    if (typeof settings.assignedById === 'number' && Number.isFinite(settings.assignedById) && settings.assignedById > 0) {
-      fields.ASSIGNED_BY_ID = settings.assignedById;
-    }
-
+    let additionalFields: AnyObject = {};
     try {
-      Object.assign(fields, parseAdditionalFields(settings.additionalFieldsJson));
+      additionalFields = parseAdditionalFields(settings.additionalFieldsJson);
     } catch (error) {
       console.error('Invalid additionalFieldsJson:', error);
       return NextResponse.json(
@@ -140,11 +157,34 @@ export async function POST(request: Request) {
       );
     }
 
-    const leadAddUrl = resolveBitrixMethodUrl(settings.webhookUrl, 'crm.lead.add');
+    const { stageId } = resolveDealStageDefaults(additionalFields);
+
+    const fields: AnyObject = {
+      TITLE: title,
+      STAGE_ID: stageId,
+      SOURCE_DESCRIPTION: sourceDescription,
+      COMMENTS: commentsWithContact,
+    };
+
+    if (settings.sourceId) {
+      fields.SOURCE_ID = settings.sourceId;
+    }
+    if (typeof settings.assignedById === 'number' && Number.isFinite(settings.assignedById) && settings.assignedById > 0) {
+      fields.ASSIGNED_BY_ID = settings.assignedById;
+    }
+    Object.assign(fields, additionalFields);
+
+    if (typeof fields.STAGE_ID !== 'string' || !fields.STAGE_ID.trim()) {
+      fields.STAGE_ID = stageId;
+    } else {
+      fields.STAGE_ID = fields.STAGE_ID.trim();
+    }
+
+    const dealAddUrl = resolveBitrixMethodUrl(settings.webhookUrl, 'crm.deal.add');
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), settings.timeoutMs);
 
-    const response = await fetch(leadAddUrl, {
+    const response = await fetch(dealAddUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -173,19 +213,19 @@ export async function POST(request: Request) {
     const payloadError = typeof payload.error === 'string' ? payload.error : '';
     const payloadErrorDescription = typeof payload.error_description === 'string' ? payload.error_description : '';
     if (!response.ok || payloadError) {
-      console.error('Bitrix lead creation failed', {
+      console.error('Bitrix deal creation failed', {
         status: response.status,
         error: payloadError,
         errorDescription: payloadErrorDescription,
       });
 
       return NextResponse.json(
-        { success: false, error: payloadErrorDescription || payloadError || 'CRM rejected lead request' },
+        { success: false, error: payloadErrorDescription || payloadError || 'CRM rejected deal request' },
         { status: 502 },
       );
     }
 
-    return NextResponse.json({ success: true, leadId: payload.result ?? null });
+    return NextResponse.json({ success: true, dealId: payload.result ?? null });
   } catch (error: any) {
     if (error?.name === 'AbortError') {
       return NextResponse.json(
@@ -194,9 +234,9 @@ export async function POST(request: Request) {
       );
     }
 
-    console.error('Lead submit failed:', error);
+    console.error('Deal submit failed:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to submit lead' },
+      { success: false, error: 'Failed to submit deal' },
       { status: 500 },
     );
   }
