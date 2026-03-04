@@ -22,7 +22,7 @@ export async function GET() {
       agePresets: getAgePresets(),
     });
   } catch (error) {
-    console.error('Failed to load calculator options:', error);
-    return NextResponse.json({ error: 'Failed to load options' }, { status: 500 });
+    console.error('Не удалось загрузить параметры калькулятора:', error);
+    return NextResponse.json({ error: 'Не удалось загрузить параметры' }, { status: 500 });
   }
 }

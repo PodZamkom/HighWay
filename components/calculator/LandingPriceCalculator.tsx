@@ -42,6 +42,7 @@ function formatMoney(value: number, currency: 'USD' | 'BYN') {
 }
 
 export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps) {
+  const pdfDownloadLabel = 'Скачать расчет';
   const [form, setForm] = useState<LocalCalculatorForm>(DEFAULT_FORM);
   const [options, setOptions] = useState<CalculatorOptionsResponse | null>(null);
   const [result, setResult] = useState<CalculatorResultPayload | null>(null);
@@ -61,7 +62,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data?.error || 'Failed to load options');
+          throw new Error(data?.error || 'Не удалось загрузить параметры');
         }
 
         if (!active) return;
@@ -110,7 +111,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
         const data = await response.json();
 
         if (!response.ok || !data?.success || !data?.data) {
-          throw new Error('Calculation failed');
+          throw new Error('Не удалось выполнить расчет');
         }
 
         setResult(data.data);
@@ -156,14 +157,14 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
       });
 
       if (!response.ok) {
-        throw new Error('Failed to build PDF');
+        throw new Error('Не удалось сформировать документ');
       }
 
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `E-TRADE-calculation-${Date.now()}.pdf`;
+      link.download = `Расчет-стоимости-${Date.now()}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -394,10 +395,10 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                       onClick={onDownloadPdf}
                       disabled={isDownloadingPdf || isLoadingResult}
                       className="inline-flex items-center gap-2 rounded-md border border-slate-900 px-3 py-1.5 text-xs text-slate-900 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-                      title={content.labels.downloadPdfTitle}
+                      title={pdfDownloadLabel}
                     >
                       {isDownloadingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-                      {content.labels.downloadPdfButton}
+                      {pdfDownloadLabel}
                     </button>
                   </div>
                 </div>

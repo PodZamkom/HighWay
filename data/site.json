@@ -185,8 +185,8 @@
         "customsAndClearance": "Растаможка и оформление",
         "total": "ИТОГО",
         "disclaimer": "* В расчет не входят комиссии за переводы. Все суммы действительны на дату расчёта и могут изменяться.",
-        "downloadPdfTitle": "Скачать PDF",
-        "downloadPdfButton": "PDF",
+        "downloadPdfTitle": "Скачать расчет",
+        "downloadPdfButton": "Скачать расчет",
         "priceMin": "0 $",
         "priceMax": "100 000 $"
       },
@@ -202,11 +202,11 @@
           },
           {
             "key": "electro_suv",
-            "name": "Электромобиль SUV"
+            "name": "Электромобиль (внедорожник)"
           },
           {
             "key": "auto_suv",
-            "name": "Внедорожник SUV"
+            "name": "Внедорожник"
           },
           {
             "key": "hybrid",
@@ -214,7 +214,7 @@
           },
           {
             "key": "hybrid_suv",
-            "name": "Гибрид SUV"
+            "name": "Гибрид (внедорожник)"
           },
           {
             "key": "moto",

@@ -20,17 +20,20 @@ export async function POST(request: Request) {
     const form = body?.form ?? body;
     const result = calculateLocalPrice(form);
     const pdf = await buildCalculatorPdf(result);
+    const timestamp = timestampForFileName();
+    const russianFileName = `расчет-стоимости-${timestamp}.pdf`;
+    const asciiFallbackFileName = `raschet-stoimosti-${timestamp}.pdf`;
 
     return new NextResponse(pdf, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="E-TRADE-calculation-${timestampForFileName()}.pdf"`,
+        'Content-Disposition': `attachment; filename="${asciiFallbackFileName}"; filename*=UTF-8''${encodeURIComponent(russianFileName)}`,
         'Cache-Control': 'no-store',
       },
     });
   } catch (error) {
-    console.error('PDF generation failed:', error);
-    return NextResponse.json({ error: 'Failed to generate PDF' }, { status: 500 });
+    console.error('Ошибка генерации PDF:', error);
+    return NextResponse.json({ error: 'Не удалось сформировать документ' }, { status: 500 });
   }
 }

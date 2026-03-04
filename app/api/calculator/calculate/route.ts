@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error('Local calculator failed:', error);
-    return NextResponse.json({ success: false, error: 'Calculation failed' }, { status: 500 });
+    console.error('Локальный калькулятор завершился с ошибкой:', error);
+    return NextResponse.json({ success: false, error: 'Не удалось выполнить расчет' }, { status: 500 });
   }
 }
