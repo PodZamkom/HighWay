@@ -20,6 +20,10 @@ export default function AdminIndexPage() {
             <h2 className="text-lg font-semibold">Настройки калькулятора</h2>
             <p className="mt-1 text-sm text-zinc-400">Файлы ставок, порты, маржи и расходы.</p>
           </Link>
+          <Link href="/admin/bitrix" className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-orange-500 transition-colors">
+            <h2 className="text-lg font-semibold">Bitrix CRM</h2>
+            <p className="mt-1 text-sm text-zinc-400">Webhook, формат лида, заголовки и дополнительные поля заявки.</p>
+          </Link>
         </div>
       </div>
     </div>

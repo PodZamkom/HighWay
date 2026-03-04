@@ -117,6 +117,9 @@ export default function AdminHomePage() {
                         <a href="/admin/calculator" className="rounded-lg bg-zinc-800 px-3 py-2 hover:bg-zinc-700 transition-colors">
                             Перейти к настройкам калькулятора
                         </a>
+                        <a href="/admin/bitrix" className="rounded-lg bg-zinc-800 px-3 py-2 hover:bg-zinc-700 transition-colors">
+                            Перейти к настройкам Bitrix CRM
+                        </a>
                         <a href="/" className="rounded-lg bg-zinc-800 px-3 py-2 hover:bg-zinc-700 transition-colors">
                             Открыть сайт
                         </a>
