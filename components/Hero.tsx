@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { CirclePlay, Instagram, MessageCircleMore, Send, Star } from "lucide-react";
 import type { HeroContent } from "@/types/site";
+import { LeadFormModal } from "@/components/LeadFormModal";
 
 interface HeroProps {
   content: HeroContent;
@@ -29,6 +29,7 @@ function extractYoutubeId(source: string): string | null {
 
 export function Hero({ content }: HeroProps) {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
   const youtubeSource = process.env.NEXT_PUBLIC_HERO_YOUTUBE_ID ?? content.youtubeSource;
   const youtubeId = useMemo(() => extractYoutubeId(youtubeSource), [youtubeSource]);
   const embedUrl = useMemo(() => {
@@ -95,12 +96,13 @@ export function Hero({ content }: HeroProps) {
             </div>
 
             <div className="mt-4">
-              <Link
-                href={content.primaryButtonHref}
+              <button
+                type="button"
+                onClick={() => setIsLeadFormOpen(true)}
                 className="inline-flex items-center rounded-xl bg-[#ff5a00] px-7 py-3 text-xs font-black uppercase tracking-wide text-white shadow-[0_13px_20px_-12px_rgba(255,90,0,0.65)] transition hover:translate-y-[-1px] hover:bg-[#ff7429] sm:px-8 sm:py-3 sm:text-[0.9rem]"
               >
                 {content.primaryButtonLabel}
-              </Link>
+              </button>
             </div>
 
             <div className="mt-4 flex items-center gap-2.5">
@@ -180,6 +182,12 @@ export function Hero({ content }: HeroProps) {
           </motion.div>
         </div>
       </div>
+
+      <LeadFormModal
+        isOpen={isLeadFormOpen}
+        onClose={() => setIsLeadFormOpen(false)}
+        source="hero_primary_cta"
+      />
     </section>
   );
 }

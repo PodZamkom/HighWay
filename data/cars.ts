@@ -1,4 +1,4 @@
-﻿// Highway Motors - Car Database
+﻿// E-TRADE - Car Database
 // Prices reflect 2025 "New Tax Reality" for Hybrids (EREV) - VAT included
 // Prices are approximately 25-30% higher than 2024
 

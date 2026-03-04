@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="highway-calculation-${timestampForFileName()}.pdf"`,
+        'Content-Disposition': `attachment; filename="E-TRADE-calculation-${timestampForFileName()}.pdf"`,
         'Cache-Control': 'no-store',
       },
     });

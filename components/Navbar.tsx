@@ -26,7 +26,7 @@ export function Navbar({ content }: NavbarProps) {
               {/* Logo */}
               <div className="flex-shrink-0">
                 <Link href="/" className="flex items-center gap-2">
-                  <img src="/images/logo2.png" alt="Highway Motors" className="h-11 w-auto object-contain sm:h-12" />
+                  <img src="/images/logo2.png" alt="E-TRADE" className="h-11 w-auto object-contain sm:h-12" />
                 </Link>
               </div>
 
@@ -171,6 +171,7 @@ export function Navbar({ content }: NavbarProps) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="ОБРАТНЫЙ ЗВОНОК"
+        source="navbar_callback"
       />
     </>
   );

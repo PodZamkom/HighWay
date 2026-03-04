@@ -3,7 +3,7 @@ import { getSiteContent } from '@/lib/data';
 import { ChevronRight } from 'lucide-react';
 
 export const metadata = {
-    title: 'Калькулятор растаможки авто из США в Беларусь 2026 | Highway Motors',
+    title: 'Калькулятор растаможки авто из США в Беларусь 2026 | E-TRADE',
     description:
         'Рассчитайте ориентировочную стоимость покупки и доставки авто из США в Беларусь: аукционный сбор, логистика, растаможка, оформление и итоговая цена.',
 };

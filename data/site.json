@@ -1,13 +1,13 @@
 {
   "seo": {
-    "title": "Highway Motors | Авто из Китая, Европы и США",
+    "title": "E-TRADE | Авто из Китая, Европы и США",
     "description": "Честные цены, быстрая доставка, профессиональный подбор.",
-    "keywords": "авто из Китая, авто из Европы, авто из США, импорт авто, подбор авто, Highway Motors",
+    "keywords": "авто из Китая, авто из Европы, авто из США, импорт авто, подбор авто, E-TRADE",
     "ogImage": "/images/og-image.jpg"
   },
   "navbar": {
-    "brandPrimary": "HIGHWAY",
-    "brandAccent": "MOTORS",
+    "brandPrimary": "E-TRADE",
+    "brandAccent": "",
     "links": [
       {
         "label": "О компании",
@@ -103,7 +103,7 @@
   "hero": {
     "title": "АВТО ИЗ США",
     "descriptionBeforeBrand": "Хотите выгодно купить бу автомобиль из Америки с доставкой в Беларусь?",
-    "brand": "HIGHWAYMOTORS",
+    "brand": "E-TRADE",
     "descriptionAfterBrand": " поможет!",
     "highlights": [
       {
@@ -130,7 +130,7 @@
     "primaryButtonHref": "#calculator",
     "contactsLabel": "Пишите нам:",
     "whatsappLink": "https://wa.me/375447772224",
-    "telegramLink": "https://t.me/highwaymotors",
+    "telegramLink": "https://t.me/e_avto_pinsk",
     "instagramLink": "https://www.instagram.com/eavto_delivery/",
     "youtubeSource": "https://youtube.com/shorts/8zO8IhwdVWo",
     "fallbackImage": "/images/cars/ford/mustang_mach_e/main.webp",
@@ -432,7 +432,7 @@
     ]
   },
   "teamSection": {
-    "eyebrow": "Highway Motors",
+    "eyebrow": "E-TRADE",
     "title": "Наша команда",
     "description": "Специалисты, которые ведут сделку аккуратно и прозрачно: от подбора до передачи авто.",
     "badge": "14+ лет опыта",
@@ -506,9 +506,9 @@
     "whatsappButton": "Написать в WhatsApp"
   },
   "footer": {
-    "copyright": "© 2026 Highway Motors. Все права защищены.",
+    "copyright": "© 2026 E-TRADE. Все права защищены.",
     "tagline": "Разработано для лучших автомобилей.",
-    "version": "1.3.6",
+    "version": "1.3.7",
     "adminLinkLabel": "Вход в админку",
     "contacts": {
       "phone": "+375 (33) 696-22-24",

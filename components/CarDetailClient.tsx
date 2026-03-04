@@ -263,6 +263,7 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                 onClose={() => setIsModalOpen(false)}
                 title={`ЗАКАЗАТЬ ${car.brand}`}
                 subtitle={`Оставьте заявку на расчет по модели ${car.model}${car.generation ? ` ${car.generation}` : ''} ${car.year}`}
+                source={`car_detail_${car.slug}`}
             />
         </div>
     );

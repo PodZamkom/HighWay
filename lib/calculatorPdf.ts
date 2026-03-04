@@ -44,7 +44,7 @@ export async function buildCalculatorPdf(result: CalculatorResultPayload) {
     const image = await pdf.embedPng(logoBytes);
     page.drawImage(image, { x: 28, y: 542, width: 172, height: 52 });
   } catch {
-    page.drawText('Highway Motors', { x: 28, y: 563, size: 18, font: fontBold, color: rgb(0.95, 0.43, 0.09) });
+    page.drawText('E-TRADE', { x: 28, y: 563, size: 18, font: fontBold, color: rgb(0.95, 0.43, 0.09) });
   }
 
   const now = new Date();
@@ -100,7 +100,7 @@ export async function buildCalculatorPdf(result: CalculatorResultPayload) {
     color: rgb(0.45, 0.48, 0.5),
   });
 
-  page.drawText('highwaymotors.site', { x: 670, y: 18, size: 10, font, color: rgb(0.45, 0.48, 0.5) });
+  page.drawText('E-TRADE', { x: 730, y: 18, size: 10, font, color: rgb(0.45, 0.48, 0.5) });
 
   const bytes = await pdf.save();
   return Buffer.from(bytes);

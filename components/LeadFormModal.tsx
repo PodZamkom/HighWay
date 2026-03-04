@@ -1,32 +1,88 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Send, Smartphone, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+type MessengerType = 'telegram' | 'whatsapp';
+
+const DEFAULT_FORM_STATE: {
+    name: string;
+    phone: string;
+    preferredMessenger: MessengerType;
+} = {
+    name: '',
+    phone: '',
+    preferredMessenger: 'telegram'
+};
 
 interface LeadFormModalProps {
     isOpen: boolean;
     onClose: () => void;
     title?: string;
     subtitle?: string;
+    source?: string;
 }
 
 export const LeadFormModal: React.FC<LeadFormModalProps> = ({
     isOpen,
     onClose,
     title = "ОБРАТНЫЙ ЗВОНОК",
-    subtitle = "Оставьте заявку. Менеджер свяжется в течение 15 минут."
+    subtitle = "Оставьте заявку. Менеджер свяжется в течение 15 минут.",
+    source = 'site_form'
 }) => {
-    const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        preferredMessenger: 'telegram'
-    });
+    const [formData, setFormData] = useState(DEFAULT_FORM_STATE);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState('');
+    const [submitSuccess, setSubmitSuccess] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        if (!isOpen) {
+            setSubmitError('');
+            setSubmitSuccess('');
+            setIsSubmitting(false);
+        }
+    }, [isOpen]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        alert('Спасибо! Ваша заявка принята. (Демо-режим)');
-        onClose();
+        if (isSubmitting) {
+            return;
+        }
+
+        setSubmitError('');
+        setSubmitSuccess('');
+        setIsSubmitting(true);
+
+        try {
+            const response = await fetch('/api/leads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...formData,
+                    source,
+                    pageUrl: window.location.href
+                })
+            });
+
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok || !payload?.success) {
+                throw new Error(payload?.error || 'Не удалось отправить заявку');
+            }
+
+            setSubmitSuccess('Спасибо! Заявка отправлена.');
+            setFormData(DEFAULT_FORM_STATE);
+
+            window.setTimeout(() => {
+                setSubmitSuccess('');
+                onClose();
+            }, 700);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Не удалось отправить заявку';
+            setSubmitError(message);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -107,10 +163,20 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
+                                type="submit"
+                                disabled={isSubmitting}
                                 className="w-full bg-orange-600 text-white font-bold py-4 rounded-xl hover:bg-orange-500 transition-colors mt-4 shadow-lg shadow-orange-600/20 uppercase"
                             >
-                                ОТПРАВИТЬ
+                                {isSubmitting ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ'}
                             </motion.button>
+
+                            {submitError ? (
+                                <p className="text-sm text-red-600 text-center">{submitError}</p>
+                            ) : null}
+
+                            {submitSuccess ? (
+                                <p className="text-sm text-green-600 text-center">{submitSuccess}</p>
+                            ) : null}
                         </form>
                     </motion.div>
                 </div>
