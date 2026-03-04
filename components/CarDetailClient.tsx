@@ -1,23 +1,28 @@
 "use client";
 
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { ArrowLeft, Zap } from 'lucide-react';
+import { Zap } from 'lucide-react';
+import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { LeadFormModal } from '@/components/LeadFormModal';
 import { importedCarsDb } from '@/data/cars_imported_db';
 import { CarModel } from '@/types/car';
 
 type CarDetailClientProps = {
     carId?: string;
+    catalogLabel: string;
 };
 
-export function CarDetailClient({ carId }: CarDetailClientProps) {
+export function CarDetailClient({ carId, catalogLabel }: CarDetailClientProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const params = useParams<{ id?: string | string[] }>();
     const resolvedId = carId ?? (Array.isArray(params?.id) ? params?.id?.[0] : params?.id);
     const car = resolvedId ? importedCarsDb.find((c) => c.id === resolvedId) : undefined;
+    const baseBreadcrumbs = [
+        { label: 'Главная', href: '/' },
+        { label: catalogLabel, href: '/catalog' },
+    ];
 
     const currencySymbol = (currency: string) => {
         switch (currency) {
@@ -67,6 +72,11 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
         return (
             <div className="bg-white min-h-screen pb-20 pt-24 text-gray-900">
                 <div className="max-w-7xl mx-auto px-6">
+                    <Breadcrumbs
+                        items={[...baseBreadcrumbs, { label: 'Загрузка...' }]}
+                        tone="light"
+                        className="mb-6"
+                    />
                     <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
                         <h1 className="text-2xl font-bold mb-2">Загрузка...</h1>
                         <p className="text-gray-500">Получаем данные автомобиля.</p>
@@ -80,9 +90,11 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
         return (
             <div className="bg-white min-h-screen pb-20 pt-24 text-gray-900">
                 <div className="max-w-7xl mx-auto px-6">
-                    <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-600 mb-8 transition-colors">
-                        Назад в каталог
-                    </Link>
+                    <Breadcrumbs
+                        items={[...baseBreadcrumbs, { label: 'Автомобиль не найден' }]}
+                        tone="light"
+                        className="mb-6"
+                    />
                     <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
                         <h1 className="text-2xl font-bold mb-2">Авто не найдено</h1>
                         <p className="text-gray-500">Проверьте ссылку или вернитесь в каталог.</p>
@@ -117,11 +129,11 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
     return (
         <div className="bg-white min-h-screen pb-20 pt-8 text-gray-900">
             <div className="max-w-7xl mx-auto px-6">
-
-                {/* Breadcrumb */}
-                <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-600 mb-8 transition-colors">
-                    <ArrowLeft size={16} /> Назад в каталог
-                </Link>
+                <Breadcrumbs
+                    items={[...baseBreadcrumbs, { label: `${car.brand} ${car.model}` }]}
+                    tone="light"
+                    className="mb-7"
+                />
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 

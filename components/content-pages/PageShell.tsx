@@ -6,9 +6,12 @@ import { ArrowUpRight, CheckCircle2 } from "lucide-react";
 import type { ContentPage } from "@/types/content-pages";
 import { MetricCards } from "@/components/content-pages/MetricCards";
 import { SectionBlock } from "@/components/content-pages/SectionBlock";
+import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
+import type { BreadcrumbItem } from "@/lib/breadcrumbs";
 
 interface PageShellProps {
   page: ContentPage;
+  breadcrumbs: BreadcrumbItem[];
 }
 
 function isExternalHref(href: string) {
@@ -65,12 +68,13 @@ function SecondaryLink({ label, href }: { label: string; href: string }) {
   );
 }
 
-export function PageShell({ page }: PageShellProps) {
+export function PageShell({ page, breadcrumbs }: PageShellProps) {
   return (
     <div className="bg-[#0f0f10] pb-16 text-[#e8e8e8]">
       <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_10%_20%,rgba(255,90,0,0.20),transparent_38%),radial-gradient(circle_at_88%_15%,rgba(255,255,255,0.08),transparent_35%),#111112]">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+            <Breadcrumbs items={breadcrumbs} tone="dark" className="mb-5 sm:mb-6" />
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#ff8f55]">{page.hero.eyebrow}</p>
             <h1 className="mt-3 max-w-4xl text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
               {page.hero.title}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowUpDown, Search, SlidersHorizontal, X } from "lucide-react";
+import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { cars_db } from "@/data/cars_db";
 
 type MarketFilter = "All" | "USA" | "Korea" | "China" | "Europe";
@@ -11,6 +12,7 @@ type EngineFilter = "All" | "EV" | "EREV" | "HEV" | "ICE";
 
 interface CarCatalogProps {
   initialMarket?: string;
+  catalogLabel: string;
 }
 
 function normalizeMarket(value?: string): MarketFilter {
@@ -49,7 +51,7 @@ function engineLabel(value: EngineFilter) {
   return "Любой";
 }
 
-export function CarCatalog({ initialMarket }: CarCatalogProps) {
+export function CarCatalog({ initialMarket, catalogLabel }: CarCatalogProps) {
   const [market, setMarket] = useState<MarketFilter>(normalizeMarket(initialMarket));
   const [brand, setBrand] = useState("All");
   const [bodyType, setBodyType] = useState("All");
@@ -164,6 +166,22 @@ export function CarCatalog({ initialMarket }: CarCatalogProps) {
       className="min-h-screen bg-[#f3f4f6] py-8 text-slate-900"
     >
       <div className="mx-auto max-w-6xl px-4">
+        <Breadcrumbs
+          items={[
+            { label: "Главная", href: "/" },
+            { label: catalogLabel },
+          ]}
+          tone="light"
+          className="mb-5"
+        />
+
+        <div className="mb-5 rounded-2xl border border-slate-200 bg-[linear-gradient(135deg,rgba(255,255,255,0.9),rgba(248,250,252,0.95))] p-4 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.55)] md:p-5">
+          <h1 className="text-2xl font-black tracking-tight text-slate-900 md:text-3xl">{catalogLabel}</h1>
+          <p className="mt-2 text-sm text-slate-600 md:text-base">
+            Подберите автомобиль по рынку, бюджету и ключевым параметрам.
+          </p>
+        </div>
+
         <div className="space-y-3">
           <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
             {marketTabs.map((tab) => (

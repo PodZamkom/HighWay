@@ -3,8 +3,11 @@ import { unstable_noStore as noStore } from "next/cache";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/content-pages/PageShell";
 import { readContentPages } from "@/lib/contentPagesStore";
+import { getSiteContent } from "@/lib/data";
+import { buildBreadcrumbJsonLd, resolveNavigationLabel } from "@/lib/breadcrumbs";
 
 const PAGE_SLUG = "o-kompanii" as const;
+const PAGE_PATH = "/o-kompanii" as const;
 
 async function loadPage() {
   noStore();
@@ -22,9 +25,24 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutCompanyPage() {
-  const page = await loadPage();
+  const [page, siteContent] = await Promise.all([loadPage(), getSiteContent()]);
   if (!page) {
     notFound();
   }
-  return <PageShell page={page} />;
+
+  const currentLabel = resolveNavigationLabel(siteContent.navbar, PAGE_PATH, page.hero.title);
+  const breadcrumbs = [
+    { label: "Главная", href: "/" },
+    { label: currentLabel },
+  ];
+  const breadcrumbSchema = buildBreadcrumbJsonLd(breadcrumbs, PAGE_PATH);
+
+  return (
+    <>
+      <PageShell page={page} breadcrumbs={breadcrumbs} />
+      {breadcrumbSchema ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      ) : null}
+    </>
+  );
 }
