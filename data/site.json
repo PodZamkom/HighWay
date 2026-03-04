@@ -98,7 +98,7 @@
     "phone": "+375 (33) 696-22-24",
     "phoneLink": "tel:+375336962224",
     "instagram": "https://www.instagram.com/eavto_delivery/",
-    "whatsapp": "https://wa.me/375447772224"
+    "whatsapp": "https://wa.me/375298422224"
   },
   "hero": {
     "title": "АВТО ИЗ США",
@@ -129,8 +129,8 @@
     "primaryButtonLabel": "Рассчитать стоимость",
     "primaryButtonHref": "#calculator",
     "contactsLabel": "Пишите нам:",
-    "whatsappLink": "https://wa.me/375447772224",
-    "telegramLink": "https://t.me/e_avto_pinsk",
+    "whatsappLink": "https://wa.me/375298422224",
+    "telegramLink": "https://t.me/Etradeby",
     "instagramLink": "https://www.instagram.com/eavto_delivery/",
     "youtubeSource": "https://youtube.com/shorts/8zO8IhwdVWo",
     "fallbackImage": "/images/cars/ford/mustang_mach_e/main.webp",
@@ -508,12 +508,12 @@
   "footer": {
     "copyright": "© 2026 E-TRADE. Все права защищены.",
     "tagline": "Разработано для лучших автомобилей.",
-    "version": "1.3.8",
+    "version": "1.3.9",
     "adminLinkLabel": "Вход в админку",
     "contacts": {
       "phone": "+375 (33) 696-22-24",
       "phoneLink": "tel:+375336962224",
-      "whatsapp": "https://wa.me/375447772224",
+      "whatsapp": "https://wa.me/375298422224",
       "offices": [
         {
           "city": "Пинск",

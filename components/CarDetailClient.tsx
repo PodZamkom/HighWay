@@ -193,7 +193,7 @@ export function CarDetailClient({ carId }: CarDetailClientProps) {
                                 Заказать расчет
                             </button>
                             <a
-                                href="https://wa.me/375447772224"
+                                href="https://wa.me/375298422224"
                                 target="_blank"
                                 className="flex-1 bg-white border-2 border-green-500 text-green-600 font-bold py-4 rounded-xl hover:bg-green-50 transition-colors flex items-center justify-center gap-2"
                             >
