@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { requireAdminApiAuth } from '@/lib/admin/api';
 import { parsePortsWithAI, parseRatesWithAI } from '@/lib/calculatorAi';
 import { readCalculatorFileAsText } from '@/lib/calculatorFileReader';
 import {
@@ -14,7 +15,10 @@ import {
 
 export const runtime = 'nodejs';
 
-export async function POST(_request: Request, context: { params: Promise<{ fileId: string }> }) {
+export async function POST(request: Request, context: { params: Promise<{ fileId: string }> }) {
+  const authResult = await requireAdminApiAuth(request);
+  if (!authResult.ok) return authResult.response;
+
   const { fileId } = await context.params;
   const parsedId = Number(fileId);
 

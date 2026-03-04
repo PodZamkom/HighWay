@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { FileJson, Link2, Loader2, Plus, Save, Settings2, Shield, TestTube2, Trash2 } from 'lucide-react';
+import { FileText, Link2, Loader2, Plus, Save, Settings2, Shield, TestTube2, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { AdminHeader } from '@/components/admin/common/AdminHeader';
 import { BITRIX_PHONE_TYPES, BITRIX_TEMPLATE_VARIABLES, type BitrixHeaderSetting, type BitrixSettings } from '@/types/bitrix';
 
 interface BitrixSettingsResponse {
@@ -26,7 +28,28 @@ function makeHeaderRow(): BitrixHeaderSetting {
   };
 }
 
+function parseAdditionalFields(value: string): Record<string, string> {
+  if (!value.trim()) return {};
+  const parsed = JSON.parse(value);
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error('Дополнительные поля должны быть объектом');
+  }
+
+  const normalized: Record<string, string> = {};
+  for (const [key, raw] of Object.entries(parsed as Record<string, unknown>)) {
+    if (!key.trim()) continue;
+    normalized[key.trim()] = typeof raw === 'string' ? raw : String(raw ?? '');
+  }
+  return normalized;
+}
+
+function stringifyAdditionalFields(value: Record<string, string>): string {
+  return JSON.stringify(value, null, 2);
+}
+
 export default function AdminBitrixPage() {
+  const router = useRouter();
+  const [adminLogin, setAdminLogin] = useState('admin');
   const [draft, setDraft] = useState<BitrixSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -36,19 +59,41 @@ export default function AdminBitrixPage() {
   const [showWebhookValue, setShowWebhookValue] = useState(false);
 
   useEffect(() => {
-    void loadSettings();
-  }, []);
+    void (async () => {
+      const sessionRes = await fetch('/api/admin/auth/me', { cache: 'no-store' });
+      if (!sessionRes.ok) {
+        router.replace('/admin/login?next=/admin/bitrix');
+        return;
+      }
+      const sessionData = await sessionRes.json();
+      if (sessionData?.user?.login) {
+        setAdminLogin(sessionData.user.login);
+      }
+      await loadSettings();
+    })();
+  }, [router]);
 
   const additionalFieldsError = useMemo(() => {
     if (!draft) return null;
     try {
-      const parsed = JSON.parse(draft.additionalFieldsJson || '{}');
-      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-        return 'Дополнительные поля должны быть JSON-объектом';
-      }
+      parseAdditionalFields(draft.additionalFieldsJson || '{}');
       return null;
     } catch {
-      return 'Дополнительные поля содержат невалидный JSON';
+      return 'Дополнительные поля должны быть в формате ключ-значение';
+    }
+  }, [draft]);
+
+  const additionalFieldRows = useMemo(() => {
+    if (!draft) return [];
+    try {
+      const parsed = parseAdditionalFields(draft.additionalFieldsJson || '{}');
+      return Object.entries(parsed).map(([key, value], index) => ({
+        id: `${key}-${index}`,
+        key,
+        value,
+      }));
+    } catch {
+      return [];
     }
   }, [draft]);
 
@@ -69,6 +114,10 @@ export default function AdminBitrixPage() {
     try {
       const res = await fetch('/api/admin/bitrix-settings', { cache: 'no-store' });
       const data = (await res.json()) as BitrixSettingsResponse;
+      if (res.status === 401) {
+        router.replace('/admin/login?next=/admin/bitrix');
+        return;
+      }
       if (!res.ok) {
         throw new Error(data.error || 'Ошибка загрузки');
       }
@@ -100,6 +149,61 @@ export default function AdminBitrixPage() {
 
   const removeHeader = (id: string) => {
     setDraft((prev) => (prev ? { ...prev, headers: prev.headers.filter((row) => row.id !== id) } : prev));
+  };
+
+  const updateAdditionalField = (currentKey: string, nextKey: string, nextValue: string) => {
+    setDraft((prev) => {
+      if (!prev) return prev;
+      try {
+        const parsed = parseAdditionalFields(prev.additionalFieldsJson || '{}');
+        delete parsed[currentKey];
+        const safeKey = nextKey.trim() || currentKey;
+        parsed[safeKey] = nextValue;
+        return {
+          ...prev,
+          additionalFieldsJson: stringifyAdditionalFields(parsed),
+        };
+      } catch {
+        return prev;
+      }
+    });
+  };
+
+  const addAdditionalField = () => {
+    setDraft((prev) => {
+      if (!prev) return prev;
+      try {
+        const parsed = parseAdditionalFields(prev.additionalFieldsJson || '{}');
+        const base = 'UF_CRM_CUSTOM_FIELD';
+        let key = `${base}_${Object.keys(parsed).length + 1}`;
+        while (key in parsed) {
+          key = `${base}_${Math.floor(Math.random() * 10000)}`;
+        }
+        parsed[key] = '';
+        return {
+          ...prev,
+          additionalFieldsJson: stringifyAdditionalFields(parsed),
+        };
+      } catch {
+        return prev;
+      }
+    });
+  };
+
+  const removeAdditionalField = (fieldKey: string) => {
+    setDraft((prev) => {
+      if (!prev) return prev;
+      try {
+        const parsed = parseAdditionalFields(prev.additionalFieldsJson || '{}');
+        delete parsed[fieldKey];
+        return {
+          ...prev,
+          additionalFieldsJson: stringifyAdditionalFields(parsed),
+        };
+      } catch {
+        return prev;
+      }
+    });
   };
 
   const saveSettings = async () => {
@@ -156,8 +260,11 @@ export default function AdminBitrixPage() {
 
   if (loading || !draft) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
-        <Loader2 className="animate-spin" />
+      <div className="min-h-screen bg-zinc-950 text-white">
+        <AdminHeader login={adminLogin} />
+        <div className="flex min-h-[70vh] items-center justify-center">
+          <Loader2 className="animate-spin" />
+        </div>
       </div>
     );
   }
@@ -165,8 +272,9 @@ export default function AdminBitrixPage() {
   const hasLocalValidationIssue = Boolean(additionalFieldsError) || Boolean(webhookError);
 
   return (
-    <div className="min-h-screen bg-zinc-950 p-6 text-white md:p-8">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <div className="min-h-screen bg-zinc-950 text-white">
+      <AdminHeader login={adminLogin} />
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
         <div className="rounded-2xl border border-white/10 bg-zinc-900 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h1 className="flex items-center gap-2 text-2xl font-bold">
@@ -236,7 +344,7 @@ export default function AdminBitrixPage() {
                 type={showWebhookValue ? 'text' : 'password'}
                 value={draft.webhookUrl}
                 onChange={(event) => update('webhookUrl', event.target.value)}
-                placeholder="https://portal.bitrix24.ru/rest/1/xxx/crm.deal.add.json"
+                placeholder="https://portal.bitrix24.ru/rest/1/xxx/crm.deal.add"
                 className="w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-orange-500"
               />
               <button
@@ -300,7 +408,7 @@ export default function AdminBitrixPage() {
             </div>
           </Section>
 
-          <Section title="Заголовок и поля сделки" icon={<FileJson size={18} className="text-orange-400" />}>
+          <Section title="Заголовок и поля сделки" icon={<FileText size={18} className="text-orange-400" />}>
             <Input
               label="TITLE префикс"
               value={draft.titlePrefix}
@@ -339,7 +447,7 @@ export default function AdminBitrixPage() {
             </div>
           </Section>
 
-          <Section title="Формат заявки" icon={<FileJson size={18} className="text-orange-400" />}>
+          <Section title="Формат заявки" icon={<FileText size={18} className="text-orange-400" />}>
             <TextArea
               label="SOURCE_DESCRIPTION шаблон"
               value={draft.sourceDescriptionTemplate}
@@ -352,13 +460,51 @@ export default function AdminBitrixPage() {
               rows={6}
               onChange={(value) => update('commentsTemplate', value)}
             />
-            <TextArea
-              label="Дополнительные поля (JSON)"
-              value={draft.additionalFieldsJson}
-              rows={8}
-              mono
-              onChange={(value) => update('additionalFieldsJson', value)}
-            />
+            <div className="mt-3 rounded-lg border border-white/10 bg-black/20 p-3">
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-sm text-zinc-300">Дополнительные поля сделки</p>
+                <button
+                  type="button"
+                  onClick={addAdditionalField}
+                  className="inline-flex items-center gap-1 rounded-md bg-zinc-800 px-2 py-1 text-xs text-zinc-200 hover:bg-zinc-700"
+                >
+                  <Plus size={12} />
+                  Добавить поле
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {additionalFieldRows.length === 0 ? (
+                  <p className="text-xs text-zinc-500">Дополнительные поля не заданы.</p>
+                ) : (
+                  additionalFieldRows.map((row) => (
+                    <div key={row.id} className="grid grid-cols-[1fr,1fr,auto] gap-2">
+                      <input
+                        type="text"
+                        value={row.key}
+                        onChange={(event) => updateAdditionalField(row.key, event.target.value, row.value)}
+                        placeholder="Код поля"
+                        className="rounded-md border border-white/10 bg-black/30 px-2 py-1.5 text-xs text-zinc-100 outline-none focus:border-orange-500"
+                      />
+                      <input
+                        type="text"
+                        value={row.value}
+                        onChange={(event) => updateAdditionalField(row.key, row.key, event.target.value)}
+                        placeholder="Значение"
+                        className="rounded-md border border-white/10 bg-black/30 px-2 py-1.5 text-xs text-zinc-100 outline-none focus:border-orange-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeAdditionalField(row.key)}
+                        className="rounded-md border border-rose-500/30 bg-rose-500/10 p-1.5 text-rose-300 hover:bg-rose-500/20"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
             {additionalFieldsError ? <p className="mt-2 text-xs text-rose-400">{additionalFieldsError}</p> : null}
 
             <div className="mt-4 rounded-lg border border-white/10 bg-black/20 p-3">

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { requireAdminApiAuth } from '@/lib/admin/api';
 import { normalizeBitrixSettings, readBitrixSettings, writeBitrixSettings } from '@/lib/bitrixSettingsStore';
 
 function validateSettings(settings: ReturnType<typeof normalizeBitrixSettings>): string[] {
@@ -19,16 +20,19 @@ function validateSettings(settings: ReturnType<typeof normalizeBitrixSettings>):
   try {
     const parsed = JSON.parse(settings.additionalFieldsJson || '{}');
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      issues.push('Дополнительные поля должны быть JSON-объектом');
+      issues.push('Дополнительные поля должны быть объектом ключ-значение');
     }
   } catch {
-    issues.push('Дополнительные поля содержат невалидный JSON');
+    issues.push('Дополнительные поля заполнены некорректно');
   }
 
   return issues;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const authResult = await requireAdminApiAuth(request);
+  if (!authResult.ok) return authResult.response;
+
   try {
     const settings = await readBitrixSettings();
     return NextResponse.json({ settings });
@@ -39,6 +43,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const authResult = await requireAdminApiAuth(request);
+  if (!authResult.ok) return authResult.response;
+
   try {
     const payload = (await request.json()) as unknown;
     const normalized = normalizeBitrixSettings(payload);

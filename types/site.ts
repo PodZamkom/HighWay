@@ -28,6 +28,7 @@ export interface NavbarContent {
   phone: string;
   phoneLink: string;
   instagram: string;
+  telegram?: string;
   whatsapp: string;
 }
 
@@ -103,52 +104,18 @@ export interface CalculatorDeliveryOption extends CalculatorSelectOption {
 }
 
 export interface CalculatorFormContent {
-  labels: {
-    transport: string;
-    carPrice: string;
-    age: string;
-    engine: string;
-    platform: string;
-    platformFallback: string;
-    auction: string;
-    deliveryTo: string;
-    preferential: string;
-    purchaseAndDelivery: string;
-    customsAndClearance: string;
-    total: string;
-    disclaimer: string;
-    downloadPdfTitle: string;
-    downloadPdfButton: string;
-    priceMin: string;
-    priceMax: string;
-  };
+  labels: Record<string, string>;
   options: {
     transports: CalculatorSelectOption[];
     auctions: CalculatorSelectOption[];
     deliveries: CalculatorDeliveryOption[];
     ages: CalculatorSelectOption[];
     platformDefault: CalculatorSelectOption;
+    [key: string]: unknown;
   };
-  errors: {
-    calculationFailed: string;
-    connectionFailed: string;
-  };
-  rowLabels: {
-    carPrice: string;
-    auctionFee: string;
-    deliveryToUsaPort: string;
-    deliveryFromPortToPoti: string;
-    deliveryFromPortDefault: string;
-    deliveryFromPortToCityTemplate: string;
-    deliveryFromPotiToTemplate: string;
-    deliveryFromKlaipedaToTemplate: string;
-    deliveryToDestinationDefault: string;
-    ourServicePrice: string;
-    customDuty: string;
-    customFee: string;
-    junkFee: string;
-    svxServicePrice: string;
-  };
+  errors: Record<string, string>;
+  rowLabels: Record<string, string>;
+  [key: string]: unknown;
 }
 
 export interface MarketSection {

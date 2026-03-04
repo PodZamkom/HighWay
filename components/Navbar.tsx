@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import type { NavbarContent } from '@/types/site';
-import { Instagram, Send, ChevronDown, Menu, X } from 'lucide-react';
+import { Instagram, Send, MessageCircle, ChevronDown, Menu, X } from 'lucide-react';
 import { LeadFormModal } from './LeadFormModal';
 
 interface NavbarProps {
@@ -15,6 +15,7 @@ export function Navbar({ content }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const secondaryMenus = content.secondaryMenus ?? [];
   const secondaryLinks = content.secondaryLinks ?? [];
+  const telegramLink = content.telegram;
 
   return (
     <>
@@ -50,14 +51,18 @@ export function Navbar({ content }: NavbarProps) {
                 <div className="hidden flex-col items-end md:flex">
                   <a href={content.phoneLink} className="flex items-center gap-1 text-[1.08rem] font-black tracking-tight text-[#ff6f1d] transition-colors hover:text-[#ff8b46]">
                     {content.phone}
-                    <ChevronDown className="h-3 w-3 text-[#8f8f8f]" />
                   </a>
                   <div className="mt-1 flex items-center gap-3">
                     <a href={content.instagram} target="_blank" rel="noreferrer" className="text-[#a9a9a9] transition-colors hover:text-[#ff7a33]">
                       <Instagram size={16} />
                     </a>
+                    {telegramLink ? (
+                      <a href={telegramLink} target="_blank" rel="noreferrer" className="text-[#a9a9a9] transition-colors hover:text-[#46a6ff]">
+                        <Send size={16} className="rotate-[-20deg]" />
+                      </a>
+                    ) : null}
                     <a href={content.whatsapp} target="_blank" rel="noreferrer" className="text-[#a9a9a9] transition-colors hover:text-[#45d07f]">
-                      <Send size={16} className="rotate-[-20deg]" />
+                      <MessageCircle size={16} />
                     </a>
                   </div>
                 </div>
@@ -68,6 +73,13 @@ export function Navbar({ content }: NavbarProps) {
                 >
                   {content.ctaLabel}
                 </button>
+
+                <a
+                  href={content.phoneLink}
+                  className="rounded-xl border border-[#ff5a00]/70 px-4 py-2 text-xs font-black uppercase tracking-wider text-[#ff8b46] transition-colors hover:border-[#ff7429] hover:text-[#ff7429] md:hidden"
+                >
+                  Позвонить
+                </a>
 
                 {/* Mobile menu button */}
                 <button

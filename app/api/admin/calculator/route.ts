@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { requireAdminApiAuth } from '@/lib/admin/api';
 import {
   listPlatforms,
   listUploadedDocuments,
@@ -14,7 +15,10 @@ function sanitizeNumber(value: unknown, fallback: number) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const authResult = await requireAdminApiAuth(request);
+  if (!authResult.ok) return authResult.response;
+
   try {
     const config = readCalculatorConfig();
     const uploads = listUploadedDocuments();
@@ -32,6 +36,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const authResult = await requireAdminApiAuth(request);
+  if (!authResult.ok) return authResult.response;
+
   try {
     const body = await request.json();
     const source = body?.config ?? body;

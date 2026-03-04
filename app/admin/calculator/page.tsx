@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Brain, Calculator, Loader2, RefreshCw, Save, Upload } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { AdminHeader } from '@/components/admin/common/AdminHeader';
 import type { CalculatorConfig, UploadedDocument } from '@/types/calculator';
 
 interface AdminCalculatorResponse {
@@ -11,6 +13,8 @@ interface AdminCalculatorResponse {
 }
 
 export default function AdminCalculatorPage() {
+  const router = useRouter();
+  const [adminLogin, setAdminLogin] = useState('admin');
   const [payload, setPayload] = useState<AdminCalculatorResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -20,8 +24,19 @@ export default function AdminCalculatorPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchSettings();
-  }, []);
+    void (async () => {
+      const sessionRes = await fetch('/api/admin/auth/me', { cache: 'no-store' });
+      if (!sessionRes.ok) {
+        router.replace('/admin/login?next=/admin/calculator');
+        return;
+      }
+      const sessionData = await sessionRes.json();
+      if (sessionData?.user?.login) {
+        setAdminLogin(sessionData.user.login);
+      }
+      await fetchSettings();
+    })();
+  }, [router]);
 
   const uploads = useMemo(() => payload?.uploads || [], [payload]);
   const platforms = useMemo(() => payload?.platforms || [], [payload]);
@@ -32,6 +47,10 @@ export default function AdminCalculatorPage() {
     try {
       const res = await fetch('/api/admin/calculator', { cache: 'no-store' });
       const data = await res.json();
+      if (res.status === 401) {
+        router.replace('/admin/login?next=/admin/calculator');
+        return;
+      }
       if (!res.ok) throw new Error(data?.error || 'Ошибка загрузки');
       setPayload(data);
     } catch (e: any) {
@@ -127,8 +146,11 @@ export default function AdminCalculatorPage() {
 
   if (loading || !payload) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
-        <Loader2 className="animate-spin" />
+      <div className="min-h-screen bg-zinc-950 text-white">
+        <AdminHeader login={adminLogin} />
+        <div className="flex min-h-[70vh] items-center justify-center">
+          <Loader2 className="animate-spin" />
+        </div>
       </div>
     );
   }
@@ -136,8 +158,9 @@ export default function AdminCalculatorPage() {
   const { config } = payload;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white p-6 md:p-8">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <div className="min-h-screen bg-zinc-950 text-white">
+      <AdminHeader login={adminLogin} />
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
         <div className="rounded-2xl border border-white/10 bg-zinc-900 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h1 className="text-2xl font-bold flex items-center gap-2">

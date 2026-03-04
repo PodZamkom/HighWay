@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { randomUUID } from 'crypto';
 import { NextResponse } from 'next/server';
+import { requireAdminApiAuth } from '@/lib/admin/api';
 import { createUploadedDocument } from '@/lib/calculatorDb';
 import type { ParseFileKind } from '@/types/calculator';
 
@@ -20,6 +21,9 @@ function inferKind(value: FormDataEntryValue | null): ParseFileKind {
 }
 
 export async function POST(request: Request) {
+  const authResult = await requireAdminApiAuth(request);
+  if (!authResult.ok) return authResult.response;
+
   try {
     const formData = await request.formData();
     const file = formData.get('file');

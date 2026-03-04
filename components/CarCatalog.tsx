@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowUpDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
-import { cars_db } from "@/data/cars_db";
+import type { CarModel } from "@/types/car";
 
 type MarketFilter = "All" | "USA" | "Korea" | "China" | "Europe";
 type SortMode = "price_asc" | "popular" | "newest";
@@ -13,6 +13,7 @@ type EngineFilter = "All" | "EV" | "EREV" | "HEV" | "ICE";
 interface CarCatalogProps {
   initialMarket?: string;
   catalogLabel: string;
+  cars: CarModel[];
 }
 
 function normalizeMarket(value?: string): MarketFilter {
@@ -51,7 +52,7 @@ function engineLabel(value: EngineFilter) {
   return "Любой";
 }
 
-export function CarCatalog({ initialMarket, catalogLabel }: CarCatalogProps) {
+export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProps) {
   const [market, setMarket] = useState<MarketFilter>(normalizeMarket(initialMarket));
   const [brand, setBrand] = useState("All");
   const [bodyType, setBodyType] = useState("All");
@@ -67,9 +68,9 @@ export function CarCatalog({ initialMarket, catalogLabel }: CarCatalogProps) {
   const [sortMode, setSortMode] = useState<SortMode>("price_asc");
 
   const marketFiltered = useMemo(() => {
-    if (market === "All") return cars_db;
-    return cars_db.filter((car) => car.market === market);
-  }, [market]);
+    if (market === "All") return cars;
+    return cars.filter((car) => car.market === market);
+  }, [cars, market]);
 
   const brands = useMemo(() => {
     return ["All", ...new Set(marketFiltered.map((car) => car.brand))].sort((a, b) => a.localeCompare(b));

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { requireAdminApiAuth } from '@/lib/admin/api';
 import { normalizeBitrixSettings, readBitrixSettings, resolveBitrixMethodUrl } from '@/lib/bitrixSettingsStore';
 
 type AnyObject = Record<string, unknown>;
@@ -20,15 +21,18 @@ function validateAdditionalFields(rawJson: string): string | null {
   try {
     const parsed = JSON.parse(rawJson || '{}');
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      return 'Дополнительные поля должны быть JSON-объектом';
+      return 'Дополнительные поля должны быть объектом ключ-значение';
     }
     return null;
   } catch {
-    return 'Дополнительные поля содержат невалидный JSON';
+    return 'Дополнительные поля заполнены некорректно';
   }
 }
 
 export async function POST(request: Request) {
+  const authResult = await requireAdminApiAuth(request);
+  if (!authResult.ok) return authResult.response;
+
   try {
     let payload: unknown = null;
     try {
