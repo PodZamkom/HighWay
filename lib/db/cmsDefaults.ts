@@ -33,8 +33,30 @@ function readPagesFromJson(): Record<ContentPageSlug, ContentPage> {
   return result;
 }
 
+function normalizeHomeContentInput(raw: Record<string, unknown>) {
+  const clone = deepClone(raw);
+  const calculator = (clone.calculator ?? {}) as Record<string, unknown>;
+  const form = (calculator.form ?? {}) as Record<string, unknown>;
+  const options = (form.options ?? {}) as Record<string, unknown>;
+  const platformDefault = (options.platformDefault ?? {}) as Record<string, unknown>;
+
+  const key = typeof platformDefault.key === "string" ? platformDefault.key.trim() : "";
+  const name = typeof platformDefault.name === "string" ? platformDefault.name.trim() : "";
+
+  options.platformDefault = {
+    ...platformDefault,
+    key: key || "default",
+    name: name || "Выберите площадку",
+  };
+  form.options = options;
+  calculator.form = form;
+  clone.calculator = calculator;
+
+  return clone;
+}
+
 function buildSnapshot(): CmsSnapshot {
-  const siteContent = siteContentJson as Record<string, unknown>;
+  const siteContent = normalizeHomeContentInput(siteContentJson as Record<string, unknown>);
 
   const homeLayout = cmsHomeLayoutSchema.parse({
     blocks: HOME_BLOCKS.map((key) => ({ key, enabled: true })),
