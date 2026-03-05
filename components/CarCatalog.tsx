@@ -45,22 +45,24 @@ function formatPrice(value?: number) {
   return value.toLocaleString("ru-RU");
 }
 
-function normalizeUsdToEurRate(value?: number) {
-  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) return 0.85844;
-  return value;
+function currencySymbol(currency: string) {
+  if (currency === "EUR") return "€";
+  if (currency === "BYN") return "Br";
+  if (currency === "JPY" || currency === "CNY") return "¥";
+  if (currency === "KRW") return "₩";
+  return "$";
 }
 
-function formatCatalogPrice(car: CarModel, usdToEurRate: number) {
-  if (car.market !== "Europe") return `$${formatPrice(car.price_value)}`;
-  const rawEur = car.price_currency === "EUR" ? car.price_value : car.price_value * usdToEurRate;
-  const normalizedEur = Math.round(rawEur);
-  return `От €${formatPrice(normalizedEur)}`;
+function formatCatalogPrice(car: CarModel) {
+  if (car.market !== "Europe") return `${currencySymbol(car.price_currency)}${formatPrice(car.price_value)}`;
+  if (car.price_currency === "EUR") return `От €${formatPrice(Math.round(car.price_value))}`;
+  return `${currencySymbol(car.price_currency)}${formatPrice(car.price_value)}`;
 }
 
-function getComparablePriceValue(car: CarModel, market: MarketFilter, usdToEurRate: number) {
+function getComparablePriceValue(car: CarModel, market: MarketFilter) {
   if (market !== "Europe") return car.price_value;
   if (car.price_currency === "EUR") return car.price_value;
-  return car.price_value * usdToEurRate;
+  return car.price_value;
 }
 
 function engineLabel(value: EngineFilter) {
@@ -71,8 +73,7 @@ function engineLabel(value: EngineFilter) {
   return "Любой";
 }
 
-export function CarCatalog({ initialMarket, catalogLabel, cars, usdToEurRate }: CarCatalogProps) {
-  const eurRate = normalizeUsdToEurRate(usdToEurRate);
+export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProps) {
   const [market, setMarket] = useState<MarketFilter>(normalizeMarket(initialMarket));
   const [brand, setBrand] = useState("All");
   const [bodyType, setBodyType] = useState("All");
@@ -129,7 +130,7 @@ export function CarCatalog({ initialMarket, catalogLabel, cars, usdToEurRate }: 
       if (drive !== "All" && car.drive !== drive) return false;
       if (yFrom !== null && car.year < yFrom) return false;
       if (yTo !== null && car.year > yTo) return false;
-      const comparablePrice = getComparablePriceValue(car, market, eurRate);
+      const comparablePrice = getComparablePriceValue(car, market);
       if (pFrom !== null && comparablePrice < pFrom) return false;
       if (pTo !== null && comparablePrice > pTo) return false;
 
@@ -145,7 +146,7 @@ export function CarCatalog({ initialMarket, catalogLabel, cars, usdToEurRate }: 
     });
 
     if (sortMode === "price_asc") {
-      cars.sort((a, b) => getComparablePriceValue(a, market, eurRate) - getComparablePriceValue(b, market, eurRate));
+      cars.sort((a, b) => getComparablePriceValue(a, market) - getComparablePriceValue(b, market));
     } else if (sortMode === "newest") {
       cars.sort((a, b) => b.year - a.year);
     } else {
@@ -157,7 +158,7 @@ export function CarCatalog({ initialMarket, catalogLabel, cars, usdToEurRate }: 
     }
 
     return cars;
-  }, [bodyType, brand, drive, engineType, eurRate, market, marketFiltered, mileageFrom, mileageTo, priceFrom, priceTo, sortMode, transmission, yearFrom, yearTo]);
+  }, [bodyType, brand, drive, engineType, market, marketFiltered, mileageFrom, mileageTo, priceFrom, priceTo, sortMode, transmission, yearFrom, yearTo]);
 
   const resetFilters = () => {
     setBrand("All");
@@ -456,7 +457,7 @@ export function CarCatalog({ initialMarket, catalogLabel, cars, usdToEurRate }: 
                     </p>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-black text-[#ff6f1d]">{formatCatalogPrice(car, eurRate)}</div>
+                    <div className="text-lg font-black text-[#ff6f1d]">{formatCatalogPrice(car)}</div>
                     <div className="text-[10px] uppercase text-slate-400">{car.price_type}</div>
                   </div>
                 </div>

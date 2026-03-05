@@ -20,7 +20,7 @@ export interface CatalogCarEntity {
   condition: Condition;
   mileageKm: number | null;
   priceValue: number;
-  priceCurrency: "USD" | "CNY" | "EUR" | "KRW";
+  priceCurrency: "USD" | "EUR" | "BYN" | "JPY" | "CNY" | "KRW";
   priceType: PriceType;
   availability: Availability;
   market: Market;

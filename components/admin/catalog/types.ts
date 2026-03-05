@@ -11,7 +11,7 @@ export type CarFormState = {
   condition: "New" | "Used" | "Crashed";
   mileageKm: number | null;
   priceValue: number;
-  priceCurrency: "USD" | "CNY" | "EUR" | "KRW";
+  priceCurrency: "USD" | "EUR" | "BYN" | "JPY" | "CNY" | "KRW";
   priceType: "FOB" | "EXW" | "OnRoad" | "Estimate";
   availability: "InStock" | "EnRoute" | "OnOrder";
   market: Market;

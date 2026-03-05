@@ -14,7 +14,7 @@ export interface CarModel {
     condition: Condition;
     mileage_km?: number;
     price_value: number;
-    price_currency: 'USD' | 'CNY' | 'EUR' | 'KRW';
+    price_currency: 'USD' | 'EUR' | 'BYN' | 'JPY' | 'CNY' | 'KRW';
     price_type: PriceType;
     availability: Availability;
     market: Market;

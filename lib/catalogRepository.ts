@@ -32,7 +32,7 @@ interface CatalogCarRow {
   condition: string;
   mileage_km: number | null;
   price_value: string | number;
-  price_currency: "USD" | "CNY" | "EUR" | "KRW";
+  price_currency: "USD" | "EUR" | "BYN" | "JPY" | "CNY" | "KRW";
   price_type: "FOB" | "EXW" | "OnRoad" | "Estimate";
   availability: "InStock" | "EnRoute" | "OnOrder";
   market: "China" | "USA" | "Korea" | "Europe";

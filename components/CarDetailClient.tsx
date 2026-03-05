@@ -22,6 +22,8 @@ export function CarDetailClient({ car, catalogLabel }: CarDetailClientProps) {
     const currencySymbol = (currency: string) => {
         switch (currency) {
             case 'EUR': return '€';
+            case 'BYN': return 'Br';
+            case 'JPY': return '¥';
             case 'CNY': return '¥';
             case 'KRW': return '₩';
             default: return '$';
@@ -48,9 +50,9 @@ export function CarDetailClient({ car, catalogLabel }: CarDetailClientProps) {
 
     const priceTypeLabel = (priceType: string) => {
         switch (priceType) {
-            case 'FOB': return 'Цена (FOB)';
-            case 'EXW': return 'Цена (EXW)';
-            case 'OnRoad': return 'Цена (OnRoad)';
+            case 'FOB': return 'Без доставки';
+            case 'EXW': return 'Без растаможки';
+            case 'OnRoad': return 'Под ключ';
             case 'Estimate': return 'Оценка';
             default: return 'Цена';
         }
@@ -425,9 +427,9 @@ function availabilityLabelStatic(availability: string) {
 
 function priceTypeLabelStatic(priceType: string) {
     switch (priceType) {
-        case 'FOB': return 'Цена (FOB)';
-        case 'EXW': return 'Цена (EXW)';
-        case 'OnRoad': return 'Цена (OnRoad)';
+        case 'FOB': return 'Без доставки';
+        case 'EXW': return 'Без растаможки';
+        case 'OnRoad': return 'Под ключ';
         case 'Estimate': return 'Оценка';
         default: return 'Цена';
     }

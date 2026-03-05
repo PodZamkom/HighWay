@@ -5,6 +5,79 @@ import { Loader2, Save } from "lucide-react";
 import { MediaField } from "@/components/admin/common/MediaField";
 import type { CarFormState } from "@/components/admin/catalog/types";
 
+type SelectOption = {
+  value: string;
+  label: string;
+};
+
+const CONDITION_OPTIONS: SelectOption[] = [
+  { value: "New", label: "Новый" },
+  { value: "Used", label: "С пробегом" },
+  { value: "Crashed", label: "После ДТП" },
+];
+
+const AVAILABILITY_OPTIONS: SelectOption[] = [
+  { value: "InStock", label: "В наличии" },
+  { value: "EnRoute", label: "В пути" },
+  { value: "OnOrder", label: "Под заказ" },
+];
+
+const MARKET_OPTIONS: SelectOption[] = [
+  { value: "China", label: "Китай" },
+  { value: "USA", label: "США" },
+  { value: "Korea", label: "Корея" },
+  { value: "Europe", label: "Европа" },
+];
+
+const CURRENCY_OPTIONS: SelectOption[] = [
+  { value: "USD", label: "Доллар (USD)" },
+  { value: "EUR", label: "Евро (EUR)" },
+  { value: "BYN", label: "Белорусский рубль (BYN)" },
+  { value: "JPY", label: "Йена (JPY)" },
+  { value: "CNY", label: "Юань (CNY)" },
+  { value: "KRW", label: "Вона (KRW)" },
+];
+
+const PRICE_TYPE_OPTIONS: SelectOption[] = [
+  { value: "OnRoad", label: "Под ключ" },
+  { value: "EXW", label: "Без растаможки" },
+  { value: "FOB", label: "Без доставки" },
+  { value: "Estimate", label: "Оценка (устар.)" },
+];
+
+const ENGINE_TYPE_OPTIONS: SelectOption[] = [
+  { value: "", label: "Не указано" },
+  { value: "EV", label: "Электро (EV)" },
+  { value: "EREV", label: "Гибрид с генератором (EREV)" },
+  { value: "ICE", label: "ДВС (ICE)" },
+  { value: "HEV", label: "Гибрид (HEV)" },
+];
+
+const BODY_TYPE_OPTIONS: SelectOption[] = [
+  { value: "", label: "Не указано" },
+  { value: "Седан", label: "Седан" },
+  { value: "Кроссовер", label: "Кроссовер" },
+  { value: "Внедорожник", label: "Внедорожник" },
+  { value: "Хэтчбек", label: "Хэтчбек" },
+  { value: "Универсал", label: "Универсал" },
+  { value: "Минивэн", label: "Минивэн" },
+  { value: "Купе", label: "Купе" },
+];
+
+const TRANSMISSION_OPTIONS: SelectOption[] = [
+  { value: "", label: "Не указано" },
+  { value: "Механическая", label: "Механическая" },
+  { value: "Автоматическая", label: "Автоматическая" },
+  { value: "Без коробки", label: "Без коробки (для электромобилей)" },
+];
+
+const DRIVE_OPTIONS: SelectOption[] = [
+  { value: "", label: "Не указано" },
+  { value: "Полный", label: "Полный" },
+  { value: "Передний", label: "Передний" },
+  { value: "Задний", label: "Задний" },
+];
+
 interface CatalogCarFormPanelProps {
   form: CarFormState;
   setForm: Dispatch<SetStateAction<CarFormState>>;
@@ -44,7 +117,12 @@ export function CatalogCarFormPanel({
 
       <div className="max-h-[74vh] space-y-3 overflow-y-auto pr-1">
         <div className="grid gap-3 md:grid-cols-2">
-          <Input label="Slug" value={form.slug} onChange={(value) => setForm((prev) => ({ ...prev, slug: value }))} />
+          <Input
+            label="URL идентификатор (slug)"
+            hint="Служебный адрес карточки в ссылке, например: toyota-camry-2025"
+            value={form.slug}
+            onChange={(value) => setForm((prev) => ({ ...prev, slug: value }))}
+          />
           <Input label="Марка" value={form.brand} onChange={(value) => setForm((prev) => ({ ...prev, brand: value }))} />
           <Input label="Модель" value={form.model} onChange={(value) => setForm((prev) => ({ ...prev, model: value }))} />
           <Input label="Комплектация" value={form.generation} onChange={(value) => setForm((prev) => ({ ...prev, generation: value }))} />
@@ -54,11 +132,12 @@ export function CatalogCarFormPanel({
             value={String(form.year)}
             onChange={(value) => setForm((prev) => ({ ...prev, year: Number(value) || prev.year }))}
           />
-          <Input
-            label="Цена"
-            type="number"
+          <PriceWithCurrencyField
             value={String(form.priceValue)}
-            onChange={(value) => setForm((prev) => ({ ...prev, priceValue: Number(value) || 0 }))}
+            currency={form.priceCurrency}
+            currencyOptions={CURRENCY_OPTIONS}
+            onValueChange={(value) => setForm((prev) => ({ ...prev, priceValue: Number(value) || 0 }))}
+            onCurrencyChange={(value) => setForm((prev) => ({ ...prev, priceCurrency: value as CarFormState["priceCurrency"] }))}
           />
         </div>
 
@@ -66,45 +145,44 @@ export function CatalogCarFormPanel({
           <Select
             label="Состояние"
             value={form.condition}
-            options={["New", "Used", "Crashed"]}
+            options={CONDITION_OPTIONS}
             onChange={(value) => setForm((prev) => ({ ...prev, condition: value as CarFormState["condition"] }))}
           />
           <Select
             label="Наличие"
             value={form.availability}
-            options={["InStock", "EnRoute", "OnOrder"]}
+            options={AVAILABILITY_OPTIONS}
             onChange={(value) => setForm((prev) => ({ ...prev, availability: value as CarFormState["availability"] }))}
           />
           <Select
             label="Рынок"
             value={form.market}
-            options={["China", "USA", "Korea", "Europe"]}
+            options={MARKET_OPTIONS}
             onChange={(value) => setForm((prev) => ({ ...prev, market: value as CarFormState["market"] }))}
-          />
-          <Select
-            label="Валюта"
-            value={form.priceCurrency}
-            options={["USD", "CNY", "EUR", "KRW"]}
-            onChange={(value) => setForm((prev) => ({ ...prev, priceCurrency: value as CarFormState["priceCurrency"] }))}
           />
           <Select
             label="Тип цены"
             value={form.priceType}
-            options={["FOB", "EXW", "OnRoad", "Estimate"]}
+            options={PRICE_TYPE_OPTIONS}
             onChange={(value) => setForm((prev) => ({ ...prev, priceType: value as CarFormState["priceType"] }))}
           />
           <Select
-            label="Тип"
+            label="Тип двигателя"
             value={form.type || ""}
-            options={["", "EV", "EREV", "ICE", "HEV"]}
+            options={ENGINE_TYPE_OPTIONS}
             onChange={(value) => setForm((prev) => ({ ...prev, type: (value || null) as CarFormState["type"] }))}
           />
         </div>
 
         <div className="grid gap-3 md:grid-cols-3">
-          <Input label="Кузов" value={form.bodyType} onChange={(value) => setForm((prev) => ({ ...prev, bodyType: value }))} />
-          <Input label="Коробка" value={form.transmission} onChange={(value) => setForm((prev) => ({ ...prev, transmission: value }))} />
-          <Input label="Привод" value={form.drive} onChange={(value) => setForm((prev) => ({ ...prev, drive: value }))} />
+          <Select label="Кузов" value={form.bodyType} options={BODY_TYPE_OPTIONS} onChange={(value) => setForm((prev) => ({ ...prev, bodyType: value }))} />
+          <Select
+            label="Коробка передач"
+            value={form.transmission}
+            options={TRANSMISSION_OPTIONS}
+            onChange={(value) => setForm((prev) => ({ ...prev, transmission: value }))}
+          />
+          <Select label="Привод" value={form.drive} options={DRIVE_OPTIONS} onChange={(value) => setForm((prev) => ({ ...prev, drive: value }))} />
         </div>
 
         <label className="block">
@@ -199,16 +277,57 @@ export function CatalogCarFormPanel({
   );
 }
 
+function PriceWithCurrencyField({
+  value,
+  currency,
+  currencyOptions,
+  onValueChange,
+  onCurrencyChange,
+}: {
+  value: string;
+  currency: string;
+  currencyOptions: SelectOption[];
+  onValueChange: (value: string) => void;
+  onCurrencyChange: (value: string) => void;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-zinc-300">Цена и валюта</span>
+      <div className="grid grid-cols-[1fr_190px] gap-2">
+        <input
+          type="number"
+          value={value}
+          onChange={(event) => onValueChange(event.target.value)}
+          className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-orange-500"
+        />
+        <select
+          value={currency}
+          onChange={(event) => onCurrencyChange(event.target.value)}
+          className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-orange-500"
+        >
+          {currencyOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    </label>
+  );
+}
+
 function Input({
   label,
   value,
   onChange,
   type = "text",
+  hint,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   type?: "text" | "number";
+  hint?: string;
 }) {
   return (
     <label className="block">
@@ -219,6 +338,7 @@ function Input({
         onChange={(event) => onChange(event.target.value)}
         className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-orange-500"
       />
+      {hint ? <span className="mt-1 block text-[11px] text-zinc-500">{hint}</span> : null}
     </label>
   );
 }
@@ -231,9 +351,14 @@ function Select({
 }: {
   label: string;
   value: string;
-  options: string[];
+  options: SelectOption[];
   onChange: (value: string) => void;
 }) {
+  const hasCurrentOption = options.some((option) => option.value === value);
+  const normalizedOptions = !hasCurrentOption && value
+    ? [{ value, label: `${value} (текущее значение)` }, ...options]
+    : options;
+
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-zinc-300">{label}</span>
@@ -242,9 +367,9 @@ function Select({
         onChange={(event) => onChange(event.target.value)}
         className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-orange-500"
       >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option || "—"}
+        {normalizedOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
           </option>
         ))}
       </select>

@@ -35,7 +35,7 @@ export const catalogCarInputSchema = z.object({
   condition: conditionSchema,
   mileageKm: z.number().int().min(0).nullable().optional(),
   priceValue: z.number().nonnegative(),
-  priceCurrency: z.enum(["USD", "CNY", "EUR", "KRW"]),
+  priceCurrency: z.enum(["USD", "EUR", "BYN", "JPY", "CNY", "KRW"]),
   priceType: priceTypeSchema,
   availability: availabilitySchema,
   market: marketSchema,
