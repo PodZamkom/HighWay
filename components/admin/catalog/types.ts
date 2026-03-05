@@ -6,6 +6,7 @@ export type CarFormState = {
   slug: string;
   brand: string;
   model: string;
+  priority: number;
   generation: string;
   year: number;
   condition: "New" | "Used" | "Crashed";
@@ -62,6 +63,7 @@ export function defaultFormState(): CarFormState {
     slug: "",
     brand: "",
     model: "",
+    priority: 0,
     generation: "",
     year: new Date().getFullYear(),
     condition: "Used",
@@ -86,6 +88,7 @@ export function mapCarToForm(car: CatalogCarEntity): CarFormState {
     slug: car.slug,
     brand: car.brand,
     model: car.model,
+    priority: car.priority,
     generation: car.generation,
     year: car.year,
     condition: car.condition,
@@ -116,6 +119,7 @@ export function mapCarToForm(car: CatalogCarEntity): CarFormState {
 export function serializeFormState(form: CarFormState): string {
   return JSON.stringify({
     ...form,
+    priority: Number.isFinite(form.priority) ? Math.trunc(form.priority) : 0,
     images: form.images.map((image, index) => ({
       id: image.id,
       mediaAssetId: image.mediaAssetId ?? null,

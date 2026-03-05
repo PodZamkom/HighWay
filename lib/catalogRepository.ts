@@ -33,6 +33,7 @@ interface CatalogCarRow {
   slug: string;
   brand: string;
   model: string;
+  priority: number;
   generation: string;
   year: number;
   condition: string;
@@ -115,6 +116,7 @@ function rowToEntity(row: CatalogCarRow): CatalogCarEntity {
     slug: row.slug,
     brand: row.brand,
     model: row.model,
+    priority: row.priority,
     generation: row.generation,
     year: row.year,
     condition: normalizeCondition(row.condition),
@@ -142,6 +144,7 @@ export function entityToLegacyCar(entity: CatalogCarEntity): CarModel {
     slug: entity.slug,
     brand: entity.brand,
     model: entity.model,
+    priority: entity.priority,
     generation: entity.generation,
     year: entity.year,
     condition: entity.condition,
@@ -243,6 +246,7 @@ export async function listCatalogCars(filters: CatalogListFilters = {}): Promise
           slug: car.slug,
           brand: car.brand,
           model: car.model,
+          priority: Number.isFinite(car.priority) ? Math.trunc(car.priority as number) : 0,
           generation: car.generation || "",
           year: car.year,
           condition: car.condition,
@@ -293,6 +297,7 @@ export async function listCatalogCars(filters: CatalogListFilters = {}): Promise
       c.slug,
       c.brand,
       c.model,
+      c.priority,
       c.generation,
       c.year,
       c.condition,
@@ -371,6 +376,7 @@ export async function findCatalogCarByIdOrSlug(idOrSlug: string): Promise<Catalo
       slug: car.slug,
       brand: car.brand,
       model: car.model,
+      priority: Number.isFinite(car.priority) ? Math.trunc(car.priority as number) : 0,
       generation: car.generation || "",
       year: car.year,
       condition: car.condition,
@@ -401,6 +407,7 @@ export async function findCatalogCarByIdOrSlug(idOrSlug: string): Promise<Catalo
         c.slug,
         c.brand,
         c.model,
+        c.priority,
         c.generation,
         c.year,
         c.condition,
@@ -482,6 +489,7 @@ function entityToInput(entity: CatalogCarEntity): CatalogCarInputDto {
     slug: entity.slug,
     brand: entity.brand,
     model: entity.model,
+    priority: entity.priority,
     generation: entity.generation,
     year: entity.year,
     condition: entity.condition,
@@ -522,11 +530,11 @@ export async function createCatalogCar(input: CatalogCarInputDto): Promise<Catal
           INSERT INTO catalog_cars (
             id, slug, brand, model, generation, year, condition, mileage_km,
             price_value, price_currency, price_type, availability, market, type,
-            body_type, transmission, drive, description, archived_at, created_at, updated_at
+            body_type, transmission, drive, priority, description, archived_at, created_at, updated_at
           ) VALUES (
             $1, $2, $3, $4, $5, $6, $7, $8,
             $9, $10, $11, $12, $13, $14,
-            $15, $16, $17, $18, NULL, NOW(), NOW()
+            $15, $16, $17, $18, $19, NULL, NOW(), NOW()
           )
         `,
         [
@@ -547,6 +555,7 @@ export async function createCatalogCar(input: CatalogCarInputDto): Promise<Catal
           input.bodyType || "",
           input.transmission || "",
           input.drive || "",
+          input.priority ?? 0,
           input.description || "",
         ],
       );
@@ -607,7 +616,8 @@ export async function updateCatalogCar(id: string, patch: CatalogCarPatchDto): P
             body_type = $15,
             transmission = $16,
             drive = $17,
-            description = $18,
+            priority = $18,
+            description = $19,
             updated_at = NOW()
           WHERE id = $1
         `,
@@ -629,6 +639,7 @@ export async function updateCatalogCar(id: string, patch: CatalogCarPatchDto): P
           next.bodyType || "",
           next.transmission || "",
           next.drive || "",
+          next.priority ?? 0,
           next.description || "",
         ],
       );

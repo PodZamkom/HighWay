@@ -127,6 +127,18 @@ export function CatalogCarFormPanel({
           <Input label="Модель" value={form.model} onChange={(value) => setForm((prev) => ({ ...prev, model: value }))} />
           <Input label="Комплектация" value={form.generation} onChange={(value) => setForm((prev) => ({ ...prev, generation: value }))} />
           <Input
+            label="Приоритет"
+            hint="Чем больше число, тем выше в каталоге"
+            type="number"
+            value={String(form.priority)}
+            onChange={(value) =>
+              setForm((prev) => ({
+                ...prev,
+                priority: Number.isFinite(Number(value)) ? Math.trunc(Number(value)) : 0,
+              }))
+            }
+          />
+          <Input
             label="Год"
             type="number"
             value={String(form.year)}

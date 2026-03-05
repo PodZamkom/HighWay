@@ -67,6 +67,7 @@ export function CatalogCarsListPanel({
                     <div className="mt-0.5 text-xs text-zinc-500">
                       {car.market} · {car.priceValue.toLocaleString("ru-RU")} {car.priceCurrency}
                     </div>
+                    <div className="mt-0.5 text-[11px] text-zinc-500">prio: {car.priority}</div>
                     <div className="mt-1 truncate text-[11px] text-zinc-500">{car.slug}</div>
                   </button>
 

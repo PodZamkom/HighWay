@@ -225,6 +225,17 @@ const MIGRATIONS: Migration[] = [
       ALTER TABLE catalog_cars VALIDATE CONSTRAINT catalog_cars_market_currency_check;
     `,
   },
+  {
+    id: "20260305_0004_catalog_car_priority",
+    sql: `
+      ALTER TABLE catalog_cars
+      ADD COLUMN IF NOT EXISTS priority INT NOT NULL DEFAULT 0;
+
+      UPDATE catalog_cars
+      SET priority = 0
+      WHERE priority IS NULL;
+    `,
+  },
 ];
 
 async function ensureMigrationsTable(client: PoolClient) {

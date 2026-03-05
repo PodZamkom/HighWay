@@ -9,6 +9,7 @@ export interface CarModel {
     slug: string;
     brand: string;
     model: string;
+    priority?: number;
     generation?: string;
     year: number;
     condition: Condition;

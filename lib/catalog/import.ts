@@ -102,6 +102,7 @@ export function parseCatalogImportFile(fileName: string, buffer: Buffer): Parsed
     const brand = pickString(normalizedRow, ["brand", "make"]);
     const model = pickString(normalizedRow, ["model"]);
     const generation = pickString(normalizedRow, ["generation", "trim"]);
+    const priority = pickNumber(normalizedRow, ["priority", "sort_priority", "display_priority"]);
     const year = pickNumber(normalizedRow, ["year"]);
     const condition = pickString(normalizedRow, ["condition"]);
     const mileageKm = pickNumber(normalizedRow, ["mileage_km", "mileage", "mileagekm"]);
@@ -130,6 +131,7 @@ export function parseCatalogImportFile(fileName: string, buffer: Buffer): Parsed
       slug,
       brand,
       model,
+      priority: priority !== null ? Math.trunc(priority) : undefined,
       generation,
       year: year ?? undefined,
       condition,

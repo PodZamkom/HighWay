@@ -113,6 +113,7 @@ function normalizeCar(car: CarModel) {
     bodyType: car.body_type || "",
     transmission: car.transmission || "",
     drive: car.drive || "",
+    priority: Number.isFinite(car.priority) ? Math.trunc(car.priority as number) : 0,
     description: car.description || "",
     images: Array.isArray(car.images) ? car.images.filter(Boolean) : [],
   };
@@ -125,11 +126,11 @@ async function insertCar(client: PoolClient, car: CarModel) {
       INSERT INTO catalog_cars (
         id, slug, brand, model, generation, year, condition, mileage_km,
         price_value, price_currency, price_type, availability, market, type,
-        body_type, transmission, drive, description, archived_at
+        body_type, transmission, drive, priority, description, archived_at
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8,
         $9, $10, $11, $12, $13, $14,
-        $15, $16, $17, $18, NULL
+        $15, $16, $17, $18, $19, NULL
       )
     `,
     [
@@ -150,6 +151,7 @@ async function insertCar(client: PoolClient, car: CarModel) {
       normalized.bodyType,
       normalized.transmission,
       normalized.drive,
+      normalized.priority,
       normalized.description,
     ],
   );

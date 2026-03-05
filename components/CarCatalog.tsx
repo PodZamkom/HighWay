@@ -7,7 +7,7 @@ import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import type { CarModel } from "@/types/car";
 
 type MarketFilter = "All" | "USA" | "Korea" | "China" | "Europe";
-type SortMode = "price_asc" | "popular" | "newest";
+type SortMode = "priority" | "price_asc" | "popular" | "newest";
 type EngineFilter = "All" | "EV" | "EREV" | "HEV" | "ICE";
 
 interface CarCatalogProps {
@@ -64,6 +64,12 @@ function getComparablePriceValue(car: CarModel, market: MarketFilter) {
   return car.price_value;
 }
 
+function comparePopularOrder(a: CarModel, b: CarModel) {
+  const aStock = a.availability === "InStock" ? 1 : 0;
+  const bStock = b.availability === "InStock" ? 1 : 0;
+  return bStock - aStock || b.year - a.year;
+}
+
 function engineLabel(value: EngineFilter) {
   if (value === "EV") return "Электро";
   if (value === "EREV") return "EREV";
@@ -85,7 +91,7 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
   const [priceTo, setPriceTo] = useState("");
   const [mileageFrom, setMileageFrom] = useState("");
   const [mileageTo, setMileageTo] = useState("");
-  const [sortMode, setSortMode] = useState<SortMode>("price_asc");
+  const [sortMode, setSortMode] = useState<SortMode>("priority");
 
   const marketFiltered = useMemo(() => {
     if (market === "All") return cars;
@@ -144,16 +150,14 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
       return true;
     });
 
-    if (sortMode === "price_asc") {
+    if (sortMode === "priority") {
+      cars.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0) || comparePopularOrder(a, b));
+    } else if (sortMode === "price_asc") {
       cars.sort((a, b) => getComparablePriceValue(a, market) - getComparablePriceValue(b, market));
     } else if (sortMode === "newest") {
       cars.sort((a, b) => b.year - a.year);
     } else {
-      cars.sort((a, b) => {
-        const aStock = a.availability === "InStock" ? 1 : 0;
-        const bStock = b.availability === "InStock" ? 1 : 0;
-        return bStock - aStock || b.year - a.year;
-      });
+      cars.sort(comparePopularOrder);
     }
 
     return cars;
@@ -171,7 +175,7 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
     setPriceTo("");
     setMileageFrom("");
     setMileageTo("");
-    setSortMode("price_asc");
+    setSortMode("priority");
   };
 
   const marketTabs: Array<{ id: MarketFilter; label: string; dot: string }> = [
@@ -387,6 +391,16 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
               Сортировка
             </div>
             <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSortMode("priority")}
+                className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase transition ${
+                  sortMode === "priority"
+                    ? "border-orange-300 bg-orange-50 text-orange-700"
+                    : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:text-slate-900"
+                }`}
+              >
+                Приоритет
+              </button>
               <button
                 onClick={() => setSortMode("price_asc")}
                 className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase transition ${
