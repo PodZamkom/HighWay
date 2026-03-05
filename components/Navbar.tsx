@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { NavbarContent } from '@/types/site';
 import { Instagram, Send, MessageCircle, ChevronDown, Menu, X } from 'lucide-react';
@@ -13,9 +13,33 @@ interface NavbarProps {
 export function Navbar({ content }: NavbarProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openSecondaryMenu, setOpenSecondaryMenu] = useState<string | null>(null);
+  const closeMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const secondaryMenus = content.secondaryMenus ?? [];
   const secondaryLinks = content.secondaryLinks ?? [];
   const telegramLink = content.telegram;
+
+  const clearCloseMenuTimeout = () => {
+    if (closeMenuTimeoutRef.current) {
+      clearTimeout(closeMenuTimeoutRef.current);
+      closeMenuTimeoutRef.current = null;
+    }
+  };
+
+  const openMenu = (menuLabel: string) => {
+    clearCloseMenuTimeout();
+    setOpenSecondaryMenu(menuLabel);
+  };
+
+  const scheduleCloseMenu = () => {
+    clearCloseMenuTimeout();
+    closeMenuTimeoutRef.current = setTimeout(() => {
+      setOpenSecondaryMenu(null);
+      closeMenuTimeoutRef.current = null;
+    }, 120);
+  };
+
+  useEffect(() => () => clearCloseMenuTimeout(), []);
 
   return (
     <>
@@ -53,16 +77,31 @@ export function Navbar({ content }: NavbarProps) {
                     {content.phone}
                   </a>
                   <div className="mt-1 flex items-center gap-3">
-                    <a href={content.instagram} target="_blank" rel="noreferrer" className="text-[#a9a9a9] transition-colors hover:text-[#ff7a33]">
-                      <Instagram size={16} />
+                    <a
+                      href={content.instagram}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex h-5 w-5 items-center justify-center text-[#a9a9a9] transition-colors hover:text-[#ff7a33]"
+                    >
+                      <Instagram size={16} className="block" />
                     </a>
                     {telegramLink ? (
-                      <a href={telegramLink} target="_blank" rel="noreferrer" className="text-[#a9a9a9] transition-colors hover:text-[#46a6ff]">
-                        <Send size={16} className="rotate-[-20deg]" />
+                      <a
+                        href={telegramLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex h-5 w-5 items-center justify-center text-[#a9a9a9] transition-colors hover:text-[#46a6ff]"
+                      >
+                        <Send size={16} className="block rotate-[-20deg]" />
                       </a>
                     ) : null}
-                    <a href={content.whatsapp} target="_blank" rel="noreferrer" className="text-[#a9a9a9] transition-colors hover:text-[#45d07f]">
-                      <MessageCircle size={16} />
+                    <a
+                      href={content.whatsapp}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex h-5 w-5 items-center justify-center text-[#a9a9a9] transition-colors hover:text-[#45d07f]"
+                    >
+                      <MessageCircle size={16} className="block" />
                     </a>
                   </div>
                 </div>
@@ -97,19 +136,45 @@ export function Navbar({ content }: NavbarProps) {
         {secondaryMenus.length > 0 ? (
           <div className="border-t border-white/5 bg-black/50 backdrop-blur-md">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="hidden items-center gap-7 py-2.5 lg:flex">
+              <div className="hidden items-center gap-7 py-2.5 lg:flex" onMouseLeave={scheduleCloseMenu}>
                 {secondaryMenus.map((menu) => (
-                  <div key={menu.label} className="relative group">
+                  <div
+                    key={menu.label}
+                    className="relative"
+                    onMouseEnter={() => openMenu(menu.label)}
+                    onMouseLeave={scheduleCloseMenu}
+                    onFocus={() => openMenu(menu.label)}
+                    onBlur={(event) => {
+                      if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                        scheduleCloseMenu();
+                      }
+                    }}
+                  >
                     <button
                       type="button"
                       className="flex items-center gap-1 text-[0.95rem] font-semibold text-[#e5e7eb] transition-colors hover:text-white"
                       aria-haspopup="true"
+                      aria-expanded={openSecondaryMenu === menu.label}
                     >
                       {menu.label}
-                      <ChevronDown className="h-3 w-3 text-[#8f8f8f] transition-colors group-hover:text-white" />
+                      <ChevronDown
+                        className={`h-3 w-3 transition-colors ${
+                          openSecondaryMenu === menu.label ? 'text-white' : 'text-[#8f8f8f]'
+                        }`}
+                      />
                     </button>
-                    <div className="pointer-events-none absolute left-0 top-full z-50 w-56 pt-2 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
-                      <div className="translate-y-2 rounded-xl border border-[#303030] bg-[#141414] p-2 shadow-xl transition-transform duration-200 group-hover:translate-y-0 group-focus-within:translate-y-0">
+                    <div
+                      className={`absolute left-0 top-full z-50 w-56 pt-2 transition-all duration-200 ${
+                        openSecondaryMenu === menu.label
+                          ? 'pointer-events-auto opacity-100'
+                          : 'pointer-events-none opacity-0'
+                      }`}
+                    >
+                      <div
+                        className={`rounded-xl border border-[#303030] bg-[#141414] p-2 shadow-xl transition-transform duration-200 ${
+                          openSecondaryMenu === menu.label ? 'translate-y-0' : 'translate-y-2'
+                        }`}
+                      >
                         {menu.items.map((item) => (
                           <Link
                             key={item.label}

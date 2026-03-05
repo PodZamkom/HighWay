@@ -14,6 +14,7 @@ interface CarCatalogProps {
   initialMarket?: string;
   catalogLabel: string;
   cars: CarModel[];
+  usdToEurRate?: number;
 }
 
 function normalizeMarket(value?: string): MarketFilter {
@@ -44,6 +45,24 @@ function formatPrice(value?: number) {
   return value.toLocaleString("ru-RU");
 }
 
+function normalizeUsdToEurRate(value?: number) {
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) return 0.85844;
+  return value;
+}
+
+function formatCatalogPrice(car: CarModel, usdToEurRate: number) {
+  if (car.market !== "Europe") return `$${formatPrice(car.price_value)}`;
+  const rawEur = car.price_currency === "EUR" ? car.price_value : car.price_value * usdToEurRate;
+  const normalizedEur = Math.round(rawEur);
+  return `От €${formatPrice(normalizedEur)}`;
+}
+
+function getComparablePriceValue(car: CarModel, market: MarketFilter, usdToEurRate: number) {
+  if (market !== "Europe") return car.price_value;
+  if (car.price_currency === "EUR") return car.price_value;
+  return car.price_value * usdToEurRate;
+}
+
 function engineLabel(value: EngineFilter) {
   if (value === "EV") return "Электро";
   if (value === "EREV") return "EREV";
@@ -52,7 +71,8 @@ function engineLabel(value: EngineFilter) {
   return "Любой";
 }
 
-export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProps) {
+export function CarCatalog({ initialMarket, catalogLabel, cars, usdToEurRate }: CarCatalogProps) {
+  const eurRate = normalizeUsdToEurRate(usdToEurRate);
   const [market, setMarket] = useState<MarketFilter>(normalizeMarket(initialMarket));
   const [brand, setBrand] = useState("All");
   const [bodyType, setBodyType] = useState("All");
@@ -109,8 +129,9 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
       if (drive !== "All" && car.drive !== drive) return false;
       if (yFrom !== null && car.year < yFrom) return false;
       if (yTo !== null && car.year > yTo) return false;
-      if (pFrom !== null && car.price_value < pFrom) return false;
-      if (pTo !== null && car.price_value > pTo) return false;
+      const comparablePrice = getComparablePriceValue(car, market, eurRate);
+      if (pFrom !== null && comparablePrice < pFrom) return false;
+      if (pTo !== null && comparablePrice > pTo) return false;
 
       const mileageValue = typeof car.mileage_km === "number" ? car.mileage_km : 0;
       if (mFrom !== null) {
@@ -124,7 +145,7 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
     });
 
     if (sortMode === "price_asc") {
-      cars.sort((a, b) => a.price_value - b.price_value);
+      cars.sort((a, b) => getComparablePriceValue(a, market, eurRate) - getComparablePriceValue(b, market, eurRate));
     } else if (sortMode === "newest") {
       cars.sort((a, b) => b.year - a.year);
     } else {
@@ -136,7 +157,7 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
     }
 
     return cars;
-  }, [bodyType, brand, drive, engineType, marketFiltered, mileageFrom, mileageTo, priceFrom, priceTo, sortMode, transmission, yearFrom, yearTo]);
+  }, [bodyType, brand, drive, engineType, eurRate, market, marketFiltered, mileageFrom, mileageTo, priceFrom, priceTo, sortMode, transmission, yearFrom, yearTo]);
 
   const resetFilters = () => {
     setBrand("All");
@@ -435,7 +456,7 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
                     </p>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-black text-[#ff6f1d]">${formatPrice(car.price_value)}</div>
+                    <div className="text-lg font-black text-[#ff6f1d]">{formatCatalogPrice(car, eurRate)}</div>
                     <div className="text-[10px] uppercase text-slate-400">{car.price_type}</div>
                   </div>
                 </div>
