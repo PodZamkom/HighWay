@@ -186,6 +186,45 @@ const MIGRATIONS: Migration[] = [
       WHERE key = 'home_content';
     `,
   },
+  {
+    id: "20260305_0003_catalog_currency_policy",
+    sql: `
+      -- Source: ECB (via Frankfurter API), date 2026-03-04.
+      -- USD -> EUR rate used for one-time migration:
+      -- 1 USD = 0.85844 EUR
+      UPDATE catalog_cars
+      SET
+        price_value = ROUND(price_value * 0.85844, 0),
+        price_currency = 'EUR',
+        updated_at = NOW()
+      WHERE market = 'Europe' AND price_currency = 'USD';
+
+      UPDATE catalog_cars
+      SET
+        price_value = ROUND(price_value / 0.85844, 0),
+        price_currency = 'USD',
+        updated_at = NOW()
+      WHERE market = 'USA' AND price_currency = 'EUR';
+
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_constraint
+          WHERE conname = 'catalog_cars_market_currency_check'
+        ) THEN
+          ALTER TABLE catalog_cars
+          ADD CONSTRAINT catalog_cars_market_currency_check
+          CHECK (
+            (market = 'Europe' AND price_currency = 'EUR')
+            OR (market IN ('China', 'USA', 'Korea') AND price_currency = 'USD')
+          ) NOT VALID;
+        END IF;
+      END $$;
+
+      ALTER TABLE catalog_cars VALIDATE CONSTRAINT catalog_cars_market_currency_check;
+    `,
+  },
 ];
 
 async function ensureMigrationsTable(client: PoolClient) {

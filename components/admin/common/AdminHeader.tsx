@@ -36,29 +36,31 @@ export function AdminHeader({ login }: AdminHeaderProps) {
           <span>{login}</span>
         </div>
 
-        <nav className="flex flex-wrap items-center gap-2">
-          {NAV_ITEMS.map((item) => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                  active
-                    ? "bg-orange-500/20 text-orange-300"
-                    : "bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white"
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="order-3 w-full overflow-x-auto md:order-2 md:w-auto">
+          <nav className="flex min-w-max items-center gap-2 pb-1 md:pb-0">
+            {NAV_ITEMS.map((item) => {
+              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                    active
+                      ? "bg-orange-500/20 text-orange-300"
+                      : "bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
 
         <button
           type="button"
           onClick={logout}
-          className="inline-flex items-center gap-1 rounded-lg border border-white/15 px-3 py-1.5 text-xs font-semibold text-zinc-200 transition hover:border-orange-400 hover:text-white"
+          className="order-2 inline-flex items-center gap-1 rounded-lg border border-white/15 px-3 py-1.5 text-xs font-semibold text-zinc-200 transition hover:border-orange-400 hover:text-white md:order-3"
         >
           <LogOut size={14} />
           Выход

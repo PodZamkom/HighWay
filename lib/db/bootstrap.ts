@@ -3,8 +3,16 @@ import type { PoolClient } from "pg";
 import { withDbClient } from "@/lib/db";
 import { importedCarsDb } from "@/data/cars_imported_db";
 import { buildCmsDefaults } from "@/lib/db/cmsDefaults";
+import {
+  getMarketDefaultCurrency,
+  normalizeCatalogCurrency,
+  normalizeMarket,
+  type CatalogCurrency,
+} from "@/lib/catalog/currencyPolicy";
 import type { CmsDocumentKey } from "@/types/cms";
 import type { CarModel } from "@/types/car";
+
+const USD_TO_EUR_RATE = 0.85844;
 
 async function upsertCmsDocument(client: PoolClient, key: CmsDocumentKey, content: unknown) {
   await client.query(
@@ -42,7 +50,51 @@ async function seedCmsIfEmpty(client: PoolClient) {
   }
 }
 
+function normalizeCurrencyByMarket(params: {
+  market: string;
+  priceValue: number;
+  priceCurrency: string;
+}): { priceValue: number; priceCurrency: CatalogCurrency } {
+  const market = normalizeMarket(params.market) ?? "China";
+  const targetCurrency = getMarketDefaultCurrency(market);
+  const sourceCurrency = normalizeCatalogCurrency(params.priceCurrency) ?? targetCurrency;
+
+  if (sourceCurrency === targetCurrency) {
+    return {
+      priceValue: params.priceValue,
+      priceCurrency: targetCurrency,
+    };
+  }
+
+  if (sourceCurrency === "USD" && targetCurrency === "EUR") {
+    return {
+      priceValue: Math.round(params.priceValue * USD_TO_EUR_RATE),
+      priceCurrency: "EUR",
+    };
+  }
+
+  if (sourceCurrency === "EUR" && targetCurrency === "USD") {
+    return {
+      priceValue: Math.round(params.priceValue / USD_TO_EUR_RATE),
+      priceCurrency: "USD",
+    };
+  }
+
+  return {
+    priceValue: params.priceValue,
+    priceCurrency: targetCurrency,
+  };
+}
+
 function normalizeCar(car: CarModel) {
+  const normalizedMarket = normalizeMarket(car.market) ?? "China";
+  const normalizedPriceValue = Number.isFinite(car.price_value) ? car.price_value : 0;
+  const normalizedCurrency = normalizeCurrencyByMarket({
+    market: normalizedMarket,
+    priceValue: normalizedPriceValue,
+    priceCurrency: car.price_currency || "USD",
+  });
+
   return {
     id: car.id || randomUUID(),
     slug: car.slug || car.id || randomUUID(),
@@ -52,11 +104,11 @@ function normalizeCar(car: CarModel) {
     year: Number.isFinite(car.year) ? car.year : 2000,
     condition: car.condition || "Used",
     mileageKm: typeof car.mileage_km === "number" ? Math.max(0, Math.trunc(car.mileage_km)) : null,
-    priceValue: Number.isFinite(car.price_value) ? car.price_value : 0,
-    priceCurrency: car.price_currency || "USD",
+    priceValue: normalizedCurrency.priceValue,
+    priceCurrency: normalizedCurrency.priceCurrency,
     priceType: car.price_type || "FOB",
     availability: car.availability || "OnOrder",
-    market: car.market || "China",
+    market: normalizedMarket,
     type: car.type || null,
     bodyType: car.body_type || "",
     transmission: car.transmission || "",

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
-import { createCatalogCar, listCatalogCars } from "@/lib/catalogRepository";
+import { createCatalogCar, CurrencyPolicyError, listCatalogCars } from "@/lib/catalogRepository";
 import { catalogCarInputSchema, catalogCarListQuerySchema } from "@/lib/schemas/catalog";
 
 export async function GET(request: Request) {
@@ -56,6 +56,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ car: created }, { status: 201 });
   } catch (error: any) {
+    if (error instanceof CurrencyPolicyError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     console.error("Failed to create catalog car:", error);
     return NextResponse.json({ error: error?.message || "Не удалось создать автомобиль" }, { status: 500 });
   }

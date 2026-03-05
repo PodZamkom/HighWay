@@ -2,6 +2,11 @@ import path from "path";
 import * as XLSX from "xlsx";
 import { catalogCarInputSchema, type CatalogCarInputDto } from "@/lib/schemas/catalog";
 import {
+  getMarketDefaultCurrency,
+  normalizeCatalogCurrency,
+  normalizeMarket,
+} from "@/lib/catalog/currencyPolicy";
+import {
   createCatalogCar,
   findCatalogCarByIdOrSlug,
   updateCatalogCar,
@@ -101,16 +106,24 @@ export function parseCatalogImportFile(fileName: string, buffer: Buffer): Parsed
     const condition = pickString(normalizedRow, ["condition"]);
     const mileageKm = pickNumber(normalizedRow, ["mileage_km", "mileage", "mileagekm"]);
     const priceValue = pickNumber(normalizedRow, ["price_value", "price", "price_usd"]);
-    const priceCurrency = pickString(normalizedRow, ["price_currency", "currency"]).toUpperCase();
+    const priceCurrencyRaw = pickString(normalizedRow, ["price_currency", "currency"]).toUpperCase();
     const priceType = pickString(normalizedRow, ["price_type"]).toUpperCase();
     const availability = pickString(normalizedRow, ["availability"]);
-    const market = pickString(normalizedRow, ["market"]);
+    const marketRaw = pickString(normalizedRow, ["market"]);
     const type = pickString(normalizedRow, ["type"]).toUpperCase();
     const bodyType = pickString(normalizedRow, ["body_type", "bodytype", "body"]);
     const transmission = pickString(normalizedRow, ["transmission"]);
     const drive = pickString(normalizedRow, ["drive"]);
     const description = pickString(normalizedRow, ["description"]);
     const imagesRaw = pickString(normalizedRow, ["images", "image_urls", "gallery"]);
+    const normalizedMarket = normalizeMarket(marketRaw);
+    const normalizedPriceCurrency = normalizeCatalogCurrency(priceCurrencyRaw);
+    const resolvedMarket = normalizedMarket || marketRaw;
+    const resolvedPriceCurrency = priceCurrencyRaw
+      ? normalizedPriceCurrency || priceCurrencyRaw
+      : normalizedMarket
+      ? getMarketDefaultCurrency(normalizedMarket)
+      : "USD";
 
     const candidate: Record<string, unknown> = {
       id: id || undefined,
@@ -122,10 +135,10 @@ export function parseCatalogImportFile(fileName: string, buffer: Buffer): Parsed
       condition,
       mileageKm: mileageKm ?? null,
       priceValue: priceValue ?? undefined,
-      priceCurrency: priceCurrency || "USD",
+      priceCurrency: resolvedPriceCurrency,
       priceType: priceType || "FOB",
       availability,
-      market,
+      market: resolvedMarket,
       type: type || null,
       bodyType,
       transmission,

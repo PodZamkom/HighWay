@@ -19,7 +19,7 @@ const MARKET_COLORS: Record<string, string> = {
 export function MarketGrid({ content }: MarketGridProps) {
   return (
     <section className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 tracking-tight text-gray-900 flex items-center gap-4">
           <Globe className="text-orange-600" size={36} /> {content.title}
         </h2>

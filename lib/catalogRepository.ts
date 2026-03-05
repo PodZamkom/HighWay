@@ -2,6 +2,12 @@ import { randomUUID } from "crypto";
 import type { PoolClient } from "pg";
 import { dbQuery, isDatabaseConfigured, withDbClient } from "@/lib/db";
 import { ensureDatabaseReady } from "@/lib/db/ready";
+import {
+  assertMarketCurrencyAllowed,
+  CurrencyPolicyError,
+  normalizeCatalogCurrency,
+  normalizeMarket,
+} from "@/lib/catalog/currencyPolicy";
 import type {
   CatalogCarEntity,
   CatalogCarImage,
@@ -51,6 +57,17 @@ function requireDbForWrites() {
   if (!isDatabaseConfigured()) {
     throw new Error("DATABASE_URL is not configured. Catalog write operations require Postgres.");
   }
+}
+
+function assertCurrencyPolicy(market: string, currency: string) {
+  const normalizedMarket = normalizeMarket(market);
+  const normalizedCurrency = normalizeCatalogCurrency(currency);
+
+  if (!normalizedMarket || !normalizedCurrency) {
+    throw new Error(`Не удалось проверить политику валют: market=${market}, currency=${currency}`);
+  }
+
+  assertMarketCurrencyAllowed(normalizedMarket, normalizedCurrency);
 }
 
 function parsePriceValue(raw: string | number): number {
@@ -493,6 +510,7 @@ function entityToInput(entity: CatalogCarEntity): CatalogCarInputDto {
 export async function createCatalogCar(input: CatalogCarInputDto): Promise<CatalogCarEntity> {
   requireDbForWrites();
   await ensureDatabaseReady();
+  assertCurrencyPolicy(input.market, input.priceCurrency);
 
   const carId = input.id || randomUUID();
 
@@ -564,6 +582,7 @@ export async function updateCatalogCar(id: string, patch: CatalogCarPatchDto): P
     id: existing.id,
     images: patch.images ?? entityToInput(existing).images,
   } as CatalogCarInputDto;
+  assertCurrencyPolicy(next.market, next.priceCurrency);
 
   await withDbClient(async (client) => {
     await client.query("BEGIN");
@@ -632,6 +651,8 @@ export async function updateCatalogCar(id: string, patch: CatalogCarPatchDto): P
 
   return updated;
 }
+
+export { CurrencyPolicyError };
 
 export async function archiveCatalogCar(id: string, archived: boolean): Promise<void> {
   requireDbForWrites();

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
-import { archiveCatalogCar, findCatalogCarByIdOrSlug, updateCatalogCar } from "@/lib/catalogRepository";
+import { archiveCatalogCar, CurrencyPolicyError, findCatalogCarByIdOrSlug, updateCatalogCar } from "@/lib/catalogRepository";
 import { catalogArchiveRequestSchema, catalogCarPatchSchema } from "@/lib/schemas/catalog";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -48,6 +48,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     return NextResponse.json({ car: updated });
   } catch (error: any) {
+    if (error instanceof CurrencyPolicyError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     console.error("Failed to update catalog car:", error);
     return NextResponse.json({ error: error?.message || "Не удалось обновить автомобиль" }, { status: 500 });
   }

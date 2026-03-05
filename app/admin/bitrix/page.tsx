@@ -374,7 +374,7 @@ export default function AdminBitrixPage() {
                 <p className="text-xs text-zinc-500">Можно оставить пусто, обычно хватает стандартного Content-Type.</p>
               ) : (
                 draft.headers.map((row) => (
-                  <div key={row.id} className="grid grid-cols-[auto,1fr,1fr,auto] items-center gap-2 rounded-lg border border-white/10 bg-black/20 p-2">
+                  <div key={row.id} className="grid grid-cols-1 items-center gap-2 rounded-lg border border-white/10 bg-black/20 p-2 sm:grid-cols-[auto,1fr,1fr,auto]">
                     <input
                       type="checkbox"
                       checked={row.enabled}
@@ -478,7 +478,7 @@ export default function AdminBitrixPage() {
                   <p className="text-xs text-zinc-500">Дополнительные поля не заданы.</p>
                 ) : (
                   additionalFieldRows.map((row) => (
-                    <div key={row.id} className="grid grid-cols-[1fr,1fr,auto] gap-2">
+                    <div key={row.id} className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr,1fr,auto]">
                       <input
                         type="text"
                         value={row.key}

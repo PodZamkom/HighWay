@@ -68,7 +68,7 @@ export function CarDetailClient({ car, catalogLabel }: CarDetailClientProps) {
     if (!car) {
         return (
             <div className="bg-white min-h-screen pb-20 pt-24 text-gray-900">
-                <div className="max-w-7xl mx-auto px-6">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6">
                     <Breadcrumbs
                         items={[...baseBreadcrumbs, { label: 'Автомобиль не найден' }]}
                         tone="light"
@@ -107,7 +107,7 @@ export function CarDetailClient({ car, catalogLabel }: CarDetailClientProps) {
 
     return (
         <div className="bg-white min-h-screen pb-20 pt-8 text-gray-900">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 <Breadcrumbs
                     items={[...baseBreadcrumbs, { label: `${car.brand} ${car.model}` }]}
                     tone="light"
@@ -165,18 +165,21 @@ export function CarDetailClient({ car, catalogLabel }: CarDetailClientProps) {
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                            <div className="flex justify-between items-end mb-2">
+                        <div className="bg-gray-50 rounded-xl border border-gray-200 p-5 sm:p-6">
+                            <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                                 <span className="text-gray-500">{priceTypeLabel(car.price_type)}</span>
-                                <span className="text-3xl font-bold text-gray-900">
-                                    {currencySymbol(car.price_currency)}
-                                    {formatPrice(car.price_value)} <span className="text-base text-gray-400">{car.price_currency}</span>
+                                <span className="break-words text-2xl font-bold text-gray-900 sm:text-right sm:text-3xl">
+                                    <span className="whitespace-nowrap">
+                                        {currencySymbol(car.price_currency)}
+                                        {formatPrice(car.price_value)}
+                                    </span>{" "}
+                                    <span className="text-sm text-gray-400 sm:text-base">{car.price_currency}</span>
                                 </span>
                             </div>
-                            <p className="text-xs text-gray-400 text-right">Итог считается по текущему курсу</p>
+                            <p className="text-xs text-gray-400 sm:text-right">Итог считается по текущему курсу</p>
                         </div>
 
-                        <div className="flex gap-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                             <button
                                 onClick={() => setIsModalOpen(true)}
                                 className="flex-1 bg-orange-600 text-white font-bold py-4 rounded-xl hover:bg-orange-500 transition-colors shadow-lg shadow-orange-600/20"
@@ -186,6 +189,7 @@ export function CarDetailClient({ car, catalogLabel }: CarDetailClientProps) {
                             <a
                                 href="https://wa.me/375298422224"
                                 target="_blank"
+                                rel="noreferrer"
                                 className="flex-1 bg-white border-2 border-green-500 text-green-600 font-bold py-4 rounded-xl hover:bg-green-50 transition-colors flex items-center justify-center gap-2"
                             >
                                 <Zap size={18} /> WhatsApp

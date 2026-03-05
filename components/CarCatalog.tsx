@@ -14,7 +14,6 @@ interface CarCatalogProps {
   initialMarket?: string;
   catalogLabel: string;
   cars: CarModel[];
-  usdToEurRate?: number;
 }
 
 function normalizeMarket(value?: string): MarketFilter {

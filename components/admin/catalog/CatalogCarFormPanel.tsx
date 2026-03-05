@@ -293,7 +293,7 @@ function PriceWithCurrencyField({
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-zinc-300">Цена и валюта</span>
-      <div className="grid grid-cols-[1fr_190px] gap-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_190px]">
         <input
           type="number"
           value={value}

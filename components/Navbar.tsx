@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { NavbarContent } from '@/types/site';
-import { Instagram, Send, MessageCircle, ChevronDown, Menu, X } from 'lucide-react';
+import { Instagram, Send, MessageCircle, ChevronDown, Menu, Phone, X } from 'lucide-react';
 import { LeadFormModal } from './LeadFormModal';
 
 interface NavbarProps {
@@ -47,15 +47,49 @@ export function Navbar({ content }: NavbarProps) {
         {/* Top Row */}
         <div className="bg-black/70 backdrop-blur-md">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-[92px] items-center justify-between">
-              {/* Logo */}
-              <div className="flex-shrink-0">
-                <Link href="/" className="flex items-center gap-2">
+            <div className="md:hidden">
+              <div className="flex h-[92px] items-center justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <Link href="/" className="flex min-w-0 items-center">
+                    <img src="/images/logo3.png" alt="E-TRADE" className="h-[52px] w-auto max-w-full object-contain" />
+                  </Link>
+                </div>
+
+                <div className="flex shrink-0 items-center gap-2">
+                  <a
+                    href={content.phoneLink}
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#ff6f1d]/70 bg-black/30 text-[#ff8b46] transition-colors hover:border-[#ff7429] hover:text-[#ff7429]"
+                    aria-label="Позвонить"
+                  >
+                    <Phone size={18} />
+                  </a>
+                  <button
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white transition-colors hover:border-white/40"
+                    onClick={() => setMobileOpen(!mobileOpen)}
+                    aria-label={mobileOpen ? "Закрыть меню" : "Открыть меню"}
+                  >
+                    {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="pb-3">
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full rounded-xl bg-[#ff5a00] px-4 py-3 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-[#ff5a00]/30 transition-colors hover:bg-[#ff7429] active:scale-[0.99]"
+                >
+                  {content.ctaLabel}
+                </button>
+              </div>
+            </div>
+
+            <div className="hidden h-[92px] items-center justify-between md:flex">
+              <div className="flex min-w-0 flex-shrink-0 items-center gap-2">
+                <Link href="/" className="flex items-center">
                   <img src="/images/logo3.png" alt="E-TRADE" className="h-[62px] w-auto object-contain sm:h-[68px] lg:h-[74px]" />
                 </Link>
               </div>
 
-              {/* Nav Links */}
               <div className="ml-10 hidden lg:block">
                 <div className="flex items-center space-x-7">
                   {content.links.map((link) => (
@@ -70,8 +104,7 @@ export function Navbar({ content }: NavbarProps) {
                 </div>
               </div>
 
-              {/* Right Side */}
-              <div className="flex items-center gap-5">
+              <div className="flex min-w-0 items-center gap-3 lg:gap-5">
                 <div className="hidden flex-col items-end md:flex">
                   <a href={content.phoneLink} className="flex items-center gap-1 text-[1.08rem] font-black tracking-tight text-[#ff6f1d] transition-colors hover:text-[#ff8b46]">
                     {content.phone}
@@ -113,19 +146,12 @@ export function Navbar({ content }: NavbarProps) {
                   {content.ctaLabel}
                 </button>
 
-                <a
-                  href={content.phoneLink}
-                  className="rounded-xl border border-[#ff5a00]/70 px-4 py-2 text-xs font-black uppercase tracking-wider text-[#ff8b46] transition-colors hover:border-[#ff7429] hover:text-[#ff7429] md:hidden"
-                >
-                  Позвонить
-                </a>
-
-                {/* Mobile menu button */}
                 <button
-                  className="lg:hidden text-white"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white transition-colors hover:border-white/40 lg:hidden"
                   onClick={() => setMobileOpen(!mobileOpen)}
+                  aria-label={mobileOpen ? "Закрыть меню" : "Открыть меню"}
                 >
-                  {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+                  {mobileOpen ? <X size={22} /> : <Menu size={22} />}
                 </button>
               </div>
             </div>
