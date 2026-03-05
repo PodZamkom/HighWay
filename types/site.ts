@@ -137,8 +137,13 @@ export interface TeamSectionContent {
   title: string;
   description: string;
   badge: string;
-  members: TeamMember[];
+  groups: TeamGroup[];
   stats: string[];
+}
+
+export interface TeamGroup {
+  title: string;
+  members: TeamMember[];
 }
 
 export interface TeamMember {

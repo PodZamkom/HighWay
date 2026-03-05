@@ -523,7 +523,7 @@ export function AdminHomeEditor() {
         </div>
       </SectionCard>
 
-      <SectionCard title="Рынки, калькулятор и команда" subtitle="Контент остальных блоков главной" actions={<SaveButton status={homeStatus} onClick={saveHome} />}>
+      <SectionCard title="Рынки и калькулятор" subtitle="Контент остальных блоков главной" actions={<SaveButton status={homeStatus} onClick={saveHome} />}>
         <TextField
           label="Заголовок блока рынков"
           value={state.home.content.marketSection.title}
@@ -647,6 +647,9 @@ export function AdminHomeEditor() {
           />
         </div>
 
+      </SectionCard>
+
+      <SectionCard title="Команда" subtitle="Редактирование блока команды на главной" actions={<SaveButton status={homeStatus} onClick={saveHome} />}>
         <div className="grid gap-3 md:grid-cols-2">
           <TextField
             label="Команда: заголовок"
@@ -725,55 +728,73 @@ export function AdminHomeEditor() {
           ))}
         </div>
 
-        <div className="grid gap-3 md:grid-cols-3">
-          {state.home.content.teamSection.members.map((member, index) => (
-            <div key={`${member.name}-${index}`} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+        <div className="space-y-4">
+          {state.home.content.teamSection.groups.map((group, groupIndex) => (
+            <div key={`${group.title}-${groupIndex}`} className="rounded-2xl border border-white/10 bg-black/20 p-4">
               <TextField
-                label="Имя"
-                value={member.name}
+                label={`Раздел команды ${groupIndex + 1}`}
+                value={group.title}
                 onChange={(value) => {
                   updateState((prev) => {
                     const next = deepClone(prev);
-                    next.home.content.teamSection.members[index].name = value;
+                    next.home.content.teamSection.groups[groupIndex].title = value;
                     return next;
                   });
                 }}
               />
-              <TextField
-                label="Роль"
-                value={member.role}
-                onChange={(value) => {
-                  updateState((prev) => {
-                    const next = deepClone(prev);
-                    next.home.content.teamSection.members[index].role = value;
-                    return next;
-                  });
-                }}
-              />
-              <TextAreaField
-                label="Описание"
-                value={member.bio}
-                onChange={(value) => {
-                  updateState((prev) => {
-                    const next = deepClone(prev);
-                    next.home.content.teamSection.members[index].bio = value;
-                    return next;
-                  });
-                }}
-              />
-              <MediaField
-                label="Фото"
-                value={member.image}
-                onChange={(url) => {
-                  updateState((prev) => {
-                    const next = deepClone(prev);
-                    next.home.content.teamSection.members[index].image = url;
-                    return next;
-                  });
-                }}
-              />
-              <div className="overflow-hidden rounded-xl border border-white/10">
-                <img src={member.image} alt={member.name} className="h-36 w-full object-cover" />
+
+              <div className="mt-3 grid gap-3 md:grid-cols-3">
+                {group.members.map((member, memberIndex) => (
+                  <div key={`${member.name}-${memberIndex}`} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+                    <TextField
+                      label="Имя"
+                      value={member.name}
+                      onChange={(value) => {
+                        updateState((prev) => {
+                          const next = deepClone(prev);
+                          next.home.content.teamSection.groups[groupIndex].members[memberIndex].name = value;
+                          return next;
+                        });
+                      }}
+                    />
+                    <TextField
+                      label="Роль"
+                      value={member.role}
+                      onChange={(value) => {
+                        updateState((prev) => {
+                          const next = deepClone(prev);
+                          next.home.content.teamSection.groups[groupIndex].members[memberIndex].role = value;
+                          return next;
+                        });
+                      }}
+                    />
+                    <TextAreaField
+                      label="Описание"
+                      value={member.bio}
+                      onChange={(value) => {
+                        updateState((prev) => {
+                          const next = deepClone(prev);
+                          next.home.content.teamSection.groups[groupIndex].members[memberIndex].bio = value;
+                          return next;
+                        });
+                      }}
+                    />
+                    <MediaField
+                      label="Фото"
+                      value={member.image}
+                      onChange={(url) => {
+                        updateState((prev) => {
+                          const next = deepClone(prev);
+                          next.home.content.teamSection.groups[groupIndex].members[memberIndex].image = url;
+                          return next;
+                        });
+                      }}
+                    />
+                    <div className="overflow-hidden rounded-xl border border-white/10">
+                      <img src={member.image} alt={member.name} className="h-28 w-full object-cover" />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}

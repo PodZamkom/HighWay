@@ -30,7 +30,7 @@ function extractYoutubeId(source: string): string | null {
 export function Hero({ content }: HeroProps) {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
-  const youtubeSource = process.env.NEXT_PUBLIC_HERO_YOUTUBE_ID ?? content.youtubeSource;
+  const youtubeSource = content.youtubeSource || process.env.NEXT_PUBLIC_HERO_YOUTUBE_ID || "";
   const youtubeId = useMemo(() => extractYoutubeId(youtubeSource), [youtubeSource]);
   const embedUrl = useMemo(() => {
     if (!youtubeId) {
@@ -141,14 +141,14 @@ export function Hero({ content }: HeroProps) {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.52, delay: 0.1 }}
-            className="relative"
+            className="relative mx-auto w-full max-w-[340px] sm:max-w-[360px] lg:max-w-[380px]"
           >
             <div className="relative overflow-hidden rounded-2xl border border-[#d0d5df] bg-white shadow-[0_20px_36px_-24px_rgba(16,24,40,0.45)]">
               {isVideoOpen && embedUrl ? (
                 <iframe
                   src={embedUrl}
                   title={content.videoTitle}
-                  className="aspect-square w-full"
+                  className="aspect-[9/16] w-full"
                   allow="autoplay; encrypted-media; picture-in-picture"
                   allowFullScreen
                 />
@@ -166,7 +166,7 @@ export function Hero({ content }: HeroProps) {
                   <img
                     src={thumbnailUrl}
                     alt={content.videoTitle}
-                    className="aspect-square w-full object-cover object-center"
+                    className="aspect-[9/16] w-full object-cover object-center"
                   />
 
                   <div className="absolute inset-0 bg-black/20" />

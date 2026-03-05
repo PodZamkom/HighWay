@@ -133,7 +133,7 @@
     "whatsappLink": "https://wa.me/375298422224",
     "telegramLink": "https://t.me/Etradeby",
     "instagramLink": "https://www.instagram.com/eavto_delivery/",
-    "youtubeSource": "https://youtube.com/shorts/8zO8IhwdVWo",
+    "youtubeSource": "https://www.youtube.com/shorts/eoh6ZrVTGgQ",
     "fallbackImage": "/images/cars/ford/mustang_mach_e/main.webp",
     "videoTitle": "Видео о подборе авто"
   },
@@ -437,27 +437,58 @@
     "title": "Наша команда",
     "description": "Специалисты, которые ведут сделку аккуратно и прозрачно: от подбора до передачи авто.",
     "badge": "14+ лет опыта",
-    "members": [
+    "groups": [
       {
-        "name": "Илья",
-        "role": "Эксперт по подбору",
-        "bio": "Подбор авто, проверка лотов и оценка рисков перед покупкой.",
-        "image": "/images/team/member-1.jpeg",
-        "position": "object-[52%_46%]"
+        "title": "Команда Минск",
+        "members": [
+          {
+            "name": "Алексей",
+            "role": "Консультант по подбору",
+            "bio": "Временный профиль для тестового наполнения блока команды в Минске.",
+            "image": "/images/team/member-1.jpeg",
+            "position": "object-center"
+          },
+          {
+            "name": "Марина",
+            "role": "Координатор клиентов",
+            "bio": "Временный профиль для тестового наполнения блока команды в Минске.",
+            "image": "/images/team/member-2.jpeg",
+            "position": "object-center"
+          },
+          {
+            "name": "Денис",
+            "role": "Специалист по логистике",
+            "bio": "Временный профиль для тестового наполнения блока команды в Минске.",
+            "image": "/images/team/member-3.jpeg",
+            "position": "object-center"
+          }
+        ]
       },
       {
-        "name": "Сергей",
-        "role": "Менеджер логистики",
-        "bio": "Контролирует доставку, сроки и этапы движения авто до выдачи клиенту.",
-        "image": "/images/team/member-2.jpeg",
-        "position": "object-[51%_38%]"
-      },
-      {
-        "name": "Тома",
-        "role": "Клиентский сервис",
-        "bio": "Сопровождает клиента по всем вопросам сделки и документов.",
-        "image": "/images/team/member-3.jpeg",
-        "position": "object-[50%_28%]"
+        "title": "Команда Пинск",
+        "members": [
+          {
+            "name": "Илья",
+            "role": "Эксперт по подбору",
+            "bio": "Подбор авто, проверка лотов и оценка рисков перед покупкой.",
+            "image": "/images/team/member-1.jpeg",
+            "position": "object-[52%_46%]"
+          },
+          {
+            "name": "Сергей",
+            "role": "Менеджер логистики",
+            "bio": "Контролирует доставку, сроки и этапы движения авто до выдачи клиенту.",
+            "image": "/images/team/member-2.jpeg",
+            "position": "object-[51%_38%]"
+          },
+          {
+            "name": "Тома",
+            "role": "Клиентский сервис",
+            "bio": "Сопровождает клиента по всем вопросам сделки и документов.",
+            "image": "/images/team/member-3.jpeg",
+            "position": "object-[50%_28%]"
+          }
+        ]
       }
     ],
     "stats": [
@@ -509,7 +540,7 @@
   "footer": {
     "copyright": "© 2026 E-TRADE. Все права защищены.",
     "tagline": "Разработано для лучших автомобилей.",
-    "version": "1.3.14",
+    "version": "1.3.15",
     "adminLinkLabel": "Вход в админку",
     "contacts": {
       "phone": "+375 (33) 696-22-24",

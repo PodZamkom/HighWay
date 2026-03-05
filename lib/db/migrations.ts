@@ -166,6 +166,26 @@ const MIGRATIONS: Migration[] = [
       CREATE INDEX IF NOT EXISTS idx_catalog_import_rows_job_id ON catalog_import_rows(job_id, row_index);
     `,
   },
+  {
+    id: "20260305_0002_update_home_hero_youtube_source",
+    sql: `
+      UPDATE cms_documents
+      SET
+        content = jsonb_set(
+          content,
+          '{hero,youtubeSource}',
+          to_jsonb('https://www.youtube.com/shorts/eoh6ZrVTGgQ'::text),
+          true
+        ),
+        updated_at = NOW()
+      WHERE key = 'home_content';
+
+      INSERT INTO cms_revisions (key, content, created_by)
+      SELECT key, content, NULL
+      FROM cms_documents
+      WHERE key = 'home_content';
+    `,
+  },
 ];
 
 async function ensureMigrationsTable(client: PoolClient) {

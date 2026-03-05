@@ -34,30 +34,37 @@ export function TeamSection({ content }: TeamSectionProps) {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {content.members.map((member) => (
-            <article
-              key={member.image}
-              className="group overflow-hidden rounded-2xl border border-white/15 bg-[#1a1a1a] shadow-[0_22px_50px_-32px_rgba(0,0,0,0.95)]"
-            >
-              <div className="relative aspect-[3/4] overflow-hidden">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  loading="lazy"
-                  decoding="async"
-                  className={`h-full w-full object-cover ${member.position} transition duration-500 group-hover:scale-[1.02]`}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-              </div>
+        <div className="space-y-10">
+          {content.groups.map((group, groupIndex) => (
+            <div key={`${group.title}-${groupIndex}`}>
+              <h3 className="mb-4 text-2xl font-black tracking-tight text-white sm:text-3xl">{group.title}</h3>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {group.members.map((member, memberIndex) => (
+                  <article
+                    key={`${group.title}-${member.name}-${memberIndex}`}
+                    className="mx-auto w-full max-w-[280px] group overflow-hidden rounded-2xl border border-white/15 bg-[#1a1a1a] shadow-[0_22px_50px_-32px_rgba(0,0,0,0.95)]"
+                  >
+                    <div className="relative aspect-square overflow-hidden">
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        loading="lazy"
+                        decoding="async"
+                        className={`h-full w-full object-cover ${member.position} transition duration-500 group-hover:scale-[1.02]`}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+                    </div>
 
-              <div className="border-t border-white/10 p-5 sm:p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#a9a9a9]">{content.eyebrow}</p>
-                <h3 className="mt-1 text-3xl font-black text-white">{member.name}</h3>
-                <p className="mt-1 text-base font-semibold text-[#f0f0f0]">{member.role}</p>
-                <p className="mt-2 text-sm leading-snug text-[#d4d4d4]">{member.bio}</p>
+                    <div className="border-t border-white/10 p-5 sm:p-6">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#a9a9a9]">{content.eyebrow}</p>
+                      <h4 className="mt-1 text-2xl font-black text-white">{member.name}</h4>
+                      <p className="mt-1 text-base font-semibold text-[#f0f0f0]">{member.role}</p>
+                      <p className="mt-2 text-sm leading-snug text-[#d4d4d4]">{member.bio}</p>
+                    </div>
+                  </article>
+                ))}
               </div>
-            </article>
+            </div>
           ))}
         </div>
 

@@ -127,7 +127,21 @@ const teamMemberSchema = z.object({
   position: requiredText,
 });
 
-const teamSectionSchema = z.object({
+const teamGroupSchema = z.object({
+  title: requiredText,
+  members: z.array(teamMemberSchema).min(1),
+});
+
+const teamSectionSchemaV2 = z.object({
+  eyebrow: requiredText,
+  title: requiredText,
+  description: requiredText,
+  badge: requiredText,
+  groups: z.array(teamGroupSchema).min(1),
+  stats: z.array(requiredText),
+});
+
+const teamSectionSchemaLegacy = z.object({
   eyebrow: requiredText,
   title: requiredText,
   description: requiredText,
@@ -135,6 +149,54 @@ const teamSectionSchema = z.object({
   members: z.array(teamMemberSchema).min(1),
   stats: z.array(requiredText),
 });
+
+const teamSectionSchema = z
+  .union([teamSectionSchemaV2, teamSectionSchemaLegacy])
+  .transform((input) => {
+    if ("groups" in input) {
+      return input;
+    }
+
+    return {
+      eyebrow: input.eyebrow,
+      title: input.title,
+      description: input.description,
+      badge: input.badge,
+      groups: [
+        {
+          title: "Команда Минск",
+          members: [
+            {
+              name: "Алексей",
+              role: "Консультант по подбору",
+              bio: "Временный профиль для тестового наполнения блока команды в Минске.",
+              image: "/images/team/member-1.jpeg",
+              position: "object-center",
+            },
+            {
+              name: "Марина",
+              role: "Координатор клиентов",
+              bio: "Временный профиль для тестового наполнения блока команды в Минске.",
+              image: "/images/team/member-2.jpeg",
+              position: "object-center",
+            },
+            {
+              name: "Денис",
+              role: "Специалист по логистике",
+              bio: "Временный профиль для тестового наполнения блока команды в Минске.",
+              image: "/images/team/member-3.jpeg",
+              position: "object-center",
+            },
+          ],
+        },
+        {
+          title: "Команда Пинск",
+          members: input.members,
+        },
+      ],
+      stats: input.stats,
+    };
+  });
 
 export const cmsHomeContentSchema = z.object({
   hero: heroSchema,

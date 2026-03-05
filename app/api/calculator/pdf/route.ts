@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { calculateLocalPrice } from '@/lib/localCalculator';
 import { buildCalculatorPdf } from '@/lib/calculatorPdf';
+import type { CalculatorResultPayload } from '@/types/calculator';
 
 export const runtime = 'nodejs';
 
@@ -14,11 +15,35 @@ function timestampForFileName() {
   return `${y}${m}${d}-${hh}${mm}`;
 }
 
+function isCalculatorResultPayload(value: unknown): value is CalculatorResultPayload {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Partial<CalculatorResultPayload>;
+  const isLineItem = (line: unknown) => {
+    if (!line || typeof line !== 'object') return false;
+    const item = line as { label?: unknown; value?: unknown; currency?: unknown };
+    return typeof item.label === 'string' && typeof item.value === 'number' && (item.currency === 'USD' || item.currency === 'BYN');
+  };
+
+  return Boolean(
+    isLineItem(candidate.carPrice) &&
+      isLineItem(candidate.auctionFee) &&
+      isLineItem(candidate.deliveryToPortUSA) &&
+      isLineItem(candidate.deliveryFromPortUSA) &&
+      isLineItem(candidate.fromKlaipeda) &&
+      isLineItem(candidate.ourServicePrice) &&
+      isLineItem(candidate.customDuty) &&
+      isLineItem(candidate.customFee) &&
+      isLineItem(candidate.junkFee) &&
+      isLineItem(candidate.svxServicePrice) &&
+      isLineItem(candidate.total),
+  );
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const form = body?.form ?? body;
-    const result = calculateLocalPrice(form);
+    const result = isCalculatorResultPayload(body?.result) ? body.result : calculateLocalPrice(form);
     const pdf = await buildCalculatorPdf(result);
     const timestamp = timestampForFileName();
     const russianFileName = `расчет-стоимости-${timestamp}.pdf`;

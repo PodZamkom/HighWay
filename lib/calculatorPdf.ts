@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, type PDFPage, type PDFFont } from 'pdf-lib';
 import fontkit from '@/lib/vendor/fontkit.cjs';
 import type { CalculatorResultPayload } from '@/types/calculator';
 
@@ -26,8 +26,103 @@ function formatMoney(value: number, currency: 'USD' | 'BYN') {
   return `${amount} ${currency}`;
 }
 
-function lineY(startY: number, index: number) {
-  return startY - index * 24;
+function wrapText(value: string, font: PDFFont, size: number, maxWidth: number): string[] {
+  if (!value) return [''];
+  const words = value.trim().split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current = '';
+
+  const fits = (text: string) => font.widthOfTextAtSize(text, size) <= maxWidth;
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (fits(candidate)) {
+      current = candidate;
+      continue;
+    }
+
+    if (current) {
+      lines.push(current);
+      current = '';
+    }
+
+    if (fits(word)) {
+      current = word;
+      continue;
+    }
+
+    let chunk = '';
+    for (const char of word) {
+      const nextChunk = `${chunk}${char}`;
+      if (fits(nextChunk)) {
+        chunk = nextChunk;
+      } else {
+        if (chunk) {
+          lines.push(chunk);
+          chunk = char;
+        } else {
+          lines.push(char);
+        }
+      }
+    }
+    current = chunk;
+  }
+
+  if (current) {
+    lines.push(current);
+  }
+
+  return lines.length > 0 ? lines : [''];
+}
+
+function drawRowsInColumn(params: {
+  page: PDFPage;
+  rows: Array<{ label: string; value: number; currency: 'USD' | 'BYN' }>;
+  font: PDFFont;
+  fontBold: PDFFont;
+  text: (value: string) => string;
+  x: number;
+  y: number;
+  width: number;
+}) {
+  const { page, rows, font, fontBold, text, x, y, width } = params;
+  const labelSize = 11;
+  const valueSize = 11;
+  const valueAreaWidth = 110;
+  const gap = 12;
+  const lineHeight = 16;
+  const minRowHeight = 24;
+  const labelMaxWidth = width - valueAreaWidth - gap;
+  const valueRight = x + width;
+  let cursorY = y;
+
+  for (const item of rows) {
+    const labelLines = wrapText(text(item.label), font, labelSize, labelMaxWidth);
+    for (let i = 0; i < labelLines.length; i += 1) {
+      page.drawText(labelLines[i], {
+        x,
+        y: cursorY - i * lineHeight,
+        size: labelSize,
+        font,
+        color: rgb(0.2, 0.23, 0.26),
+      });
+    }
+
+    const valueText = formatMoney(item.value, item.currency);
+    const valueWidth = fontBold.widthOfTextAtSize(valueText, valueSize);
+    const minValueX = x + labelMaxWidth + gap;
+    const valueX = Math.max(minValueX, valueRight - valueWidth);
+    page.drawText(valueText, {
+      x: valueX,
+      y: cursorY,
+      size: valueSize,
+      font: fontBold,
+      color: rgb(0.95, 0.28, 0.34),
+    });
+
+    const rowHeight = Math.max(minRowHeight, labelLines.length * lineHeight);
+    cursorY -= rowHeight;
+  }
 }
 
 async function embedFonts(pdf: PDFDocument) {
@@ -61,7 +156,17 @@ export async function buildCalculatorPdf(result: CalculatorResultPayload) {
   try {
     const logoBytes = await fs.readFile(logoPath);
     const image = await pdf.embedPng(logoBytes);
-    page.drawImage(image, { x: 28, y: 542, width: 172, height: 52 });
+    const maxLogoWidth = 172;
+    const maxLogoHeight = 42;
+    const scale = Math.min(maxLogoWidth / image.width, maxLogoHeight / image.height);
+    const logoWidth = image.width * scale;
+    const logoHeight = image.height * scale;
+    page.drawImage(image, {
+      x: 28,
+      y: 545 + (50 - logoHeight) / 2,
+      width: logoWidth,
+      height: logoHeight,
+    });
   } catch {
     page.drawText(text('Е-ТРЕЙД'), { x: 28, y: 563, size: 18, font: fontBold, color: rgb(0.95, 0.43, 0.09) });
   }
@@ -73,7 +178,9 @@ export async function buildCalculatorPdf(result: CalculatorResultPayload) {
   page.drawText(text(`Дата расчета: ${dateText}`), { x: 28, y: 486, size: 12, font, color: rgb(0.3, 0.33, 0.36) });
 
   const leftX = 28;
-  const rightX = 420;
+  const columnGap = 36;
+  const columnWidth = (786 - columnGap) / 2;
+  const rightX = leftX + columnWidth + columnGap;
 
   page.drawText(text('Покупка и доставка'), { x: leftX, y: 450, size: 15, font: fontBold, color: rgb(0.13, 0.14, 0.16) });
   page.drawText(text('Растаможка и оформление'), { x: rightX, y: 450, size: 15, font: fontBold, color: rgb(0.13, 0.14, 0.16) });
@@ -88,23 +195,36 @@ export async function buildCalculatorPdf(result: CalculatorResultPayload) {
   ];
   const customsRows = [result.customDuty, result.customFee, result.junkFee, result.svxServicePrice];
 
-  purchaseRows.forEach((item, index) => {
-    const y = lineY(420, index);
-    page.drawText(text(item.label), { x: leftX, y, size: 11, font, color: rgb(0.2, 0.23, 0.26) });
-    page.drawText(formatMoney(item.value, item.currency), { x: 280, y, size: 11, font: fontBold, color: rgb(0.95, 0.28, 0.34) });
+  drawRowsInColumn({
+    page,
+    rows: purchaseRows,
+    font,
+    fontBold,
+    text,
+    x: leftX,
+    y: 420,
+    width: columnWidth,
   });
 
-  customsRows.forEach((item, index) => {
-    const y = lineY(420, index);
-    page.drawText(text(item.label), { x: rightX, y, size: 11, font, color: rgb(0.2, 0.23, 0.26) });
-    page.drawText(formatMoney(item.value, item.currency), { x: 690, y, size: 11, font: fontBold, color: rgb(0.95, 0.28, 0.34) });
+  drawRowsInColumn({
+    page,
+    rows: customsRows,
+    font,
+    fontBold,
+    text,
+    x: rightX,
+    y: 420,
+    width: columnWidth,
   });
 
   page.drawRectangle({ x: 28, y: 116, width: 786, height: 62, color: rgb(0.97, 0.97, 0.97), borderColor: rgb(0.9, 0.9, 0.9), borderWidth: 1 });
 
   page.drawText(text('ИТОГО'), { x: 44, y: 141, size: 20, font: fontBold, color: rgb(0.13, 0.14, 0.16) });
-  page.drawText(formatMoney(result.total.value, result.total.currency), {
-    x: 620,
+  const totalText = formatMoney(result.total.value, result.total.currency);
+  const totalRightX = 28 + 786 - 18;
+  const totalWidth = fontBold.widthOfTextAtSize(totalText, 24);
+  page.drawText(totalText, {
+    x: totalRightX - totalWidth,
     y: 141,
     size: 24,
     font: fontBold,
