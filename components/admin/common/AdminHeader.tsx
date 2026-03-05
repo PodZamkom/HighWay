@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/admin", label: "Обзор" },
   { href: "/admin/home", label: "Главная и CMS" },
   { href: "/admin/pages", label: "Страницы" },
   { href: "/admin/catalog", label: "Каталог" },
@@ -39,7 +38,7 @@ export function AdminHeader({ login }: AdminHeaderProps) {
 
         <nav className="flex flex-wrap items-center gap-2">
           {NAV_ITEMS.map((item) => {
-            const active = pathname === item.href;
+            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
                 key={item.href}

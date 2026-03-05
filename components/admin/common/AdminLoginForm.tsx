@@ -41,7 +41,7 @@ export function AdminLoginForm({ nextPath }: AdminLoginFormProps) {
         throw new Error(data?.error || "Не удалось выполнить вход");
       }
 
-      router.replace(nextPath || "/admin");
+      router.replace(nextPath || "/admin/home");
       router.refresh();
     } catch (cause: any) {
       setError(cause?.message || "Ошибка входа");

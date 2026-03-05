@@ -9,11 +9,11 @@ export default async function AdminLoginPage({
 }) {
   const auth = await getAdminSessionFromServerContext();
   if (auth) {
-    redirect("/admin");
+    redirect("/admin/home");
   }
 
   const { next } = await searchParams;
-  const nextPath = typeof next === "string" && next.startsWith("/") ? next : "/admin";
+  const nextPath = typeof next === "string" && next.startsWith("/") ? next : "/admin/home";
 
   return (
     <div className="min-h-screen bg-zinc-950 px-4 py-16 text-white">
