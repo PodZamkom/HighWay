@@ -94,7 +94,7 @@ else
 fi
 
 sitemap_xml="$(curl -sS -L --max-time "$TIMEOUT_SECONDS" "${BASE_URL}/sitemap.xml")"
-if ! printf '%s' "$sitemap_xml" | grep -Fq "<loc>${EXPECTED_SITE_URL}/"; then
+if [[ "$sitemap_xml" != *"<loc>${EXPECTED_SITE_URL}/"* ]]; then
   fail "Sitemap does not use expected domain: ${EXPECTED_SITE_URL}"
 fi
 
