@@ -49,6 +49,37 @@ function requireDbForWrites() {
   }
 }
 
+const RECOVERABLE_DB_READ_ERRORS = new Set([
+  "ENOTFOUND",
+  "EAI_AGAIN",
+  "ECONNREFUSED",
+  "ECONNRESET",
+  "ETIMEDOUT",
+  "08000",
+  "08001",
+  "08003",
+  "08004",
+  "08006",
+  "08007",
+  "08P01",
+  "57P03",
+  "53300",
+  "3D000",
+]);
+
+function isRecoverableDbReadError(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const code = typeof (error as { code?: unknown }).code === "string" ? (error as { code: string }).code : "";
+  return RECOVERABLE_DB_READ_ERRORS.has(code);
+}
+
+function logReadFallback(scope: string, error: unknown) {
+  console.warn(`[newsRepository] Falling back to safe read for ${scope}:`, error);
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -239,6 +270,11 @@ function buildWhere(query: NewsListQuery) {
 export async function listNews(query: NewsListQuery): Promise<NewsListResult> {
   const page = Math.max(1, query.page || 1);
   const pageSize = Math.max(1, Math.min(100, query.pageSize || 12));
+  const normalized: NewsListQuery = {
+    ...query,
+    page,
+    pageSize,
+  };
 
   if (!isDatabaseConfigured()) {
     return {
@@ -249,59 +285,67 @@ export async function listNews(query: NewsListQuery): Promise<NewsListResult> {
     };
   }
 
-  await ensureDatabaseReady();
+  try {
+    await ensureDatabaseReady();
 
-  const normalized: NewsListQuery = {
-    ...query,
-    page,
-    pageSize,
-  };
+    const { whereSql, values } = buildWhere(normalized);
+    const countRes = await dbQuery<{ count: string }>(`SELECT COUNT(*)::text AS count FROM news_posts c ${whereSql}`, values);
+    const total = Number(countRes.rows[0]?.count || "0");
 
-  const { whereSql, values } = buildWhere(normalized);
-  const countRes = await dbQuery<{ count: string }>(`SELECT COUNT(*)::text AS count FROM news_posts c ${whereSql}`, values);
-  const total = Number(countRes.rows[0]?.count || "0");
+    const offset = (page - 1) * pageSize;
+    const listValues = [...values, pageSize, offset];
+    const limitPlaceholder = `$${listValues.length - 1}`;
+    const offsetPlaceholder = `$${listValues.length}`;
 
-  const offset = (page - 1) * pageSize;
-  const listValues = [...values, pageSize, offset];
-  const limitPlaceholder = `$${listValues.length - 1}`;
-  const offsetPlaceholder = `$${listValues.length}`;
+    const rows = await dbQuery<NewsPostRow>(
+      `
+        SELECT
+          c.id,
+          c.slug,
+          c.title,
+          c.lead,
+          c.excerpt,
+          c.status,
+          c.published_at,
+          c.is_pinned,
+          c.category,
+          c.tags,
+          c.cover,
+          c.blocks,
+          c.faq,
+          c.cta,
+          c.seo_override,
+          c.created_at,
+          c.updated_at,
+          c.archived_at
+        FROM news_posts c
+        ${whereSql}
+        ORDER BY c.is_pinned DESC, COALESCE(c.published_at, c.created_at) DESC, c.created_at DESC
+        LIMIT ${limitPlaceholder}
+        OFFSET ${offsetPlaceholder}
+      `,
+      listValues,
+    );
 
-  const rows = await dbQuery<NewsPostRow>(
-    `
-      SELECT
-        c.id,
-        c.slug,
-        c.title,
-        c.lead,
-        c.excerpt,
-        c.status,
-        c.published_at,
-        c.is_pinned,
-        c.category,
-        c.tags,
-        c.cover,
-        c.blocks,
-        c.faq,
-        c.cta,
-        c.seo_override,
-        c.created_at,
-        c.updated_at,
-        c.archived_at
-      FROM news_posts c
-      ${whereSql}
-      ORDER BY c.is_pinned DESC, COALESCE(c.published_at, c.created_at) DESC, c.created_at DESC
-      LIMIT ${limitPlaceholder}
-      OFFSET ${offsetPlaceholder}
-    `,
-    listValues,
-  );
+    return {
+      items: rows.rows.map(rowToNewsPost),
+      total,
+      page,
+      pageSize,
+    };
+  } catch (error) {
+    if (normalized.onlyPublished && isRecoverableDbReadError(error)) {
+      logReadFallback("listNews", error);
+      return {
+        items: [],
+        total: 0,
+        page,
+        pageSize,
+      };
+    }
 
-  return {
-    items: rows.rows.map(rowToNewsPost),
-    total,
-    page,
-    pageSize,
-  };
+    throw error;
+  }
 }
 
 export async function findNewsById(id: string): Promise<NewsPost | null> {
@@ -347,49 +391,58 @@ export async function findNewsBySlug(slug: string, onlyPublished: boolean): Prom
     return null;
   }
 
-  await ensureDatabaseReady();
+  try {
+    await ensureDatabaseReady();
 
-  const values: unknown[] = [slug.trim().toLowerCase()];
-  const clauses = [`LOWER(c.slug) = $1`];
+    const values: unknown[] = [slug.trim().toLowerCase()];
+    const clauses = [`LOWER(c.slug) = $1`];
 
-  if (onlyPublished) {
-    clauses.push(`c.status IN ('published', 'scheduled')`);
-    clauses.push(`c.published_at IS NOT NULL`);
-    clauses.push(`c.published_at <= NOW()`);
-    clauses.push(`c.archived_at IS NULL`);
-    clauses.push(`c.status <> 'archived'`);
+    if (onlyPublished) {
+      clauses.push(`c.status IN ('published', 'scheduled')`);
+      clauses.push(`c.published_at IS NOT NULL`);
+      clauses.push(`c.published_at <= NOW()`);
+      clauses.push(`c.archived_at IS NULL`);
+      clauses.push(`c.status <> 'archived'`);
+    }
+
+    const result = await dbQuery<NewsPostRow>(
+      `
+        SELECT
+          c.id,
+          c.slug,
+          c.title,
+          c.lead,
+          c.excerpt,
+          c.status,
+          c.published_at,
+          c.is_pinned,
+          c.category,
+          c.tags,
+          c.cover,
+          c.blocks,
+          c.faq,
+          c.cta,
+          c.seo_override,
+          c.created_at,
+          c.updated_at,
+          c.archived_at
+        FROM news_posts c
+        WHERE ${clauses.join(" AND ")}
+        LIMIT 1
+      `,
+      values,
+    );
+
+    const row = result.rows[0];
+    return row ? rowToNewsPost(row) : null;
+  } catch (error) {
+    if (onlyPublished && isRecoverableDbReadError(error)) {
+      logReadFallback("findNewsBySlug", error);
+      return null;
+    }
+
+    throw error;
   }
-
-  const result = await dbQuery<NewsPostRow>(
-    `
-      SELECT
-        c.id,
-        c.slug,
-        c.title,
-        c.lead,
-        c.excerpt,
-        c.status,
-        c.published_at,
-        c.is_pinned,
-        c.category,
-        c.tags,
-        c.cover,
-        c.blocks,
-        c.faq,
-        c.cta,
-        c.seo_override,
-        c.created_at,
-        c.updated_at,
-        c.archived_at
-      FROM news_posts c
-      WHERE ${clauses.join(" AND ")}
-      LIMIT 1
-    `,
-    values,
-  );
-
-  const row = result.rows[0];
-  return row ? rowToNewsPost(row) : null;
 }
 
 export async function createNewsPost(input: NewsCreateRequest, userId: string | null): Promise<NewsPost> {
@@ -580,41 +633,50 @@ export async function listNewsFacets(onlyPublished: boolean): Promise<NewsFacets
     return { categories: [], tags: [] };
   }
 
-  await ensureDatabaseReady();
+  try {
+    await ensureDatabaseReady();
 
-  const filter = onlyPublished
-    ? `
-      WHERE c.status IN ('published', 'scheduled')
-      AND c.published_at IS NOT NULL
-      AND c.published_at <= NOW()
-      AND c.archived_at IS NULL
-      AND c.status <> 'archived'
-    `
-    : "WHERE c.archived_at IS NULL";
+    const filter = onlyPublished
+      ? `
+        WHERE c.status IN ('published', 'scheduled')
+        AND c.published_at IS NOT NULL
+        AND c.published_at <= NOW()
+        AND c.archived_at IS NULL
+        AND c.status <> 'archived'
+      `
+      : "WHERE c.archived_at IS NULL";
 
-  const categoriesRes = await dbQuery<{ category: string }>(
-    `
-      SELECT DISTINCT c.category
-      FROM news_posts c
-      ${filter}
-      AND c.category <> ''
-      ORDER BY c.category ASC
-    `,
-  );
+    const categoriesRes = await dbQuery<{ category: string }>(
+      `
+        SELECT DISTINCT c.category
+        FROM news_posts c
+        ${filter}
+        AND c.category <> ''
+        ORDER BY c.category ASC
+      `,
+    );
 
-  const tagsRes = await dbQuery<{ tag: string }>(
-    `
-      SELECT DISTINCT unnest(c.tags) AS tag
-      FROM news_posts c
-      ${filter}
-      ORDER BY tag ASC
-    `,
-  );
+    const tagsRes = await dbQuery<{ tag: string }>(
+      `
+        SELECT DISTINCT unnest(c.tags) AS tag
+        FROM news_posts c
+        ${filter}
+        ORDER BY tag ASC
+      `,
+    );
 
-  return {
-    categories: categoriesRes.rows.map((row) => row.category).filter(Boolean),
-    tags: tagsRes.rows.map((row) => row.tag).filter(Boolean),
-  };
+    return {
+      categories: categoriesRes.rows.map((row) => row.category).filter(Boolean),
+      tags: tagsRes.rows.map((row) => row.tag).filter(Boolean),
+    };
+  } catch (error) {
+    if (isRecoverableDbReadError(error)) {
+      logReadFallback("listNewsFacets", error);
+      return { categories: [], tags: [] };
+    }
+
+    throw error;
+  }
 }
 
 export async function listRelatedNews(slug: string, category: string, limit = 3): Promise<NewsPost[]> {
@@ -622,50 +684,59 @@ export async function listRelatedNews(slug: string, category: string, limit = 3)
     return [];
   }
 
-  await ensureDatabaseReady();
+  try {
+    await ensureDatabaseReady();
 
-  const values: unknown[] = [slug.trim().toLowerCase(), Math.max(1, Math.min(12, limit))];
-  const categoryCondition = category ? `AND c.category = $3` : "";
-  if (category) {
-    values.push(category);
+    const values: unknown[] = [slug.trim().toLowerCase(), Math.max(1, Math.min(12, limit))];
+    const categoryCondition = category ? `AND c.category = $3` : "";
+    if (category) {
+      values.push(category);
+    }
+
+    const result = await dbQuery<NewsPostRow>(
+      `
+        SELECT
+          c.id,
+          c.slug,
+          c.title,
+          c.lead,
+          c.excerpt,
+          c.status,
+          c.published_at,
+          c.is_pinned,
+          c.category,
+          c.tags,
+          c.cover,
+          c.blocks,
+          c.faq,
+          c.cta,
+          c.seo_override,
+          c.created_at,
+          c.updated_at,
+          c.archived_at
+        FROM news_posts c
+        WHERE LOWER(c.slug) <> $1
+          AND c.status IN ('published', 'scheduled')
+          AND c.published_at IS NOT NULL
+          AND c.published_at <= NOW()
+          AND c.archived_at IS NULL
+          AND c.status <> 'archived'
+          ${categoryCondition}
+        ORDER BY c.is_pinned DESC, COALESCE(c.published_at, c.created_at) DESC
+        LIMIT $2
+      `,
+      values,
+    );
+
+    return result.rows.map(rowToNewsPost);
+  } catch (error) {
+    if (isRecoverableDbReadError(error)) {
+      logReadFallback("listRelatedNews", error);
+      return [];
+    }
+
+    throw error;
   }
-
-  const result = await dbQuery<NewsPostRow>(
-    `
-      SELECT
-        c.id,
-        c.slug,
-        c.title,
-        c.lead,
-        c.excerpt,
-        c.status,
-        c.published_at,
-        c.is_pinned,
-        c.category,
-        c.tags,
-        c.cover,
-        c.blocks,
-        c.faq,
-        c.cta,
-        c.seo_override,
-        c.created_at,
-        c.updated_at,
-        c.archived_at
-      FROM news_posts c
-      WHERE LOWER(c.slug) <> $1
-        AND c.status IN ('published', 'scheduled')
-        AND c.published_at IS NOT NULL
-        AND c.published_at <= NOW()
-        AND c.archived_at IS NULL
-        AND c.status <> 'archived'
-        ${categoryCondition}
-      ORDER BY c.is_pinned DESC, COALESCE(c.published_at, c.created_at) DESC
-      LIMIT $2
-    `,
-    values,
-  );
-
-  return result.rows.map(rowToNewsPost);
 }
 
 export async function listNewsForSitemap(): Promise<Array<{ slug: string; updatedAt: string }>> {
@@ -673,20 +744,29 @@ export async function listNewsForSitemap(): Promise<Array<{ slug: string; update
     return [];
   }
 
-  await ensureDatabaseReady();
+  try {
+    await ensureDatabaseReady();
 
-  const result = await dbQuery<{ slug: string; updated_at: string }>(
-    `
-      SELECT c.slug, c.updated_at
-      FROM news_posts c
-      WHERE c.status IN ('published', 'scheduled')
-        AND c.published_at IS NOT NULL
-        AND c.published_at <= NOW()
-        AND c.archived_at IS NULL
-        AND c.status <> 'archived'
-      ORDER BY c.updated_at DESC
-    `,
-  );
+    const result = await dbQuery<{ slug: string; updated_at: string }>(
+      `
+        SELECT c.slug, c.updated_at
+        FROM news_posts c
+        WHERE c.status IN ('published', 'scheduled')
+          AND c.published_at IS NOT NULL
+          AND c.published_at <= NOW()
+          AND c.archived_at IS NULL
+          AND c.status <> 'archived'
+        ORDER BY c.updated_at DESC
+      `,
+    );
 
-  return result.rows.map((row) => ({ slug: row.slug, updatedAt: row.updated_at }));
+    return result.rows.map((row) => ({ slug: row.slug, updatedAt: row.updated_at }));
+  } catch (error) {
+    if (isRecoverableDbReadError(error)) {
+      logReadFallback("listNewsForSitemap", error);
+      return [];
+    }
+
+    throw error;
+  }
 }
