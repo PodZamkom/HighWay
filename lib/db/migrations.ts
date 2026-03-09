@@ -236,6 +236,136 @@ const MIGRATIONS: Migration[] = [
       WHERE priority IS NULL;
     `,
   },
+  {
+    id: "20260309_0005_catalog_availability_locations",
+    sql: `
+      UPDATE catalog_cars
+      SET
+        availability = CASE
+          WHEN availability IN ('InStockKhorgos', 'InStockMinsk', 'EnRoute', 'OnOrder') THEN availability
+          WHEN LOWER(TRIM(availability)) IN ('instock', 'in stock', 'в наличии', 'в наличии в хоргосе', 'хоргос') THEN 'InStockKhorgos'
+          WHEN LOWER(TRIM(availability)) IN ('instockminsk', 'в минске', 'minsk', 'in stock minsk') THEN 'InStockMinsk'
+          WHEN LOWER(TRIM(availability)) IN ('en route', 'enroute', 'in transit', 'в пути') THEN 'EnRoute'
+          WHEN LOWER(TRIM(availability)) IN ('on order', 'onorder', 'под заказ') THEN 'OnOrder'
+          ELSE 'OnOrder'
+        END,
+        updated_at = NOW()
+      WHERE availability IS DISTINCT FROM
+        CASE
+          WHEN availability IN ('InStockKhorgos', 'InStockMinsk', 'EnRoute', 'OnOrder') THEN availability
+          WHEN LOWER(TRIM(availability)) IN ('instock', 'in stock', 'в наличии', 'в наличии в хоргосе', 'хоргос') THEN 'InStockKhorgos'
+          WHEN LOWER(TRIM(availability)) IN ('instockminsk', 'в минске', 'minsk', 'in stock minsk') THEN 'InStockMinsk'
+          WHEN LOWER(TRIM(availability)) IN ('en route', 'enroute', 'in transit', 'в пути') THEN 'EnRoute'
+          WHEN LOWER(TRIM(availability)) IN ('on order', 'onorder', 'под заказ') THEN 'OnOrder'
+          ELSE 'OnOrder'
+        END;
+
+      ALTER TABLE catalog_cars
+      ALTER COLUMN availability SET DEFAULT 'OnOrder';
+
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_constraint
+          WHERE conname = 'catalog_cars_availability_check'
+        ) THEN
+          ALTER TABLE catalog_cars
+          ADD CONSTRAINT catalog_cars_availability_check
+          CHECK (availability IN ('InStockKhorgos', 'InStockMinsk', 'EnRoute', 'OnOrder')) NOT VALID;
+        END IF;
+      END $$;
+
+      ALTER TABLE catalog_cars VALIDATE CONSTRAINT catalog_cars_availability_check;
+
+      UPDATE cms_documents
+      SET
+        content = CASE
+          WHEN jsonb_typeof(content->'secondaryMenus') = 'array' THEN
+            jsonb_set(
+              content,
+              '{secondaryMenus}',
+              (
+                SELECT jsonb_agg(
+                  CASE
+                    WHEN menu->>'label' = 'В наличии' THEN
+                      jsonb_set(
+                        menu,
+                        '{items}',
+                        jsonb_build_array(
+                          jsonb_build_object('label', 'В наличии в Хоргосе', 'href', '/catalog?availability=InStockKhorgos'),
+                          jsonb_build_object('label', 'В наличии в Минске', 'href', '/catalog?availability=InStockMinsk')
+                        ),
+                        true
+                      )
+                    ELSE menu
+                  END
+                )
+                FROM jsonb_array_elements(content->'secondaryMenus') AS menu
+              ),
+              true
+            )
+          ELSE content
+        END,
+        updated_at = NOW()
+      WHERE key = 'navigation';
+
+      INSERT INTO cms_revisions (key, content, created_by)
+      SELECT key, content, NULL
+      FROM cms_documents
+      WHERE key = 'navigation';
+    `,
+  },
+  {
+    id: "20260309_0006_news_module",
+    sql: `
+      CREATE TABLE IF NOT EXISTS news_posts (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        slug TEXT NOT NULL UNIQUE,
+        title TEXT NOT NULL,
+        lead TEXT NOT NULL,
+        excerpt TEXT NOT NULL,
+        status TEXT NOT NULL,
+        published_at TIMESTAMPTZ,
+        is_pinned BOOLEAN NOT NULL DEFAULT FALSE,
+        category TEXT NOT NULL DEFAULT '',
+        tags TEXT[] NOT NULL DEFAULT '{}'::text[],
+        cover JSONB,
+        blocks JSONB NOT NULL DEFAULT '[]'::jsonb,
+        faq JSONB NOT NULL DEFAULT '[]'::jsonb,
+        cta JSONB,
+        seo_override JSONB NOT NULL DEFAULT '{}'::jsonb,
+        archived_at TIMESTAMPTZ,
+        created_by UUID REFERENCES admin_users(id) ON DELETE SET NULL,
+        updated_by UUID REFERENCES admin_users(id) ON DELETE SET NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_news_posts_status_published ON news_posts(status, published_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_news_posts_pinned_published ON news_posts(is_pinned DESC, published_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_news_posts_category ON news_posts(category);
+      CREATE INDEX IF NOT EXISTS idx_news_posts_tags_gin ON news_posts USING GIN(tags);
+
+      UPDATE cms_documents
+      SET
+        content = jsonb_set(
+          jsonb_set(content, '{links,3,label}', to_jsonb('Новости'::text), false),
+          '{links,3,href}',
+          to_jsonb('/novosti'::text),
+          false
+        ),
+        updated_at = NOW()
+      WHERE key = 'navigation'
+        AND jsonb_typeof(content->'links') = 'array'
+        AND jsonb_array_length(content->'links') > 3;
+
+      INSERT INTO cms_revisions (key, content, created_by)
+      SELECT key, content, NULL
+      FROM cms_documents
+      WHERE key = 'navigation';
+    `,
+  },
 ];
 
 async function ensureMigrationsTable(client: PoolClient) {

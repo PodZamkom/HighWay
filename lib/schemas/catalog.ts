@@ -4,6 +4,7 @@ import {
   isMarketCurrencyAllowed,
   type CatalogCurrency,
 } from "@/lib/catalog/currencyPolicy";
+import { AVAILABILITY_VALUES, parseAvailability } from "@/lib/catalog/availability";
 
 const idSchema = z.string().trim().min(1).max(200);
 const slugSchema = z
@@ -17,7 +18,17 @@ const requiredText = text.min(1);
 
 const marketSchema = z.enum(["China", "USA", "Korea", "Europe"]);
 const conditionSchema = z.enum(["New", "Used", "Crashed"]);
-const availabilitySchema = z.enum(["InStock", "EnRoute", "OnOrder"]);
+const availabilitySchema = z.preprocess(
+  (value) => {
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    const parsed = parseAvailability(value);
+    return parsed ?? value;
+  },
+  z.enum(AVAILABILITY_VALUES),
+);
 const priceTypeSchema = z.enum(["FOB", "EXW", "OnRoad", "Estimate"]);
 const carTypeSchema = z.enum(["EV", "EREV", "ICE", "HEV"]);
 const priceCurrencySchema = z.enum(["USD", "EUR", "BYN", "JPY", "CNY", "KRW"]);

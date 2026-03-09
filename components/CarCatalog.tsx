@@ -4,14 +4,17 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowUpDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
-import type { CarModel } from "@/types/car";
+import { availabilityLabel, isInStockAvailability, parseAvailability } from "@/lib/catalog/availability";
+import type { Availability, CarModel } from "@/types/car";
 
 type MarketFilter = "All" | "USA" | "Korea" | "China" | "Europe";
+type AvailabilityFilter = "All" | Availability;
 type SortMode = "priority" | "price_asc" | "popular" | "newest";
 type EngineFilter = "All" | "EV" | "EREV" | "HEV" | "ICE";
 
 interface CarCatalogProps {
   initialMarket?: string;
+  initialAvailability?: string;
   catalogLabel: string;
   cars: CarModel[];
 }
@@ -23,6 +26,11 @@ function normalizeMarket(value?: string): MarketFilter {
   if (v === "china") return "China";
   if (v === "europe") return "Europe";
   return "All";
+}
+
+function normalizeAvailabilityFilter(value?: string): AvailabilityFilter {
+  const parsed = parseAvailability(value);
+  return parsed ?? "All";
 }
 
 function toNumber(input: string): number | null {
@@ -65,8 +73,8 @@ function getComparablePriceValue(car: CarModel, market: MarketFilter) {
 }
 
 function comparePopularOrder(a: CarModel, b: CarModel) {
-  const aStock = a.availability === "InStock" ? 1 : 0;
-  const bStock = b.availability === "InStock" ? 1 : 0;
+  const aStock = isInStockAvailability(a.availability) ? 1 : 0;
+  const bStock = isInStockAvailability(b.availability) ? 1 : 0;
   return bStock - aStock || b.year - a.year;
 }
 
@@ -78,8 +86,10 @@ function engineLabel(value: EngineFilter) {
   return "Любой";
 }
 
-export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProps) {
+export function CarCatalog({ initialMarket, initialAvailability, catalogLabel, cars }: CarCatalogProps) {
+  const initialAvailabilityFilter = normalizeAvailabilityFilter(initialAvailability);
   const [market, setMarket] = useState<MarketFilter>(normalizeMarket(initialMarket));
+  const [availability, setAvailability] = useState<AvailabilityFilter>(initialAvailabilityFilter);
   const [brand, setBrand] = useState("All");
   const [bodyType, setBodyType] = useState("All");
   const [engineType, setEngineType] = useState<EngineFilter>("All");
@@ -93,10 +103,15 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
   const [mileageTo, setMileageTo] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("priority");
 
+  const availabilityFiltered = useMemo(() => {
+    if (availability === "All") return cars;
+    return cars.filter((car) => parseAvailability(car.availability) === availability);
+  }, [availability, cars]);
+
   const marketFiltered = useMemo(() => {
-    if (market === "All") return cars;
-    return cars.filter((car) => car.market === market);
-  }, [cars, market]);
+    if (market === "All") return availabilityFiltered;
+    return availabilityFiltered.filter((car) => car.market === market);
+  }, [availabilityFiltered, market]);
 
   const brands = useMemo(() => {
     return ["All", ...new Set(marketFiltered.map((car) => car.brand))].sort((a, b) => a.localeCompare(b));
@@ -164,6 +179,7 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
   }, [bodyType, brand, drive, engineType, market, marketFiltered, mileageFrom, mileageTo, priceFrom, priceTo, sortMode, transmission, yearFrom, yearTo]);
 
   const resetFilters = () => {
+    setAvailability(initialAvailabilityFilter);
     setBrand("All");
     setBodyType("All");
     setEngineType("All");
@@ -206,6 +222,11 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
           <p className="mt-2 text-sm text-slate-600 md:text-base">
             Подберите автомобиль по рынку, бюджету и ключевым параметрам.
           </p>
+          {availability !== "All" ? (
+            <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-orange-700">
+              Фильтр по наличию: {availabilityLabel(availability)}
+            </p>
+          ) : null}
         </div>
 
         <div className="space-y-3">
@@ -264,7 +285,21 @@ export function CarCatalog({ initialMarket, catalogLabel, cars }: CarCatalogProp
               Фильтры
             </div>
 
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
+              <div>
+                <label className="mb-1 block text-xs uppercase tracking-wide text-slate-500">Наличие</label>
+                <select
+                  value={availability}
+                  onChange={(e) => setAvailability(e.target.value as AvailabilityFilter)}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-orange-300"
+                >
+                  <option value="All">Любое</option>
+                  <option value="InStockKhorgos">{availabilityLabel("InStockKhorgos")}</option>
+                  <option value="InStockMinsk">{availabilityLabel("InStockMinsk")}</option>
+                  <option value="EnRoute">{availabilityLabel("EnRoute")}</option>
+                  <option value="OnOrder">{availabilityLabel("OnOrder")}</option>
+                </select>
+              </div>
               <div>
                 <label className="mb-1 block text-xs uppercase tracking-wide text-slate-500">Тип кузова</label>
                 <select

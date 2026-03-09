@@ -11,6 +11,7 @@ import {
   cmsGlobalSeoSchema,
   cmsHomeContentSchema,
   cmsHomeLayoutSchema,
+  cmsNewsSettingsSchema,
   cmsNavigationSchema,
 } from "@/lib/schemas/cms";
 
@@ -73,6 +74,26 @@ function buildSnapshot(): CmsSnapshot {
   const navigation = cmsNavigationSchema.parse(siteContent.navbar);
   const footer = cmsFooterSchema.parse(siteContent.footer);
   const globalSeo = cmsGlobalSeoSchema.parse(siteContent.seo);
+  const newsSettings = cmsNewsSettingsSchema.parse({
+    pageEyebrow: "Новости",
+    pageTitle: "Новости E-TRADE",
+    pageDescription: "Актуальные новости поставок, кейсы и аналитика по рынкам авто из Китая, США, Кореи и Европы.",
+    seo: {
+      title: "Новости E-TRADE | Кейсы и обновления поставок",
+      description:
+        "Читайте новости E-TRADE: реальные кейсы, сроки поставок, обновления по рынкам и практические рекомендации по импорту авто.",
+      keywords: "новости E-TRADE, импорт авто, кейсы поставок, авто из Китая, авто из США",
+      ogImage: globalSeo.ogImage,
+      canonical: "/novosti",
+      schemaName: "Новости E-TRADE",
+      schemaDescription: "Лента новостей и материалов E-TRADE по импорту автомобилей.",
+    },
+    list: {
+      pageSize: 12,
+      enableSearch: true,
+      enableFilters: true,
+    },
+  });
   const catalogLabels = cmsCatalogLabelsSchema.parse({
     catalogSection: siteContent.catalogSection,
     carDetail: siteContent.carDetail,
@@ -104,6 +125,7 @@ function buildSnapshot(): CmsSnapshot {
     homeContent,
     navigation,
     footer,
+    newsSettings,
     globalSeo,
     catalogListSeo,
     catalogDetailSeoTemplate,
@@ -118,6 +140,7 @@ function snapshotToDocuments(snapshot: CmsSnapshot): Record<CmsDocumentKey, unkn
     home_content: snapshot.homeContent,
     navigation: snapshot.navigation,
     footer: snapshot.footer,
+    "news:settings": snapshot.newsSettings,
     "seo:global": snapshot.globalSeo,
     "seo:catalog-list": snapshot.catalogListSeo,
     "seo:catalog-detail-template": snapshot.catalogDetailSeoTemplate,

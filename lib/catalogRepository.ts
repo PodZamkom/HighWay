@@ -8,6 +8,7 @@ import {
   normalizeCatalogCurrency,
   normalizeMarket,
 } from "@/lib/catalog/currencyPolicy";
+import { normalizeAvailability } from "@/lib/catalog/availability";
 import type {
   CatalogCarEntity,
   CatalogCarImage,
@@ -15,7 +16,7 @@ import type {
   CatalogImportRow,
   CatalogListResult,
 } from "@/types/catalog";
-import type { CarModel, Condition } from "@/types/car";
+import type { Availability, CarModel, Condition } from "@/types/car";
 import { cars_db } from "@/data/cars_db";
 import type { CatalogCarImageInputDto, CatalogCarInputDto, CatalogCarPatchDto } from "@/lib/schemas/catalog";
 
@@ -24,7 +25,7 @@ interface CatalogListFilters {
   pageSize?: number;
   search?: string;
   market?: string;
-  availability?: string;
+  availability?: Availability;
   includeArchived?: boolean;
 }
 
@@ -41,7 +42,7 @@ interface CatalogCarRow {
   price_value: string | number;
   price_currency: "USD" | "EUR" | "BYN" | "JPY" | "CNY" | "KRW";
   price_type: "FOB" | "EXW" | "OnRoad" | "Estimate";
-  availability: "InStock" | "EnRoute" | "OnOrder";
+  availability: string;
   market: "China" | "USA" | "Korea" | "Europe";
   type: "EV" | "EREV" | "ICE" | "HEV" | null;
   body_type: string;
@@ -124,7 +125,7 @@ function rowToEntity(row: CatalogCarRow): CatalogCarEntity {
     priceValue: parsePriceValue(row.price_value),
     priceCurrency: row.price_currency,
     priceType: row.price_type,
-    availability: row.availability,
+    availability: normalizeAvailability(row.availability),
     market: row.market,
     type: row.type,
     bodyType: row.body_type,
@@ -178,7 +179,7 @@ function staticCarsToLegacy(filters: CatalogListFilters): CarModel[] {
   }
 
   if (filters.availability) {
-    items = items.filter((car) => car.availability === filters.availability);
+    items = items.filter((car) => normalizeAvailability(car.availability) === filters.availability);
   }
 
   if (filters.search && filters.search.trim()) {
@@ -190,6 +191,61 @@ function staticCarsToLegacy(filters: CatalogListFilters): CarModel[] {
   }
 
   return items;
+}
+
+function staticCarToEntity(car: CarModel): CatalogCarEntity {
+  const images = (car.images || []).map((url, index) => ({
+    id: index + 1,
+    carId: car.id,
+    mediaAssetId: null,
+    url,
+    alt: `${car.brand} ${car.model}`,
+    sortOrder: index,
+    isCover: index === 0,
+  }));
+
+  return {
+    id: car.id,
+    slug: car.slug,
+    brand: car.brand,
+    model: car.model,
+    priority: Number.isFinite(car.priority) ? Math.trunc(car.priority as number) : 0,
+    generation: car.generation || "",
+    year: car.year,
+    condition: car.condition,
+    mileageKm: car.mileage_km ?? null,
+    priceValue: car.price_value,
+    priceCurrency: car.price_currency,
+    priceType: car.price_type,
+    availability: normalizeAvailability(car.availability),
+    market: car.market,
+    type: car.type ?? null,
+    bodyType: car.body_type || "",
+    transmission: car.transmission || "",
+    drive: car.drive || "",
+    description: car.description || "",
+    images,
+    archivedAt: null,
+    createdAt: new Date(0).toISOString(),
+    updatedAt: new Date(0).toISOString(),
+  };
+}
+
+function buildStaticCatalogListResult(filters: CatalogListFilters, page: number, pageSize: number): CatalogListResult {
+  const staticItems = staticCarsToLegacy(filters);
+  const start = (page - 1) * pageSize;
+  const slice = staticItems.slice(start, start + pageSize);
+  return {
+    items: slice.map(staticCarToEntity),
+    total: staticItems.length,
+    page,
+    pageSize,
+  };
+}
+
+function findStaticCatalogCarByIdOrSlug(idOrSlug: string): CatalogCarEntity | null {
+  const car = cars_db.find((item) => item.id === idOrSlug || item.slug === idOrSlug);
+  return car ? staticCarToEntity(car) : null;
 }
 
 function buildWhere(filters: CatalogListFilters) {
@@ -226,182 +282,29 @@ export async function listCatalogCars(filters: CatalogListFilters = {}): Promise
   const pageSize = Math.max(1, Math.min(100, filters.pageSize ?? 24));
 
   if (!isDatabaseConfigured()) {
-    const staticItems = staticCarsToLegacy(filters);
-    const start = (page - 1) * pageSize;
-    const slice = staticItems.slice(start, start + pageSize);
-    return {
-      items: slice.map((car) => {
-        const images = (car.images || []).map((url, index) => ({
-          id: index + 1,
-          carId: car.id,
-          mediaAssetId: null,
-          url,
-          alt: `${car.brand} ${car.model}`,
-          sortOrder: index,
-          isCover: index === 0,
-        }));
-
-        return {
-          id: car.id,
-          slug: car.slug,
-          brand: car.brand,
-          model: car.model,
-          priority: Number.isFinite(car.priority) ? Math.trunc(car.priority as number) : 0,
-          generation: car.generation || "",
-          year: car.year,
-          condition: car.condition,
-          mileageKm: car.mileage_km ?? null,
-          priceValue: car.price_value,
-          priceCurrency: car.price_currency,
-          priceType: car.price_type,
-          availability: car.availability,
-          market: car.market,
-          type: car.type ?? null,
-          bodyType: car.body_type || "",
-          transmission: car.transmission || "",
-          drive: car.drive || "",
-          description: car.description || "",
-          images,
-          archivedAt: null,
-          createdAt: new Date(0).toISOString(),
-          updatedAt: new Date(0).toISOString(),
-        } as CatalogCarEntity;
-      }),
-      total: staticItems.length,
-      page,
-      pageSize,
-    };
+    return buildStaticCatalogListResult(filters, page, pageSize);
   }
 
-  await ensureDatabaseReady();
+  try {
+    await ensureDatabaseReady();
 
-  const { whereSql, values } = buildWhere({
-    market: filters.market,
-    availability: filters.availability,
-    search: filters.search,
-    includeArchived: filters.includeArchived,
-  });
+    const { whereSql, values } = buildWhere({
+      market: filters.market,
+      availability: filters.availability,
+      search: filters.search,
+      includeArchived: filters.includeArchived,
+    });
 
-  const countQuery = `SELECT COUNT(*)::text AS count FROM catalog_cars c ${whereSql}`;
-  const countResponse = await dbQuery<{ count: string }>(countQuery, values);
-  const total = Number(countResponse.rows[0]?.count || "0");
+    const countQuery = `SELECT COUNT(*)::text AS count FROM catalog_cars c ${whereSql}`;
+    const countResponse = await dbQuery<{ count: string }>(countQuery, values);
+    const total = Number(countResponse.rows[0]?.count || "0");
 
-  const offset = (page - 1) * pageSize;
-  const listValues = [...values, pageSize, offset];
-  const limitPlaceholder = `$${listValues.length - 1}`;
-  const offsetPlaceholder = `$${listValues.length}`;
+    const offset = (page - 1) * pageSize;
+    const listValues = [...values, pageSize, offset];
+    const limitPlaceholder = `$${listValues.length - 1}`;
+    const offsetPlaceholder = `$${listValues.length}`;
 
-  const listQuery = `
-    SELECT
-      c.id,
-      c.slug,
-      c.brand,
-      c.model,
-      c.priority,
-      c.generation,
-      c.year,
-      c.condition,
-      c.mileage_km,
-      c.price_value,
-      c.price_currency,
-      c.price_type,
-      c.availability,
-      c.market,
-      c.type,
-      c.body_type,
-      c.transmission,
-      c.drive,
-      c.description,
-      c.archived_at,
-      c.created_at,
-      c.updated_at,
-      COALESCE(
-        json_agg(
-          json_build_object(
-            'id', i.id,
-            'carId', i.car_id,
-            'mediaAssetId', i.media_asset_id,
-            'url', i.url,
-            'alt', i.alt,
-            'sortOrder', i.sort_order,
-            'isCover', i.is_cover
-          ) ORDER BY i.sort_order ASC, i.id ASC
-        ) FILTER (WHERE i.id IS NOT NULL),
-        '[]'::json
-      ) AS images
-    FROM catalog_cars c
-    LEFT JOIN catalog_car_images i ON i.car_id = c.id
-    ${whereSql}
-    GROUP BY c.id
-    ORDER BY c.updated_at DESC, c.id ASC
-    LIMIT ${limitPlaceholder}
-    OFFSET ${offsetPlaceholder}
-  `;
-
-  const response = await dbQuery<CatalogCarRow>(listQuery, listValues);
-  const items = response.rows.map(rowToEntity);
-
-  return {
-    items,
-    total,
-    page,
-    pageSize,
-  };
-}
-
-export async function listCatalogCarsLegacy(filters: CatalogListFilters = {}): Promise<CarModel[]> {
-  const result = await listCatalogCars({ ...filters, page: filters.page ?? 1, pageSize: filters.pageSize ?? 5000 });
-  return result.items.map(entityToLegacyCar);
-}
-
-export async function findCatalogCarByIdOrSlug(idOrSlug: string): Promise<CatalogCarEntity | null> {
-  const needle = idOrSlug.trim();
-  if (!needle) return null;
-
-  if (!isDatabaseConfigured()) {
-    const car = cars_db.find((item) => item.id === needle || item.slug === needle);
-    if (!car) return null;
-    const images = (car.images || []).map((url, index) => ({
-      id: index + 1,
-      carId: car.id,
-      mediaAssetId: null,
-      url,
-      alt: `${car.brand} ${car.model}`,
-      sortOrder: index,
-      isCover: index === 0,
-    }));
-
-    return {
-      id: car.id,
-      slug: car.slug,
-      brand: car.brand,
-      model: car.model,
-      priority: Number.isFinite(car.priority) ? Math.trunc(car.priority as number) : 0,
-      generation: car.generation || "",
-      year: car.year,
-      condition: car.condition,
-      mileageKm: car.mileage_km ?? null,
-      priceValue: car.price_value,
-      priceCurrency: car.price_currency,
-      priceType: car.price_type,
-      availability: car.availability,
-      market: car.market,
-      type: car.type ?? null,
-      bodyType: car.body_type || "",
-      transmission: car.transmission || "",
-      drive: car.drive || "",
-      description: car.description || "",
-      images,
-      archivedAt: null,
-      createdAt: new Date(0).toISOString(),
-      updatedAt: new Date(0).toISOString(),
-    };
-  }
-
-  await ensureDatabaseReady();
-
-  const response = await dbQuery<CatalogCarRow>(
-    `
+    const listQuery = `
       SELECT
         c.id,
         c.slug,
@@ -441,16 +344,99 @@ export async function findCatalogCarByIdOrSlug(idOrSlug: string): Promise<Catalo
         ) AS images
       FROM catalog_cars c
       LEFT JOIN catalog_car_images i ON i.car_id = c.id
-      WHERE (c.id = $1 OR c.slug = $1)
+      ${whereSql}
       GROUP BY c.id
-      LIMIT 1
-    `,
-    [needle],
-  );
+      ORDER BY c.updated_at DESC, c.id ASC
+      LIMIT ${limitPlaceholder}
+      OFFSET ${offsetPlaceholder}
+    `;
 
-  const row = response.rows[0];
-  if (!row) return null;
-  return rowToEntity(row);
+    const response = await dbQuery<CatalogCarRow>(listQuery, listValues);
+    const items = response.rows.map(rowToEntity);
+
+    return {
+      items,
+      total,
+      page,
+      pageSize,
+    };
+  } catch (error) {
+    console.error("[catalogRepository] Falling back to static catalog list due database error", error);
+    return buildStaticCatalogListResult(filters, page, pageSize);
+  }
+}
+
+export async function listCatalogCarsLegacy(filters: CatalogListFilters = {}): Promise<CarModel[]> {
+  const result = await listCatalogCars({ ...filters, page: filters.page ?? 1, pageSize: filters.pageSize ?? 5000 });
+  return result.items.map(entityToLegacyCar);
+}
+
+export async function findCatalogCarByIdOrSlug(idOrSlug: string): Promise<CatalogCarEntity | null> {
+  const needle = idOrSlug.trim();
+  if (!needle) return null;
+
+  if (!isDatabaseConfigured()) {
+    return findStaticCatalogCarByIdOrSlug(needle);
+  }
+
+  try {
+    await ensureDatabaseReady();
+
+    const response = await dbQuery<CatalogCarRow>(
+      `
+        SELECT
+          c.id,
+          c.slug,
+          c.brand,
+          c.model,
+          c.priority,
+          c.generation,
+          c.year,
+          c.condition,
+          c.mileage_km,
+          c.price_value,
+          c.price_currency,
+          c.price_type,
+          c.availability,
+          c.market,
+          c.type,
+          c.body_type,
+          c.transmission,
+          c.drive,
+          c.description,
+          c.archived_at,
+          c.created_at,
+          c.updated_at,
+          COALESCE(
+            json_agg(
+              json_build_object(
+                'id', i.id,
+                'carId', i.car_id,
+                'mediaAssetId', i.media_asset_id,
+                'url', i.url,
+                'alt', i.alt,
+                'sortOrder', i.sort_order,
+                'isCover', i.is_cover
+              ) ORDER BY i.sort_order ASC, i.id ASC
+            ) FILTER (WHERE i.id IS NOT NULL),
+            '[]'::json
+          ) AS images
+        FROM catalog_cars c
+        LEFT JOIN catalog_car_images i ON i.car_id = c.id
+        WHERE (c.id = $1 OR c.slug = $1)
+        GROUP BY c.id
+        LIMIT 1
+      `,
+      [needle],
+    );
+
+    const row = response.rows[0];
+    if (!row) return null;
+    return rowToEntity(row);
+  } catch (error) {
+    console.error("[catalogRepository] Falling back to static catalog detail due database error", error);
+    return findStaticCatalogCarByIdOrSlug(needle);
+  }
 }
 
 function normalizeImageInputs(images: CatalogCarImageInputDto[]): CatalogCarImageInputDto[] {

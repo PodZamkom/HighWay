@@ -1,6 +1,6 @@
 export type Market = 'China' | 'USA' | 'Korea' | 'Europe';
 export type Condition = 'New' | 'Used' | 'Crashed';
-export type Availability = 'InStock' | 'EnRoute' | 'OnOrder';
+export type Availability = 'InStockKhorgos' | 'InStockMinsk' | 'EnRoute' | 'OnOrder';
 export type PriceType = 'FOB' | 'EXW' | 'OnRoad' | 'Estimate';
 export type CarType = 'EV' | 'EREV' | 'ICE' | 'HEV';
 

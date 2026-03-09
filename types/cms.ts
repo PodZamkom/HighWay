@@ -8,6 +8,7 @@ import type {
   SeoContent,
 } from "@/types/site";
 import type { ContentPage, ContentPageSlug } from "@/types/content-pages";
+import type { NewsSettings } from "@/types/news";
 
 export type HomeBlockKey = "hero" | "promo" | "market" | "calculator" | "team";
 
@@ -51,12 +52,14 @@ export interface CmsSeoDocument {
 }
 
 export type CmsCatalogLabelsDocument = CmsCatalogLabelsDto;
+export type CmsNewsSettingsDocument = NewsSettings;
 
 export type CmsDocumentKey =
   | "home_layout"
   | "home_content"
   | "navigation"
   | "footer"
+  | "news:settings"
   | "seo:global"
   | "seo:catalog-list"
   | "seo:catalog-detail-template"
@@ -76,6 +79,7 @@ export interface CmsSnapshot {
   homeContent: CmsHomeContentDocument;
   navigation: CmsNavigationDocument;
   footer: CmsFooterDocument;
+  newsSettings: CmsNewsSettingsDocument;
   globalSeo: CmsGlobalSeoDocument;
   catalogListSeo: CmsCatalogListSeoDocument;
   catalogDetailSeoTemplate: CmsCatalogDetailSeoTemplateDocument;

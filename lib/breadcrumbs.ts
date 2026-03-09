@@ -5,7 +5,7 @@ export type BreadcrumbItem = {
   href?: string;
 };
 
-const DEFAULT_SITE_URL = "https://edelivery.by";
+const DEFAULT_SITE_URL = "https://highwaymotors.site";
 
 function normalizePath(pathOrUrl: string | undefined | null): string {
   if (!pathOrUrl) return "/";

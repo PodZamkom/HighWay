@@ -9,6 +9,7 @@ import {
   normalizeMarket,
   type CatalogCurrency,
 } from "@/lib/catalog/currencyPolicy";
+import { normalizeAvailability } from "@/lib/catalog/availability";
 import type { CmsDocumentKey } from "@/types/cms";
 import type { CarModel } from "@/types/car";
 
@@ -107,7 +108,7 @@ function normalizeCar(car: CarModel) {
     priceValue: normalizedCurrency.priceValue,
     priceCurrency: normalizedCurrency.priceCurrency,
     priceType: car.price_type || "FOB",
-    availability: car.availability || "OnOrder",
+    availability: normalizeAvailability(car.availability),
     market: normalizedMarket,
     type: car.type || null,
     bodyType: car.body_type || "",

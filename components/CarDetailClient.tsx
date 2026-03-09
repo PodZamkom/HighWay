@@ -5,6 +5,7 @@ import { Zap } from 'lucide-react';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { LeadFormModal } from '@/components/LeadFormModal';
 import { CarModel } from '@/types/car';
+import { availabilityLabel, isInStockAvailability } from '@/lib/catalog/availability';
 
 type CarDetailClientProps = {
     car: CarModel | null;
@@ -36,15 +37,6 @@ export function CarDetailClient({ car, catalogLabel }: CarDetailClientProps) {
             case 'Used': return 'Б/У';
             case 'Crashed': return 'Битый';
             default: return condition;
-        }
-    };
-
-    const availabilityLabel = (availability: string) => {
-        switch (availability) {
-            case 'InStock': return 'В Минске';
-            case 'EnRoute': return 'В Пути';
-            case 'OnOrder': return 'Под Заказ';
-            default: return availability;
         }
     };
 
@@ -160,7 +152,7 @@ export function CarDetailClient({ car, catalogLabel }: CarDetailClientProps) {
                             <div className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-700">{car.year}</div>
                             <div className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-700">{conditionLabel(car.condition)}</div>
                             <div className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-700">{car.market}</div>
-                            <div className={`px-3 py-1 rounded-full text-sm font-bold ${car.availability === 'InStock' ? 'bg-green-500 text-white' : 'text-gray-500 border border-gray-300'}`}>
+                            <div className={`px-3 py-1 rounded-full text-sm font-bold ${isInStockAvailability(car.availability) ? 'bg-green-500 text-white' : 'text-gray-500 border border-gray-300'}`}>
                                 {availabilityLabel(car.availability)}
                             </div>
                         </div>
@@ -279,7 +271,7 @@ function buildSpecsList(car: CarModel, description: string): SpecItem[] {
     add('Год выпуска', String(car.year));
     add('Состояние', conditionLabelStatic(car.condition));
     add('Рынок', car.market);
-    add('Наличие', availabilityLabelStatic(car.availability));
+    add('Наличие', availabilityLabel(car.availability));
     add('Пробег', car.mileage_km ? `${car.mileage_km.toLocaleString()} км` : undefined);
     add('Тип цены', priceTypeLabelStatic(car.price_type));
     add('Валюта', car.price_currency);
@@ -417,15 +409,6 @@ function conditionLabelStatic(condition: string) {
         case 'Used': return 'Б/У';
         case 'Crashed': return 'Битый';
         default: return condition;
-    }
-}
-
-function availabilityLabelStatic(availability: string) {
-    switch (availability) {
-        case 'InStock': return 'В Минске';
-        case 'EnRoute': return 'В Пути';
-        case 'OnOrder': return 'Под Заказ';
-        default: return availability;
     }
 }
 

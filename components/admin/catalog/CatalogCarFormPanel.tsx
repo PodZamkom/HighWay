@@ -17,7 +17,8 @@ const CONDITION_OPTIONS: SelectOption[] = [
 ];
 
 const AVAILABILITY_OPTIONS: SelectOption[] = [
-  { value: "InStock", label: "В наличии" },
+  { value: "InStockKhorgos", label: "В наличии в Хоргосе" },
+  { value: "InStockMinsk", label: "В наличии в Минске" },
   { value: "EnRoute", label: "В пути" },
   { value: "OnOrder", label: "Под заказ" },
 ];

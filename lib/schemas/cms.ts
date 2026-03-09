@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { newsSettingsSchema } from "@/lib/schemas/news";
 
 const text = z.string().trim();
 const requiredText = text.min(1);
@@ -235,6 +236,8 @@ export const cmsFooterSchema = z.object({
   contacts: footerContactsSchema.optional(),
 });
 
+export const cmsNewsSettingsSchema = newsSettingsSchema;
+
 export const cmsGlobalSeoSchema = z.object({
   title: requiredText,
   description: requiredText,
@@ -457,6 +460,7 @@ export type CmsHomeLayoutDto = z.infer<typeof cmsHomeLayoutSchema>;
 export type CmsHomeContentDto = z.infer<typeof cmsHomeContentSchema>;
 export type CmsNavigationDto = z.infer<typeof cmsNavigationSchema>;
 export type CmsFooterDto = z.infer<typeof cmsFooterSchema>;
+export type CmsNewsSettingsDto = z.infer<typeof cmsNewsSettingsSchema>;
 export type CmsSeoBundleDto = z.infer<typeof cmsSeoBundleSchema>;
 export type CmsCatalogLabelsDto = z.infer<typeof cmsCatalogLabelsSchema>;
 export type CmsContentPageDto = z.infer<typeof cmsContentPageSchema>;

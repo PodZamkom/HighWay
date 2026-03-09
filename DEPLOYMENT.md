@@ -1,26 +1,51 @@
-# Правила деплоя для Highway Motors
+# Деплой для Highway Motors (robust flow)
 
-Этот проект критически чувствителен к ресурсам сервера и стабильности сети. Чтобы деплой проходил быстро и без ошибок, следуй этим правилам:
+Цель: после деплоя и после перезагрузки сервера контейнер должен автоматически подниматься, а выкладка должна откатываться при провале smoke-check.
 
-### 1. Лимиты памяти (Обязательно)
-- Процесс сборки (`npm run build`) ВСЕГДА должен быть ограничен: `NODE_OPTIONS="--max-old-space-size=1536"`.
-- Это уже прописано в `Dockerfile`, не удалять.
+## Что используется
+- `scripts/deploy.sh` — выкладка через candidate-контейнер + rollback.
+- `scripts/smoke-check.sh` — обязательная проверка ключевых маршрутов, `sitemap.xml` и чата.
+- `scripts/self-heal.sh` — watchdog: авто-старт/рестарт контейнера при деградации.
+- `--restart always` + volume `highway-runtime:/app/runtime`.
 
-### 2. Очистка перед билдом
-- Всегда проверяй отсутствие временных файлов `temp_*.tsx`. Они ломают типизацию и билд.
-- В `deploy.sh` (или команде деплоя) всегда должен быть `git reset --hard` и `git clean -fd`.
+## Обязательные env
+В `.env` должны быть:
+- `SITE_URL=https://highwaymotors.site`
+- `NEXT_PUBLIC_SITE_URL=https://highwaymotors.site`
+- Для чата (один вариант):
+- `NEXT_PUBLIC_CHAT_WIDGET_SRC=<валидный JS URL>`
+- или `NEXT_PUBLIC_JIVO_WIDGET_ID=<id>`
 
-### 3. Стабильность SSH
-- При деплое всегда используй флаги `-o StrictHostKeyChecking=no` и `-o UserKnownHostsFile=/dev/null`, так как сервер часто меняет ключи или сбрасывается.
-
-### 4. Робастная команда деплоя
-Для деплоя используй эту "золотую" цепочку (деплой из `origin/main`):
+## Локальный запуск деплоя на сервере
 ```bash
-ssh -o StrictHostKeyChecking=no root@82.40.37.223 "nohup sh -c 'cd HighWay && git fetch origin && git reset --hard origin/main && git clean -fd && docker build --no-cache -t highway-motors:latest . && docker stop highway-highway-1 || true && docker rm highway-highway-1 || true && docker run -d --name highway-highway-1 -p 8080:3000 --restart always -v highway-runtime:/app/runtime highway-motors:latest' > deploy.log 2>&1 &"
+cd ~/HighWay
+bash scripts/deploy.sh
 ```
 
-### Причины задержек в прошлые разы:
-- **Нестабильность сервера**: Постоянные обрывы SSH (`Connection closed`).
-- **Изменение Host Key**: Приходилось вручную чистить `known_hosts`.
-- **Временные файлы**: Случайные `temp_catalog.tsx` попали в гит и не давали скомпилировать проект.
-- **Кэш Docker**: Билд пытался использовать старые слои с ошибками.
+## Удалённый деплой по SSH
+```bash
+ssh -o StrictHostKeyChecking=no root@82.40.37.223 "cd ~/HighWay && bash scripts/deploy.sh"
+```
+
+## Что делает `scripts/deploy.sh`
+1. Синхронизирует репозиторий с `origin/main` (`git fetch/reset/clean`).
+2. Собирает новый Docker image (`latest` + уникальный тег).
+3. Поднимает candidate-контейнер на отдельном порту.
+4. Выполняет smoke-check на candidate.
+5. Переключает production-контейнер.
+6. Выполняет smoke-check на публичном домене.
+7. При ошибке автоматически откатывает на предыдущий image.
+
+## Полезные флаги
+- `SKIP_GIT_SYNC=1` — не трогать git.
+- `BUILD_NO_CACHE=0` — разрешить кэш docker build.
+- `SMOKE_REQUIRE_CHAT=0` — временно пропустить проверку чата (не рекомендуется).
+- `PUBLIC_URL=https://highwaymotors.site` — домен для пост-проверки.
+- `EXPECTED_SITE_URL=https://highwaymotors.site` — домен в sitemap.
+
+## Автовосстановление после ребута/сбоев
+Проверка раз в минуту через cron:
+
+```bash
+* * * * * cd ~/HighWay && bash scripts/self-heal.sh >> /var/log/highway-self-heal.log 2>&1
+```

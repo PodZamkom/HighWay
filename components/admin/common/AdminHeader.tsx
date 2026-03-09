@@ -7,6 +7,7 @@ import { LogOut } from "lucide-react";
 const NAV_ITEMS = [
   { href: "/admin/home", label: "Главная и CMS" },
   { href: "/admin/pages", label: "Страницы" },
+  { href: "/admin/news", label: "Новости" },
   { href: "/admin/catalog", label: "Каталог" },
   { href: "/admin/calculator", label: "Калькулятор" },
   { href: "/admin/bitrix", label: "CRM" },

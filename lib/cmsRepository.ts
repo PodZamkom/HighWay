@@ -13,6 +13,7 @@ import type {
   CmsGlobalSeoDocument,
   CmsHomeContentDocument,
   CmsHomeLayoutDocument,
+  CmsNewsSettingsDocument,
   CmsNavigationDocument,
   CmsRevisionRecord,
   CmsSeoDocument,
@@ -28,6 +29,7 @@ import {
   cmsGlobalSeoSchema,
   cmsHomeContentSchema,
   cmsHomeLayoutSchema,
+  cmsNewsSettingsSchema,
   cmsNavigationSchema,
   cmsSeoBundleSchema,
   homeBlockKeySchema,
@@ -174,6 +176,10 @@ export async function readFooter(): Promise<CmsFooterDocument> {
   return readCmsDocumentWithFallback("footer", cmsFooterSchema, (snapshot) => snapshot.footer);
 }
 
+export async function readNewsSettings(): Promise<CmsNewsSettingsDocument> {
+  return readCmsDocumentWithFallback("news:settings", cmsNewsSettingsSchema, (snapshot) => snapshot.newsSettings);
+}
+
 export async function readGlobalSeo(): Promise<CmsGlobalSeoDocument> {
   return readCmsDocumentWithFallback("seo:global", cmsGlobalSeoSchema, (snapshot) => snapshot.globalSeo);
 }
@@ -223,6 +229,7 @@ export async function readCmsSnapshot(): Promise<CmsSnapshot> {
     homeContent,
     navigation,
     footer,
+    newsSettings,
     globalSeo,
     catalogListSeo,
     catalogDetailSeoTemplate,
@@ -233,6 +240,7 @@ export async function readCmsSnapshot(): Promise<CmsSnapshot> {
     readHomeContent(),
     readNavigation(),
     readFooter(),
+    readNewsSettings(),
     readGlobalSeo(),
     readCatalogListSeo(),
     readCatalogDetailSeoTemplate(),
@@ -245,6 +253,7 @@ export async function readCmsSnapshot(): Promise<CmsSnapshot> {
     homeContent,
     navigation,
     footer,
+    newsSettings,
     globalSeo,
     catalogListSeo,
     catalogDetailSeoTemplate,
@@ -302,6 +311,16 @@ export async function writeFooter(nextFooter: CmsFooterDocument, userId: string 
 
   await withDbClient(async (client) => {
     await saveCmsDocument(client, "footer", parsed, userId);
+  });
+}
+
+export async function writeNewsSettings(nextSettings: CmsNewsSettingsDocument, userId: string | null): Promise<void> {
+  requireDatabaseForWrite();
+  await ensureDatabaseReady();
+  const parsed = cmsNewsSettingsSchema.parse(nextSettings);
+
+  await withDbClient(async (client) => {
+    await saveCmsDocument(client, "news:settings", parsed, userId);
   });
 }
 

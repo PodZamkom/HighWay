@@ -39,6 +39,9 @@ export default async function SiteLayout({
   children: React.ReactNode;
 }>) {
   const siteContent = await getSiteContent();
+  const customChatSrc = process.env.NEXT_PUBLIC_CHAT_WIDGET_SRC?.trim() || "";
+  const jivoWidgetId = process.env.NEXT_PUBLIC_JIVO_WIDGET_ID?.trim() || "";
+  const resolvedChatSrc = customChatSrc || (jivoWidgetId ? `https://code.jivo.ru/widget/${jivoWidgetId}` : "");
 
   return (
     <div className="flex min-h-screen flex-col bg-white text-gray-900">
@@ -46,11 +49,13 @@ export default async function SiteLayout({
       <main className="flex-grow">{children}</main>
       <Footer content={siteContent.footer} />
 
-      <Script
-        src="https://staging.oryntix.ru/widget/430.js"
-        async
-        strategy="afterInteractive"
-      />
+      {resolvedChatSrc ? (
+        <Script
+          src={resolvedChatSrc}
+          async
+          strategy="afterInteractive"
+        />
+      ) : null}
     </div>
   );
 }

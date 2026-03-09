@@ -14,7 +14,7 @@ export type CarFormState = {
   priceValue: number;
   priceCurrency: "USD" | "EUR" | "BYN" | "JPY" | "CNY" | "KRW";
   priceType: "FOB" | "EXW" | "OnRoad" | "Estimate";
-  availability: "InStock" | "EnRoute" | "OnOrder";
+  availability: "InStockKhorgos" | "InStockMinsk" | "EnRoute" | "OnOrder";
   market: Market;
   type: "EV" | "EREV" | "ICE" | "HEV" | null;
   bodyType: string;

@@ -1,5 +1,6 @@
 import { CarModel } from '../types/car';
 import { CarFamily, CarVariant } from '../data/cars';
+import { isInStockAvailability } from '../lib/catalog/availability';
 
 export function groupCarsIntoFamilies(cars: CarModel[]): CarFamily[] {
     const familiesMap = new Map<string, CarFamily>();
@@ -41,7 +42,7 @@ export function groupCarsIntoFamilies(cars: CarModel[]): CarFamily[] {
             price_usd: car.price_value,
             tags: [
                 car.type === 'EV' ? 'Электро' : car.type === 'EREV' ? 'Гибрид' : 'ДВС',
-                car.availability === 'InStock' ? 'В наличии' : 'Под заказ'
+                isInStockAvailability(car.availability) ? 'В наличии' : 'Под заказ'
             ].filter(Boolean) as string[]
         };
 

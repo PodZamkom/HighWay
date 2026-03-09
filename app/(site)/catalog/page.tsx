@@ -33,9 +33,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CatalogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ market?: string }>;
+  searchParams: Promise<{ market?: string; availability?: string }>;
 }) {
-  const { market } = await searchParams;
+  const { market, availability } = await searchParams;
   const [siteContent, cars, catalogSeo] = await Promise.all([
     getSiteContent(),
     listCatalogCarsLegacy({ page: 1, pageSize: 5000 }),
@@ -61,7 +61,7 @@ export default async function CatalogPage({
 
   return (
     <>
-      <CarCatalog initialMarket={market} catalogLabel={catalogLabel} cars={cars} />
+      <CarCatalog initialMarket={market} initialAvailability={availability} catalogLabel={catalogLabel} cars={cars} />
       {breadcrumbSchema ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       ) : null}

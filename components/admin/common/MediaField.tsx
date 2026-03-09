@@ -7,6 +7,7 @@ interface MediaFieldProps {
   label: string;
   value: string;
   onChange: (url: string) => void;
+  onAsset?: (asset: { id: string; url: string; mime: string }) => void;
   accept?: string;
 }
 
@@ -35,7 +36,7 @@ async function uploadFileWithProgress(url: string, file: File, onProgress: (perc
   });
 }
 
-export function MediaField({ label, value, onChange, accept = "image/*" }: MediaFieldProps) {
+export function MediaField({ label, value, onChange, onAsset, accept = "image/*" }: MediaFieldProps) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -81,7 +82,12 @@ export function MediaField({ label, value, onChange, accept = "image/*" }: Media
         throw new Error(completePayload?.error || "Не удалось сохранить файл");
       }
 
-      onChange(completePayload.asset?.url || presignPayload.publicUrl || value);
+      const uploadedAsset = completePayload.asset as { id: string; url: string; mime: string } | undefined;
+      if (uploadedAsset) {
+        onAsset?.(uploadedAsset);
+      }
+
+      onChange(uploadedAsset?.url || presignPayload.publicUrl || value);
       setProgress(100);
     } catch (cause: any) {
       setError(cause?.message || "Ошибка загрузки");

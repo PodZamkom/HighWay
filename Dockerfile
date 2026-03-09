@@ -55,4 +55,7 @@ ENV PORT=3000
 # set hostname to localhost
 ENV HOSTNAME="0.0.0.0"
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 \
+  CMD wget -qO- "http://127.0.0.1:3000/" >/dev/null || exit 1
+
 CMD ["node", "server.js"]

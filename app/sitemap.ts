@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
 import { resolveSiteUrl } from "@/lib/breadcrumbs";
 import { listCatalogCarsLegacy } from "@/lib/catalogRepository";
+import { listNewsForSitemap } from "@/lib/newsRepository";
 
 const CONTENT_ROUTES = [
   "/",
   "/o-kompanii",
   "/uslugi",
   "/servisy",
-  "/poleznoe",
+  "/novosti",
   "/kontakty",
   "/calculator",
   "/catalog",
@@ -24,7 +25,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "/" ? 1 : route === "/catalog" ? 0.9 : 0.8,
   }));
 
-  const cars = await listCatalogCarsLegacy({ page: 1, pageSize: 10_000, includeArchived: false });
+  let cars = [] as Awaited<ReturnType<typeof listCatalogCarsLegacy>>;
+  try {
+    cars = await listCatalogCarsLegacy({ page: 1, pageSize: 10_000, includeArchived: false });
+  } catch (error) {
+    // Sitemap should still render even if catalog storage is temporarily unavailable.
+    console.error("[sitemap] Failed to load catalog cars, continuing with static routes only", error);
+  }
+
   const carItems: MetadataRoute.Sitemap = cars.map((car) => ({
     url: `${siteUrl}/catalog/${encodeURIComponent(car.id)}`,
     lastModified: now,
@@ -32,5 +40,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...baseItems, ...carItems];
+  let newsItems: MetadataRoute.Sitemap = [];
+  try {
+    const news = await listNewsForSitemap();
+    newsItems = news.map((item) => ({
+      url: `${siteUrl}/novosti/${encodeURIComponent(item.slug)}`,
+      lastModified: item.updatedAt ? new Date(item.updatedAt) : now,
+      changeFrequency: "daily",
+      priority: 0.7,
+    }));
+  } catch (error) {
+    console.error("[sitemap] Failed to load news items, continuing without news routes", error);
+  }
+
+  return [...baseItems, ...carItems, ...newsItems];
 }
