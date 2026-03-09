@@ -13,6 +13,7 @@ CANDIDATE_PORT="${CANDIDATE_PORT:-18080}"
 PUBLIC_URL="${PUBLIC_URL:-https://highwaymotors.site}"
 EXPECTED_SITE_URL="${EXPECTED_SITE_URL:-https://highwaymotors.site}"
 ENV_FILE="${ENV_FILE:-.env}"
+APP_NETWORK="${APP_NETWORK:-highway-net}"
 GIT_REF="${GIT_REF:-origin/main}"
 SKIP_GIT_SYNC="${SKIP_GIT_SYNC:-0}"
 BUILD_NO_CACHE="${BUILD_NO_CACHE:-1}"
@@ -34,6 +35,11 @@ fail() {
 container_exists() {
   local name="$1"
   docker ps -a --format '{{.Names}}' | grep -qx "$name"
+}
+
+network_exists() {
+  local name="$1"
+  docker network ls --format '{{.Name}}' | grep -qx "$name"
 }
 
 remove_container() {
@@ -69,6 +75,7 @@ start_container() {
 
   docker run -d \
     --name "$name" \
+    --network "$APP_NETWORK" \
     -p "${host_port}:3000" \
     --restart "$restart_policy" \
     --env-file "$ENV_FILE" \
@@ -100,6 +107,7 @@ trap on_error ERR
 command -v docker >/dev/null || fail "docker is required"
 command -v curl >/dev/null || fail "curl is required"
 [[ -f "$ENV_FILE" ]] || fail "Environment file not found: ${ENV_FILE}"
+network_exists "$APP_NETWORK" || fail "Docker network not found: ${APP_NETWORK}"
 
 if container_exists "$APP_NAME"; then
   OLD_IMAGE="$(docker inspect -f '{{.Image}}' "$APP_NAME" 2>/dev/null || true)"
