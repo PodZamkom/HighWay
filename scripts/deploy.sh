@@ -21,6 +21,7 @@ DOCKER_CACHE_DIR="${DOCKER_CACHE_DIR:-/root/.cache/highway-buildx}"
 DEPLOY_CACHE_MODE="${DEPLOY_CACHE_MODE:-warm}"
 DEPLOY_METRICS_LOG="${DEPLOY_METRICS_LOG:-$ROOT_DIR/runtime/deploy-metrics.log}"
 SMOKE_REQUIRE_CHAT="${SMOKE_REQUIRE_CHAT:-1}"
+PRE_DEPLOY_TYPECHECK="${PRE_DEPLOY_TYPECHECK:-1}"
 
 OLD_IMAGE=""
 ROLLBACK_ALLOWED=0
@@ -182,6 +183,15 @@ if [[ "$SKIP_GIT_SYNC" != "1" ]]; then
   stage_end "git_sync" "$sync_start"
 else
   log "Skipping git sync (SKIP_GIT_SYNC=${SKIP_GIT_SYNC})"
+fi
+
+if [[ "$PRE_DEPLOY_TYPECHECK" == "1" ]]; then
+  typecheck_start="$(stage_start)"
+  log "Running pre-deploy typecheck"
+  npm run typecheck
+  stage_end "predeploy_typecheck" "$typecheck_start"
+else
+  log "Skipping pre-deploy typecheck (PRE_DEPLOY_TYPECHECK=${PRE_DEPLOY_TYPECHECK})"
 fi
 
 RUNTIME_PREPARE_TOKEN="$(generate_runtime_prepare_token)"

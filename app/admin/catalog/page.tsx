@@ -1,6 +1,13 @@
+import dynamic from "next/dynamic";
 import { AdminHeader } from "@/components/admin/common/AdminHeader";
-import { AdminCatalogManager } from "@/components/admin/catalog/AdminCatalogManager";
 import { requireAdminPageSession } from "@/lib/admin/pageAuth";
+
+const AdminCatalogManager = dynamic(
+  () => import("@/components/admin/catalog/AdminCatalogManager").then((mod) => mod.AdminCatalogManager),
+  {
+    loading: () => <div className="py-16 text-center text-sm text-zinc-400">Загрузка каталога...</div>,
+  },
+);
 
 export default async function AdminCatalogPage() {
   const auth = await requireAdminPageSession();

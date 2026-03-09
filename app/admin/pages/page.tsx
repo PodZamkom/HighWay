@@ -1,6 +1,13 @@
-import { AdminPagesEditor } from "@/components/admin/pages/AdminPagesEditor";
+import dynamic from "next/dynamic";
 import { AdminHeader } from "@/components/admin/common/AdminHeader";
 import { requireAdminPageSession } from "@/lib/admin/pageAuth";
+
+const AdminPagesEditor = dynamic(
+  () => import("@/components/admin/pages/AdminPagesEditor").then((mod) => mod.AdminPagesEditor),
+  {
+    loading: () => <div className="py-16 text-center text-sm text-zinc-400">Загрузка редактора...</div>,
+  },
+);
 
 export default async function AdminPagesRoute() {
   const auth = await requireAdminPageSession();

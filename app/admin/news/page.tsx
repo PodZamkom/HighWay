@@ -1,6 +1,13 @@
+import dynamic from "next/dynamic";
 import { AdminHeader } from "@/components/admin/common/AdminHeader";
-import { AdminNewsManager } from "@/components/admin/news/AdminNewsManager";
 import { requireAdminPageSession } from "@/lib/admin/pageAuth";
+
+const AdminNewsManager = dynamic(
+  () => import("@/components/admin/news/AdminNewsManager").then((mod) => mod.AdminNewsManager),
+  {
+    loading: () => <div className="py-16 text-center text-sm text-zinc-400">Загрузка новостей...</div>,
+  },
+);
 
 export default async function AdminNewsPage() {
   const auth = await requireAdminPageSession();

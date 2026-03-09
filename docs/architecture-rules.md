@@ -29,6 +29,7 @@ Do not place mixed business logic into generic files like `lib/data.ts`.
   - `lib/cms/cmsAdminService.ts`
 - Admin/API mutations must write through domain repositories or admin services.
 - Public code must not import admin-only UI or write repositories directly.
+- Heavy admin editors should stay behind `next/dynamic` boundaries from `app/admin/*` wrappers instead of being imported inline into route files.
 
 ## 3. No infrastructure mutations in request path
 
