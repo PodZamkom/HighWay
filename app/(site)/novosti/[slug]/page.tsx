@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { unstable_noStore as noStore } from "next/cache";
 import { notFound } from "next/navigation";
-import { readNewsSettings } from "@/lib/cmsRepository";
 import { buildBreadcrumbJsonLd, resolveNavigationLabel, toAbsoluteUrl } from "@/lib/breadcrumbs";
-import { findNewsBySlug, listRelatedNews } from "@/lib/newsRepository";
-import { getSiteContent } from "@/lib/data";
+import {
+  getPublicNewsBySlug,
+  getPublicNewsSettings,
+  getPublicRelatedNews,
+  getSiteContent,
+} from "@/lib/publicSiteService";
 
 function collectArticleBody(blocks: Array<{ type: string; body?: string; quote?: string }>) {
   return blocks
@@ -19,13 +21,12 @@ function collectArticleBody(blocks: Array<{ type: string; body?: string; quote?:
 }
 
 async function loadNews(slug: string) {
-  noStore();
-  return findNewsBySlug(slug, true);
+  return getPublicNewsBySlug(slug);
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const [post, settings] = await Promise.all([loadNews(slug), readNewsSettings()]);
+  const [post, settings] = await Promise.all([loadNews(slug), getPublicNewsSettings()]);
 
   if (!post) {
     return {
@@ -65,13 +66,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [post, settings, siteContent] = await Promise.all([loadNews(slug), readNewsSettings(), getSiteContent()]);
+  const [post, settings, siteContent] = await Promise.all([loadNews(slug), getPublicNewsSettings(), getSiteContent()]);
 
   if (!post) {
     notFound();
   }
 
-  const [related] = await Promise.all([listRelatedNews(post.slug, post.category, 3)]);
+  const [related] = await Promise.all([getPublicRelatedNews(post.slug, post.category, 3)]);
 
   const listLabel = resolveNavigationLabel(siteContent.navbar, "/novosti", settings.pageTitle);
   const breadcrumbs = [

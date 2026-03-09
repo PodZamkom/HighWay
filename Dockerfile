@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7
 # Dockerfile for Next.js
 FROM node:20-alpine AS base
 
@@ -9,7 +10,7 @@ RUN apk add --no-cache python3 make g++
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -23,7 +24,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 
 ENV NODE_OPTIONS="--max-old-space-size=1536"
-RUN npm run build
+RUN --mount=type=cache,target=/app/.next/cache npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner

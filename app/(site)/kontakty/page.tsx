@@ -1,22 +1,18 @@
 import type { Metadata } from "next";
-import { unstable_noStore as noStore } from "next/cache";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/content-pages/PageShell";
-import { readContentPage, readGlobalSeo } from "@/lib/cmsRepository";
-import { getSiteContent } from "@/lib/data";
 import { buildBreadcrumbJsonLd, resolveNavigationLabel, toAbsoluteUrl } from "@/lib/breadcrumbs";
+import { getPublicContentPage, getPublicGlobalSeo, getSiteContent } from "@/lib/publicSiteService";
 
 const PAGE_SLUG = "kontakty" as const;
 const PAGE_PATH = "/kontakty" as const;
 
 async function loadPage() {
-  noStore();
-  const page = await readContentPage(PAGE_SLUG);
-  return page;
+  return getPublicContentPage(PAGE_SLUG);
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [page, globalSeo] = await Promise.all([loadPage(), readGlobalSeo()]);
+  const [page, globalSeo] = await Promise.all([loadPage(), getPublicGlobalSeo()]);
   if (!page) return {};
   return {
     title: page.seo.title,

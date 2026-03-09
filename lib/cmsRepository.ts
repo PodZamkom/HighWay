@@ -3,6 +3,14 @@ import { z } from "zod";
 import type { PoolClient } from "pg";
 import { dbQuery, isDatabaseConfigured, withDbClient } from "@/lib/db";
 import { ensureDatabaseReady } from "@/lib/db/ready";
+import {
+  invalidateContentPagesCache,
+  invalidateGlobalSeoCache,
+  invalidateNewsCache,
+  invalidateSiteContentCache,
+  invalidateCatalogCache,
+  invalidateCatalogSeoCache,
+} from "@/lib/cacheInvalidation";
 import { exportCmsSnapshot } from "@/lib/db/cmsDefaults";
 import type {
   CmsCatalogDetailSeoTemplateDocument,
@@ -289,6 +297,8 @@ export async function writeHomeCms(
       throw error;
     }
   });
+
+  invalidateSiteContentCache();
 }
 
 export async function writeNavigation(nextNavigation: CmsNavigationDocument, userId: string | null): Promise<void> {
@@ -302,6 +312,8 @@ export async function writeNavigation(nextNavigation: CmsNavigationDocument, use
   await withDbClient(async (client) => {
     await saveCmsDocument(client, "navigation", constrained, userId);
   });
+
+  invalidateSiteContentCache();
 }
 
 export async function writeFooter(nextFooter: CmsFooterDocument, userId: string | null): Promise<void> {
@@ -312,6 +324,8 @@ export async function writeFooter(nextFooter: CmsFooterDocument, userId: string 
   await withDbClient(async (client) => {
     await saveCmsDocument(client, "footer", parsed, userId);
   });
+
+  invalidateSiteContentCache();
 }
 
 export async function writeNewsSettings(nextSettings: CmsNewsSettingsDocument, userId: string | null): Promise<void> {
@@ -322,6 +336,8 @@ export async function writeNewsSettings(nextSettings: CmsNewsSettingsDocument, u
   await withDbClient(async (client) => {
     await saveCmsDocument(client, "news:settings", parsed, userId);
   });
+
+  invalidateNewsCache();
 }
 
 export async function writeContentPageDoc(
@@ -341,6 +357,8 @@ export async function writeContentPageDoc(
   await withDbClient(async (client) => {
     await saveCmsDocument(client, key, parsed, userId);
   });
+
+  invalidateContentPagesCache();
 }
 
 export async function writeSeoBundle(nextSeo: CmsSeoDocument, userId: string | null): Promise<void> {
@@ -361,6 +379,9 @@ export async function writeSeoBundle(nextSeo: CmsSeoDocument, userId: string | n
       throw error;
     }
   });
+
+  invalidateGlobalSeoCache();
+  invalidateCatalogSeoCache();
 }
 
 export async function writeContentPagesAndGlobalSeo(params: {
@@ -392,6 +413,9 @@ export async function writeContentPagesAndGlobalSeo(params: {
       throw error;
     }
   });
+
+  invalidateContentPagesCache();
+  invalidateGlobalSeoCache();
 }
 
 export async function writeCatalogLabels(nextLabels: CmsCatalogLabelsDocument, userId: string | null): Promise<void> {
@@ -402,6 +426,9 @@ export async function writeCatalogLabels(nextLabels: CmsCatalogLabelsDocument, u
   await withDbClient(async (client) => {
     await saveCmsDocument(client, "catalog:labels", parsed, userId);
   });
+
+  invalidateCatalogCache();
+  invalidateSiteContentCache();
 }
 
 export async function readCmsRevisions(options?: {

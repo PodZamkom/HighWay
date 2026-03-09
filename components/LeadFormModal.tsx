@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { Phone, Send, Smartphone, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { CheckCircle2, Phone, Send, Smartphone, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type ContactMethod = 'telegram' | 'whatsapp' | 'phone';
@@ -35,14 +35,29 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState('');
     const [submitSuccess, setSubmitSuccess] = useState('');
+    const closeTimeoutRef = useRef<number | null>(null);
 
     useEffect(() => {
+        if (!isOpen && closeTimeoutRef.current) {
+            window.clearTimeout(closeTimeoutRef.current);
+            closeTimeoutRef.current = null;
+        }
+
         if (!isOpen) {
             setSubmitError('');
             setSubmitSuccess('');
             setIsSubmitting(false);
+            setFormData(DEFAULT_FORM_STATE);
         }
     }, [isOpen]);
+
+    useEffect(() => {
+        return () => {
+            if (closeTimeoutRef.current) {
+                window.clearTimeout(closeTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -70,13 +85,14 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
                 throw new Error(payload?.error || 'Не удалось отправить заявку');
             }
 
-            setSubmitSuccess('Спасибо! Заявка отправлена.');
+            setSubmitSuccess('Спасибо, что оставили заявку');
             setFormData(DEFAULT_FORM_STATE);
 
-            window.setTimeout(() => {
+            closeTimeoutRef.current = window.setTimeout(() => {
                 setSubmitSuccess('');
+                closeTimeoutRef.current = null;
                 onClose();
-            }, 700);
+            }, 1800);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Не удалось отправить заявку';
             setSubmitError(message);
@@ -110,88 +126,113 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
                             <X size={24} />
                         </button>
 
-                        <div className="text-center mb-8">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
-                            <p className="text-sm text-gray-500">{subtitle}</p>
-                        </div>
-
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <input
-                                    type="text"
-                                    placeholder="Ваше имя"
-                                    className="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-4 text-gray-900 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-colors placeholder:text-gray-400"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    type="tel"
-                                    placeholder="+375 (XX) XXX-XX-XX"
-                                    className="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-4 text-gray-900 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-colors placeholder:text-gray-400"
-                                    value={formData.phone}
-                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <p className="text-sm text-gray-600">Выберите предпочитаемый способ связи</p>
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setFormData({ ...formData, preferredMessenger: 'telegram' })}
-                                    className={`flex items-center justify-center gap-2 py-3 rounded-xl border transition-all ${formData.preferredMessenger === 'telegram'
-                                        ? 'bg-blue-50 border-blue-400 text-blue-600'
-                                        : 'bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400'
-                                        }`}
-                                >
-                                    <Send size={16} /> Telegram
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setFormData({ ...formData, preferredMessenger: 'whatsapp' })}
-                                    className={`flex items-center justify-center gap-2 py-3 rounded-xl border transition-all ${formData.preferredMessenger === 'whatsapp'
-                                        ? 'bg-green-50 border-green-400 text-green-600'
-                                        : 'bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400'
-                                        }`}
-                                >
-                                    <Smartphone size={16} /> WhatsApp
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setFormData({ ...formData, preferredMessenger: 'phone' })}
-                                    className={`flex items-center justify-center gap-2 py-3 rounded-xl border transition-all ${formData.preferredMessenger === 'phone'
-                                        ? 'bg-zinc-100 border-zinc-500 text-zinc-700'
-                                        : 'bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400'
-                                        }`}
-                                >
-                                    <Phone size={16} /> Телефон
-                                </button>
-                            </div>
-
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="w-full bg-orange-600 text-white font-bold py-4 rounded-xl hover:bg-orange-500 transition-colors mt-4 shadow-lg shadow-orange-600/20 uppercase"
-                            >
-                                {isSubmitting ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ'}
-                            </motion.button>
-
-                            {submitError ? (
-                                <p className="text-sm text-red-600 text-center">{submitError}</p>
-                            ) : null}
-
+                        <AnimatePresence mode="wait">
                             {submitSuccess ? (
-                                <p className="text-sm text-green-600 text-center">{submitSuccess}</p>
-                            ) : null}
-                        </form>
+                                <motion.div
+                                    key="success"
+                                    initial={{ opacity: 0, y: 16 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -16 }}
+                                    className="py-10 text-center"
+                                >
+                                    <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-orange-100 text-orange-600 shadow-lg shadow-orange-500/10">
+                                        <CheckCircle2 size={40} />
+                                    </div>
+                                    <h2 className="mb-3 text-3xl font-bold uppercase tracking-[0.08em] text-gray-900">
+                                        Спасибо
+                                    </h2>
+                                    <p className="mx-auto max-w-sm text-base leading-6 text-gray-600">
+                                        {submitSuccess}. Менеджер свяжется с вами в ближайшее время.
+                                    </p>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="form"
+                                    initial={{ opacity: 0, y: 16 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -16 }}
+                                >
+                                    <div className="text-center mb-8">
+                                        <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
+                                        <p className="text-sm text-gray-500">{subtitle}</p>
+                                    </div>
+
+                                    <form onSubmit={handleSubmit} className="space-y-4">
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Ваше имя"
+                                                className="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-4 text-gray-900 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-colors placeholder:text-gray-400"
+                                                value={formData.name}
+                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <input
+                                                type="tel"
+                                                placeholder="+375 (XX) XXX-XX-XX"
+                                                className="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-4 text-gray-900 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-colors placeholder:text-gray-400"
+                                                value={formData.phone}
+                                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <p className="text-sm text-gray-600">Выберите предпочитаемый способ связи</p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, preferredMessenger: 'telegram' })}
+                                                className={`flex items-center justify-center gap-2 py-3 rounded-xl border transition-all ${formData.preferredMessenger === 'telegram'
+                                                    ? 'bg-blue-50 border-blue-400 text-blue-600'
+                                                    : 'bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400'
+                                                    }`}
+                                            >
+                                                <Send size={16} /> Telegram
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, preferredMessenger: 'whatsapp' })}
+                                                className={`flex items-center justify-center gap-2 py-3 rounded-xl border transition-all ${formData.preferredMessenger === 'whatsapp'
+                                                    ? 'bg-green-50 border-green-400 text-green-600'
+                                                    : 'bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400'
+                                                    }`}
+                                            >
+                                                <Smartphone size={16} /> WhatsApp
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, preferredMessenger: 'phone' })}
+                                                className={`flex items-center justify-center gap-2 py-3 rounded-xl border transition-all ${formData.preferredMessenger === 'phone'
+                                                    ? 'bg-zinc-100 border-zinc-500 text-zinc-700'
+                                                    : 'bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400'
+                                                    }`}
+                                            >
+                                                <Phone size={16} /> Телефон
+                                            </button>
+                                        </div>
+
+                                        <motion.button
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            type="submit"
+                                            disabled={isSubmitting}
+                                            className="w-full bg-orange-600 text-white font-bold py-4 rounded-xl hover:bg-orange-500 transition-colors mt-4 shadow-lg shadow-orange-600/20 uppercase"
+                                        >
+                                            {isSubmitting ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ'}
+                                        </motion.button>
+
+                                        {submitError ? (
+                                            <p className="text-sm text-red-600 text-center">{submitError}</p>
+                                        ) : null}
+                                    </form>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </motion.div>
                 </div>
             )}

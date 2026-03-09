@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import { CarCatalog } from "@/components/CarCatalog";
 import { buildBreadcrumbJsonLd, resolveNavigationLabel, toAbsoluteUrl } from "@/lib/breadcrumbs";
-import { listCatalogCarsLegacy } from "@/lib/catalogRepository";
-import { readCatalogListSeo } from "@/lib/cmsRepository";
-import { getSiteContent } from "@/lib/data";
+import { getPublicCatalogCars, getPublicCatalogListSeo, getSiteContent } from "@/lib/publicSiteService";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const seo = await readCatalogListSeo();
+  const seo = await getPublicCatalogListSeo();
   return {
     title: seo.title,
     description: seo.description,
@@ -38,8 +36,8 @@ export default async function CatalogPage({
   const { market, availability } = await searchParams;
   const [siteContent, cars, catalogSeo] = await Promise.all([
     getSiteContent(),
-    listCatalogCarsLegacy({ page: 1, pageSize: 5000 }),
-    readCatalogListSeo(),
+    getPublicCatalogCars(),
+    getPublicCatalogListSeo(),
   ]);
 
   const catalogLabel = siteContent.catalogSection.title?.trim() || "Каталог автомобилей";

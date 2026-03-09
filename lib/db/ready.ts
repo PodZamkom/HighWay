@@ -1,6 +1,4 @@
-import { bootstrapDatabase } from "@/lib/db/bootstrap";
-import { isDatabaseConfigured } from "@/lib/db";
-import { runMigrations } from "@/lib/db/migrations";
+import { dbQuery, isDatabaseConfigured } from "@/lib/db";
 
 const GLOBAL_READY_KEY = "__highway_db_ready__";
 
@@ -16,10 +14,14 @@ export async function ensureDatabaseReady(): Promise<void> {
 
   if (!globalThis[GLOBAL_READY_KEY]) {
     globalThis[GLOBAL_READY_KEY] = (async () => {
-      await runMigrations();
-      await bootstrapDatabase();
+      await dbQuery("SELECT 1");
     })();
   }
 
-  return globalThis[GLOBAL_READY_KEY] as Promise<void>;
+  try {
+    await (globalThis[GLOBAL_READY_KEY] as Promise<void>);
+  } catch (error) {
+    globalThis[GLOBAL_READY_KEY] = undefined;
+    throw error;
+  }
 }

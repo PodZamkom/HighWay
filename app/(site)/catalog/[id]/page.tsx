@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { CarDetailClient } from "@/components/CarDetailClient";
 import { buildBreadcrumbJsonLd, resolveNavigationLabel, toAbsoluteUrl } from "@/lib/breadcrumbs";
-import { entityToLegacyCar, findCatalogCarByIdOrSlug } from "@/lib/catalogRepository";
-import { readCatalogDetailSeoTemplate } from "@/lib/cmsRepository";
-import { getSiteContent } from "@/lib/data";
-
-export const dynamic = "force-dynamic";
+import { entityToLegacyCar } from "@/lib/catalogRepository";
+import { getPublicCatalogCar, getPublicCatalogDetailSeoTemplate, getSiteContent } from "@/lib/publicSiteService";
 
 function applyTemplate(template: string, values: Record<string, string>): string {
   return template.replace(/\{([a-zA-Z0-9_]+)\}/g, (_, key: string) => values[key] ?? "");
@@ -23,8 +20,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
 
   const [carEntity, seoTemplate] = await Promise.all([
-    findCatalogCarByIdOrSlug(id),
-    readCatalogDetailSeoTemplate(),
+    getPublicCatalogCar(id),
+    getPublicCatalogDetailSeoTemplate(),
   ]);
 
   if (!carEntity) {
@@ -77,7 +74,7 @@ export default async function CarPage({ params }: { params: Promise<{ id: string
 
   const [siteContent, catalogCar] = await Promise.all([
     getSiteContent(),
-    findCatalogCarByIdOrSlug(id),
+    getPublicCatalogCar(id),
   ]);
 
   const catalogFallback = siteContent.catalogSection.title?.trim() || "Каталог автомобилей";

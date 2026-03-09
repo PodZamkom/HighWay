@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { unstable_noStore as noStore } from "next/cache";
-import { readNewsSettings } from "@/lib/cmsRepository";
 import { buildBreadcrumbJsonLd, resolveNavigationLabel, toAbsoluteUrl } from "@/lib/breadcrumbs";
-import { listNews, listNewsFacets } from "@/lib/newsRepository";
-import { getSiteContent } from "@/lib/data";
+import {
+  getPublicNewsFacets,
+  getPublicNewsList,
+  getPublicNewsSettings,
+  getSiteContent,
+} from "@/lib/publicSiteService";
 
 function toPage(value: string | undefined) {
   const parsed = Number(value || "1");
@@ -23,7 +25,7 @@ function buildQuery(params: Record<string, string | number | undefined | null>) 
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await readNewsSettings();
+  const settings = await getPublicNewsSettings();
 
   return {
     title: settings.seo.title,
@@ -53,24 +55,20 @@ export default async function NewsListPage({
 }: {
   searchParams: Promise<{ page?: string; q?: string; category?: string; tag?: string }>;
 }) {
-  noStore();
-
   const params = await searchParams;
   const page = toPage(params.page);
 
-  const [settings, siteContent] = await Promise.all([readNewsSettings(), getSiteContent()]);
+  const [settings, siteContent] = await Promise.all([getPublicNewsSettings(), getSiteContent()]);
 
-  const result = await listNews({
+  const result = await getPublicNewsList(
     page,
-    pageSize: settings.list.pageSize,
-    search: params.q || undefined,
-    category: params.category || undefined,
-    tag: params.tag || undefined,
-    onlyPublished: true,
-    includeArchived: false,
-  });
+    settings.list.pageSize,
+    params.q || undefined,
+    params.category || undefined,
+    params.tag || undefined,
+  );
 
-  const facets = settings.list.enableFilters ? await listNewsFacets(true) : { categories: [], tags: [] };
+  const facets = settings.list.enableFilters ? await getPublicNewsFacets() : { categories: [], tags: [] };
   const totalPages = Math.max(1, Math.ceil(result.total / result.pageSize));
 
   const currentLabel = resolveNavigationLabel(siteContent.navbar, "/novosti", settings.pageTitle);

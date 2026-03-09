@@ -4,11 +4,10 @@ import { Hero } from "@/components/Hero";
 import { MarketGrid } from "@/components/MarketGrid";
 import { PromoBanners } from "@/components/PromoBanners";
 import { TeamSection } from "@/components/TeamSection";
-import { getSiteContent } from "@/lib/data";
-import { readHomeLayout } from "@/lib/cmsRepository";
+import { getPublicHomeLayout, getSiteContent } from "@/lib/publicSiteService";
 
 export default async function Home() {
-  const [siteContent, homeLayout] = await Promise.all([getSiteContent(), readHomeLayout()]);
+  const [siteContent, homeLayout] = await Promise.all([getSiteContent(), getPublicHomeLayout()]);
 
   const blockMap = {
     hero: <Hero content={siteContent.hero} />,

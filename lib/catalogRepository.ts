@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import type { PoolClient } from "pg";
 import { dbQuery, isDatabaseConfigured, withDbClient } from "@/lib/db";
 import { ensureDatabaseReady } from "@/lib/db/ready";
+import { invalidateCatalogCache } from "@/lib/cacheInvalidation";
 import {
   assertMarketCurrencyAllowed,
   CurrencyPolicyError,
@@ -559,6 +560,7 @@ export async function createCatalogCar(input: CatalogCarInputDto): Promise<Catal
     throw new Error("Не удалось загрузить созданный автомобиль");
   }
 
+  invalidateCatalogCache();
   return created;
 }
 
@@ -646,6 +648,7 @@ export async function updateCatalogCar(id: string, patch: CatalogCarPatchDto): P
     throw new Error("Не удалось загрузить обновленный автомобиль");
   }
 
+  invalidateCatalogCache();
   return updated;
 }
 
@@ -664,6 +667,8 @@ export async function archiveCatalogCar(id: string, archived: boolean): Promise<
     `,
     [id, archived],
   );
+
+  invalidateCatalogCache();
 }
 
 export async function createCatalogImportJob(params: {

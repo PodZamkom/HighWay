@@ -7,3 +7,11 @@ build
 *.log
 temp_*.tsx
 runtime
+Parcing
+Team
+legacy_backup
+deploy_new.tar.gz
+catalog_history.diff
+context_market.txt
+build_log.txt
+metadata.json

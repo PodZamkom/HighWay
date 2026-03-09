@@ -1,5 +1,6 @@
 import { dbQuery, isDatabaseConfigured } from "@/lib/db";
 import { ensureDatabaseReady } from "@/lib/db/ready";
+import { invalidateNewsCache } from "@/lib/cacheInvalidation";
 import {
   newsBlockSchema,
   newsCtaSchema,
@@ -518,6 +519,7 @@ export async function createNewsPost(input: NewsCreateRequest, userId: string | 
     throw new Error("Не удалось загрузить созданную новость");
   }
 
+  invalidateNewsCache();
   return created;
 }
 
@@ -598,6 +600,7 @@ export async function updateNewsPost(id: string, patch: NewsUpdateRequest, userI
     throw new Error("Не удалось загрузить обновленную новость");
   }
 
+  invalidateNewsCache();
   return updated;
 }
 
@@ -626,6 +629,7 @@ export async function deleteNewsPost(id: string): Promise<void> {
   requireDbForWrites();
   await ensureDatabaseReady();
   await dbQuery(`DELETE FROM news_posts WHERE id = $1`, [id]);
+  invalidateNewsCache();
 }
 
 export async function listNewsFacets(onlyPublished: boolean): Promise<NewsFacets> {
