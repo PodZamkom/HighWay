@@ -18,6 +18,7 @@ GIT_REF="${GIT_REF:-origin/main}"
 SKIP_GIT_SYNC="${SKIP_GIT_SYNC:-0}"
 BUILD_NO_CACHE="${BUILD_NO_CACHE:-0}"
 DOCKER_CACHE_DIR="${DOCKER_CACHE_DIR:-/root/.cache/highway-buildx}"
+DEPLOY_CACHE_MODE="${DEPLOY_CACHE_MODE:-warm}"
 DEPLOY_METRICS_LOG="${DEPLOY_METRICS_LOG:-$ROOT_DIR/runtime/deploy-metrics.log}"
 SMOKE_REQUIRE_CHAT="${SMOKE_REQUIRE_CHAT:-1}"
 
@@ -25,6 +26,9 @@ OLD_IMAGE=""
 ROLLBACK_ALLOWED=0
 NEW_IMAGE_TAG=""
 RUNTIME_PREPARE_TOKEN=""
+CACHE_FROM_ARGS=()
+CACHE_TO_ARGS=()
+BUILD_CACHE_TMP_DIR=""
 
 log() {
   printf '[deploy] %s\n' "$*"
@@ -143,6 +147,25 @@ command -v curl >/dev/null || fail "curl is required"
 [[ -f "$ENV_FILE" ]] || fail "Environment file not found: ${ENV_FILE}"
 network_exists "$APP_NETWORK" || fail "Docker network not found: ${APP_NETWORK}"
 
+if [[ "$BUILD_NO_CACHE" == "1" ]]; then
+  DEPLOY_CACHE_MODE="off"
+fi
+
+case "$DEPLOY_CACHE_MODE" in
+  warm)
+    CACHE_EXPORT_MODE="min"
+    ;;
+  refresh)
+    CACHE_EXPORT_MODE="max"
+    ;;
+  off)
+    CACHE_EXPORT_MODE=""
+    ;;
+  *)
+    fail "Unsupported DEPLOY_CACHE_MODE: ${DEPLOY_CACHE_MODE}. Use warm, refresh, or off."
+    ;;
+esac
+
 if container_exists "$APP_NAME"; then
   OLD_IMAGE="$(docker inspect -f '{{.Image}}' "$APP_NAME" 2>/dev/null || true)"
   log "Detected currently running image ID: ${OLD_IMAGE}"
@@ -164,30 +187,38 @@ fi
 RUNTIME_PREPARE_TOKEN="$(generate_runtime_prepare_token)"
 NEW_IMAGE_TAG="${IMAGE_NAME}:$(git rev-parse --short HEAD)-$(date -u +%Y%m%d%H%M%S)"
 log "Building image ${NEW_IMAGE_TAG}"
-mkdir -p "$DOCKER_CACHE_DIR"
+log "Deploy cache mode: ${DEPLOY_CACHE_MODE}"
 build_start="$(stage_start)"
 if docker buildx version >/dev/null 2>&1; then
-  CACHE_TMP_DIR="${DOCKER_CACHE_DIR}.tmp"
-  rm -rf "$CACHE_TMP_DIR"
+  if [[ "$DEPLOY_CACHE_MODE" != "off" ]]; then
+    mkdir -p "$DOCKER_CACHE_DIR"
+    if [[ -f "${DOCKER_CACHE_DIR}/index.json" ]]; then
+      CACHE_FROM_ARGS=(--cache-from "type=local,src=${DOCKER_CACHE_DIR}")
+    fi
+    BUILD_CACHE_TMP_DIR="${DOCKER_CACHE_DIR}.tmp"
+    rm -rf "$BUILD_CACHE_TMP_DIR"
+    CACHE_TO_ARGS=(--cache-to "type=local,dest=${BUILD_CACHE_TMP_DIR},mode=${CACHE_EXPORT_MODE}")
+  fi
   BUILD_ARGS=(
     buildx
     build
     --load
     --progress=plain
-    --cache-from "type=local,src=${DOCKER_CACHE_DIR}"
-    --cache-to "type=local,dest=${CACHE_TMP_DIR},mode=max"
     -t "$NEW_IMAGE_TAG"
     -t "${IMAGE_NAME}:latest"
   )
-  if [[ "$BUILD_NO_CACHE" == "1" ]]; then
+  BUILD_ARGS+=("${CACHE_FROM_ARGS[@]}" "${CACHE_TO_ARGS[@]}")
+  if [[ "$DEPLOY_CACHE_MODE" == "off" ]]; then
     BUILD_ARGS+=(--no-cache)
   fi
   BUILD_ARGS+=(.)
   docker "${BUILD_ARGS[@]}"
-  rm -rf "$DOCKER_CACHE_DIR"
-  mv "$CACHE_TMP_DIR" "$DOCKER_CACHE_DIR"
+  if [[ -n "$BUILD_CACHE_TMP_DIR" && -d "$BUILD_CACHE_TMP_DIR" ]]; then
+    rm -rf "$DOCKER_CACHE_DIR"
+    mv "$BUILD_CACHE_TMP_DIR" "$DOCKER_CACHE_DIR"
+  fi
 else
-  if [[ "$BUILD_NO_CACHE" == "1" ]]; then
+  if [[ "$DEPLOY_CACHE_MODE" == "off" ]]; then
     docker build --no-cache -t "$NEW_IMAGE_TAG" -t "${IMAGE_NAME}:latest" .
   else
     docker build -t "$NEW_IMAGE_TAG" -t "${IMAGE_NAME}:latest" .

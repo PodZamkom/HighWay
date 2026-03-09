@@ -6,7 +6,7 @@ import {
   readCatalogListSeo,
   readGlobalSeo,
   writeSeoBundle,
-} from "@/lib/cmsRepository";
+} from "@/lib/cms/cmsAdminService";
 import { cmsSeoBundleSchema } from "@/lib/schemas/cms";
 
 export async function GET(request: Request) {

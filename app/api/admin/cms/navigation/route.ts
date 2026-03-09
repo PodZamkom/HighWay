@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
-import { readNavigation, writeNavigation } from "@/lib/cmsRepository";
+import { readNavigation, writeNavigation } from "@/lib/cms/cmsAdminService";
 import { cmsNavigationSchema } from "@/lib/schemas/cms";
 
 export async function GET(request: Request) {

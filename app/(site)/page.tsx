@@ -4,7 +4,7 @@ import { Hero } from "@/components/Hero";
 import { MarketGrid } from "@/components/MarketGrid";
 import { PromoBanners } from "@/components/PromoBanners";
 import { TeamSection } from "@/components/TeamSection";
-import { getPublicHomeLayout, getSiteContent } from "@/lib/publicSiteService";
+import { getPublicHomeLayout, getSiteContent } from "@/lib/site/siteContentReadService";
 
 export default async function Home() {
   const [siteContent, homeLayout] = await Promise.all([getSiteContent(), getPublicHomeLayout()]);

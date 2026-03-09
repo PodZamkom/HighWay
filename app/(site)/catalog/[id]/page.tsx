@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { CarDetailClient } from "@/components/CarDetailClient";
 import { buildBreadcrumbJsonLd, resolveNavigationLabel, toAbsoluteUrl } from "@/lib/breadcrumbs";
-import { entityToLegacyCar } from "@/lib/catalogRepository";
-import { getPublicCatalogCar, getPublicCatalogDetailSeoTemplate, getSiteContent } from "@/lib/publicSiteService";
+import {
+  entityToLegacyCar,
+  getPublicCatalogCar,
+  getPublicCatalogDetailSeoTemplate,
+} from "@/lib/catalog/catalogPublicReadService";
+import { getSiteContent } from "@/lib/site/siteContentReadService";
 
 function applyTemplate(template: string, values: Record<string, string>): string {
   return template.replace(/\{([a-zA-Z0-9_]+)\}/g, (_, key: string) => values[key] ?? "");

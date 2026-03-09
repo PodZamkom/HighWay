@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
-import { patchNewsStatus } from "@/lib/newsRepository";
+import { patchNewsStatus } from "@/lib/news/newsAdminService";
 import { newsIdParamSchema, newsStatusPatchSchema } from "@/lib/schemas/news";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {

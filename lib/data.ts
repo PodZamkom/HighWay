@@ -1,1 +1,1 @@
-export { getSiteContent } from "@/lib/publicSiteService";
+export { getSiteContent } from "@/lib/site/siteContentReadService";

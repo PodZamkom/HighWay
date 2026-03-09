@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { catalogCarListQuerySchema } from "@/lib/schemas/catalog";
-import { listCatalogCars } from "@/lib/catalogRepository";
+import { listCatalogCars } from "@/lib/catalog/catalogPublicReadService";
 
 export async function GET(request: Request) {
   try {

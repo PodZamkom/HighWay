@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
-import { deleteMediaAsset, findMediaAssetById } from "@/lib/mediaRepository";
+import { deleteMediaAsset, findMediaAssetById } from "@/lib/media/mediaAdminService";
 import { deleteS3Object, isMediaStorageConfigured } from "@/lib/mediaStorage";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {

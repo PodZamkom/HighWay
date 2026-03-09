@@ -6,7 +6,7 @@ import {
   readAllContentPages,
   readGlobalSeo,
   writeContentPagesAndGlobalSeo,
-} from "@/lib/cmsRepository";
+} from "@/lib/cms/cmsAdminService";
 import { cmsContentPageSchema, cmsGlobalSeoSchema } from "@/lib/schemas/cms";
 
 export async function GET(request: Request) {

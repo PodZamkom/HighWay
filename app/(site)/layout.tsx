@@ -3,7 +3,7 @@ import Script from "next/script";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { resolveSiteUrl, toAbsoluteUrl } from "@/lib/breadcrumbs";
-import { getSiteContent } from "@/lib/data";
+import { getSiteContent } from "@/lib/site/siteContentReadService";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { seo } = await getSiteContent();

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
 import { parseCatalogImportFile } from "@/lib/catalog/import";
-import { createCatalogImportJob, insertCatalogImportRows } from "@/lib/catalogRepository";
+import { createCatalogImportJob, insertCatalogImportRows } from "@/lib/catalog/catalogAdminService";
 import type { CatalogImportRow } from "@/types/catalog";
 
 const ALLOWED_EXTENSIONS = new Set([".csv", ".xlsx", ".xls"]);

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
-import { archiveCatalogCar, CurrencyPolicyError, findCatalogCarByIdOrSlug, updateCatalogCar } from "@/lib/catalogRepository";
+import { archiveCatalogCar, CurrencyPolicyError, findCatalogCarByIdOrSlug, updateCatalogCar } from "@/lib/catalog/catalogAdminService";
 import { catalogArchiveRequestSchema, catalogCarPatchSchema } from "@/lib/schemas/catalog";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
-import { readHomeContent, readHomeLayout, writeHomeCms } from "@/lib/cmsRepository";
+import { readHomeContent, readHomeLayout, writeHomeCms } from "@/lib/cms/cmsAdminService";
 import { cmsHomeContentSchema, cmsHomeLayoutSchema } from "@/lib/schemas/cms";
 import type { CmsHomeContentDocument, CmsHomeLayoutDocument } from "@/types/cms";
 

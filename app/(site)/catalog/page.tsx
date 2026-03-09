@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { CarCatalog } from "@/components/CarCatalog";
 import { buildBreadcrumbJsonLd, resolveNavigationLabel, toAbsoluteUrl } from "@/lib/breadcrumbs";
-import { getPublicCatalogCars, getPublicCatalogListSeo, getSiteContent } from "@/lib/publicSiteService";
+import { getPublicCatalogCars, getPublicCatalogListSeo } from "@/lib/catalog/catalogPublicReadService";
+import { getSiteContent } from "@/lib/site/siteContentReadService";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getPublicCatalogListSeo();

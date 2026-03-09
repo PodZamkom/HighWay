@@ -20,6 +20,13 @@ Do not place mixed business logic into generic files like `lib/data.ts`.
 ## 2. Public read paths and admin write paths are separated
 
 - Public pages must read through dedicated read services such as `lib/publicSiteService.ts`.
+- Preferred boundary files are:
+  - `lib/site/siteContentReadService.ts`
+  - `lib/catalog/catalogPublicReadService.ts`
+  - `lib/news/newsPublicReadService.ts`
+  - `lib/catalog/catalogAdminService.ts`
+  - `lib/news/newsAdminService.ts`
+  - `lib/cms/cmsAdminService.ts`
 - Admin/API mutations must write through domain repositories or admin services.
 - Public code must not import admin-only UI or write repositories directly.
 

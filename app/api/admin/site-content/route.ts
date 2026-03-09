@@ -7,8 +7,8 @@ import {
   writeHomeCms,
   writeNavigation,
   writeSeoBundle,
-} from "@/lib/cmsRepository";
-import { getSiteContent } from "@/lib/data";
+} from "@/lib/cms/cmsAdminService";
+import { getSiteContent } from "@/lib/site/siteContentReadService";
 import type { CmsHomeContentDocument, CmsHomeLayoutDocument } from "@/types/cms";
 import type { SiteContent } from "@/types/site";
 

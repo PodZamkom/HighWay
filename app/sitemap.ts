@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { resolveSiteUrl } from "@/lib/breadcrumbs";
-import { listCatalogCarsLegacy } from "@/lib/catalogRepository";
-import { listNewsForSitemap } from "@/lib/newsRepository";
+import { listCatalogCarsLegacy } from "@/lib/catalog/catalogPublicReadService";
+import { listNewsForSitemap } from "@/lib/news/newsPublicReadService";
 
 const CONTENT_ROUTES = [
   "/",

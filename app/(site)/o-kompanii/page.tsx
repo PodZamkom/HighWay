@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/content-pages/PageShell";
 import { buildBreadcrumbJsonLd, resolveNavigationLabel, toAbsoluteUrl } from "@/lib/breadcrumbs";
-import { getPublicContentPage, getPublicGlobalSeo, getSiteContent } from "@/lib/publicSiteService";
+import { getPublicContentPage, getPublicGlobalSeo, getSiteContent } from "@/lib/site/siteContentReadService";
 
 const PAGE_SLUG = "o-kompanii" as const;
 const PAGE_PATH = "/o-kompanii" as const;

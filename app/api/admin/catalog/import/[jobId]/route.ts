@@ -3,7 +3,7 @@ import { dbQuery } from "@/lib/db";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
 import { applyCatalogImportRows, type ParsedImportRow } from "@/lib/catalog/import";
-import { readCatalogImportJob, updateCatalogImportJob } from "@/lib/catalogRepository";
+import { readCatalogImportJob, updateCatalogImportJob } from "@/lib/catalog/catalogAdminService";
 import { catalogImportApplySchema, catalogCarInputSchema } from "@/lib/schemas/catalog";
 
 export async function GET(request: Request, { params }: { params: Promise<{ jobId: string }> }) {

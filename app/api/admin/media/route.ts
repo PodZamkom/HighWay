@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
-import { listMediaAssets } from "@/lib/mediaRepository";
+import { listMediaAssets } from "@/lib/media/mediaAdminService";
 import { mediaListQuerySchema } from "@/lib/schemas/media";
 
 export async function GET(request: Request) {

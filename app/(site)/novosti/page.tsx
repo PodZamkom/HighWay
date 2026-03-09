@@ -5,8 +5,8 @@ import {
   getPublicNewsFacets,
   getPublicNewsList,
   getPublicNewsSettings,
-  getSiteContent,
-} from "@/lib/publicSiteService";
+} from "@/lib/news/newsPublicReadService";
+import { getSiteContent } from "@/lib/site/siteContentReadService";
 
 function toPage(value: string | undefined) {
   const parsed = Number(value || "1");

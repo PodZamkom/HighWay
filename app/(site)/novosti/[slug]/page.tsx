@@ -6,8 +6,8 @@ import {
   getPublicNewsBySlug,
   getPublicNewsSettings,
   getPublicRelatedNews,
-  getSiteContent,
-} from "@/lib/publicSiteService";
+} from "@/lib/news/newsPublicReadService";
+import { getSiteContent } from "@/lib/site/siteContentReadService";
 
 function collectArticleBody(blocks: Array<{ type: string; body?: string; quote?: string }>) {
   return blocks

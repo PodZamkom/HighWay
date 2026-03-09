@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
-import { readCmsRevisions } from "@/lib/cmsRepository";
+import { readCmsRevisions } from "@/lib/cms/cmsAdminService";
 import type { CmsDocumentKey } from "@/types/cms";
 
 export async function GET(request: Request) {

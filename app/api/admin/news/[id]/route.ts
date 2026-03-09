@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
-import { deleteNewsPost, findNewsById, updateNewsPost } from "@/lib/newsRepository";
+import { deleteNewsPost, findNewsById, updateNewsPost } from "@/lib/news/newsAdminService";
 import { newsIdParamSchema, newsUpdateSchema } from "@/lib/schemas/news";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {

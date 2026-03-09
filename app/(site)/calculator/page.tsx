@@ -1,7 +1,7 @@
 import { LandingPriceCalculator } from '@/components/calculator/LandingPriceCalculator';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { buildBreadcrumbJsonLd, resolveNavigationLabel } from '@/lib/breadcrumbs';
-import { getSiteContent } from '@/lib/data';
+import { getSiteContent } from '@/lib/site/siteContentReadService';
 
 export const metadata = {
     title: 'Калькулятор растаможки авто из США в Беларусь 2026 | E-TRADE',

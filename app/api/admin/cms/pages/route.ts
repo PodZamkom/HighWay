@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
-import { readAllContentPages } from "@/lib/cmsRepository";
+import { readAllContentPages } from "@/lib/cms/cmsAdminService";
 
 export async function GET(request: Request) {
   const authResult = await requireAdminApiAuth(request);

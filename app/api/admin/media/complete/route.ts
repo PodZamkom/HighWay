@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
-import { createMediaAsset } from "@/lib/mediaRepository";
+import { createMediaAsset } from "@/lib/media/mediaAdminService";
 import { mediaCompleteRequestSchema } from "@/lib/schemas/media";
 import { buildPublicAssetUrl, getS3Bucket, isMediaStorageConfigured } from "@/lib/mediaStorage";
 

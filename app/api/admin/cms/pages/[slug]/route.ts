@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAuth } from "@/lib/admin/api";
 import { writeAdminAuditLog } from "@/lib/admin/audit";
-import { readContentPage, writeContentPageDoc } from "@/lib/cmsRepository";
+import { readContentPage, writeContentPageDoc } from "@/lib/cms/cmsAdminService";
 import { cmsContentPageSchema, contentPageSlugSchema } from "@/lib/schemas/cms";
 
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
