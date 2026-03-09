@@ -1,9 +1,16 @@
-import { NextResponse } from "next/server";
-
-export async function GET(request: Request) {
-  return NextResponse.redirect(new URL("/novosti", request.url), 301);
+function permanentNewsRedirect() {
+  return new Response(null, {
+    status: 301,
+    headers: {
+      Location: "/novosti",
+    },
+  });
 }
 
-export async function HEAD(request: Request) {
-  return NextResponse.redirect(new URL("/novosti", request.url), 301);
+export async function GET() {
+  return permanentNewsRedirect();
+}
+
+export async function HEAD() {
+  return permanentNewsRedirect();
 }
