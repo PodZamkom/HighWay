@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { Loader2, Save } from "lucide-react";
 import { MediaField } from "@/components/admin/common/MediaField";
 import type { CarFormState } from "@/components/admin/catalog/types";
+import { getMarketDefaultCurrency } from "@/lib/catalog/currencyPolicy";
 
 type SelectOption = {
   value: string;
@@ -100,6 +102,27 @@ export function CatalogCarFormPanel({
   hasUnsavedChanges,
   onSave,
 }: CatalogCarFormPanelProps) {
+  const [priceInput, setPriceInput] = useState(() => formatPriceInput(form.priceValue));
+  const currencyOptions = CURRENCY_OPTIONS.filter((option) => option.value === getMarketDefaultCurrency(form.market));
+
+  useEffect(() => {
+    setPriceInput(formatPriceInput(form.priceValue));
+  }, [form.priceValue, editingId]);
+
+  const updateFormWithAutoSlug = (updater: (prev: CarFormState) => CarFormState) => {
+    setForm((prev) => {
+      const next = updater(prev);
+      const previousAutoSlug = buildCatalogSlug(prev);
+      if (!prev.slug || prev.slug === previousAutoSlug) {
+        return {
+          ...next,
+          slug: buildCatalogSlug(next),
+        };
+      }
+      return next;
+    });
+  };
+
   return (
     <section className="rounded-3xl border border-white/10 bg-zinc-900 p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
@@ -124,9 +147,9 @@ export function CatalogCarFormPanel({
             value={form.slug}
             onChange={(value) => setForm((prev) => ({ ...prev, slug: value }))}
           />
-          <Input label="Марка" value={form.brand} onChange={(value) => setForm((prev) => ({ ...prev, brand: value }))} />
-          <Input label="Модель" value={form.model} onChange={(value) => setForm((prev) => ({ ...prev, model: value }))} />
-          <Input label="Комплектация" value={form.generation} onChange={(value) => setForm((prev) => ({ ...prev, generation: value }))} />
+          <Input label="Марка" value={form.brand} onChange={(value) => updateFormWithAutoSlug((prev) => ({ ...prev, brand: value }))} />
+          <Input label="Модель" value={form.model} onChange={(value) => updateFormWithAutoSlug((prev) => ({ ...prev, model: value }))} />
+          <Input label="Комплектация" value={form.generation} onChange={(value) => updateFormWithAutoSlug((prev) => ({ ...prev, generation: value }))} />
           <Input
             label="Приоритет"
             hint="Чем больше число, тем выше в каталоге"
@@ -143,13 +166,31 @@ export function CatalogCarFormPanel({
             label="Год"
             type="number"
             value={String(form.year)}
-            onChange={(value) => setForm((prev) => ({ ...prev, year: Number(value) || prev.year }))}
+            onChange={(value) =>
+              updateFormWithAutoSlug((prev) => ({
+                ...prev,
+                year: Number(value) || prev.year,
+              }))
+            }
           />
           <PriceWithCurrencyField
-            value={String(form.priceValue)}
+            value={priceInput}
             currency={form.priceCurrency}
-            currencyOptions={CURRENCY_OPTIONS}
-            onValueChange={(value) => setForm((prev) => ({ ...prev, priceValue: Number(value) || 0 }))}
+            currencyOptions={currencyOptions}
+            onValueChange={(value) => {
+              const normalized = normalizePriceInput(value);
+              setPriceInput(normalized);
+              if (!normalized) {
+                setForm((prev) => ({ ...prev, priceValue: 0 }));
+                return;
+              }
+
+              const parsed = Number(normalized);
+              if (Number.isFinite(parsed) && parsed >= 0) {
+                setForm((prev) => ({ ...prev, priceValue: parsed }));
+              }
+            }}
+            onValueBlur={() => setPriceInput(formatPriceInput(form.priceValue))}
             onCurrencyChange={(value) => setForm((prev) => ({ ...prev, priceCurrency: value as CarFormState["priceCurrency"] }))}
           />
         </div>
@@ -171,7 +212,16 @@ export function CatalogCarFormPanel({
             label="Рынок"
             value={form.market}
             options={MARKET_OPTIONS}
-            onChange={(value) => setForm((prev) => ({ ...prev, market: value as CarFormState["market"] }))}
+            onChange={(value) =>
+              updateFormWithAutoSlug((prev) => {
+                const market = value as CarFormState["market"];
+                return {
+                  ...prev,
+                  market,
+                  priceCurrency: getMarketDefaultCurrency(market),
+                };
+              })
+            }
           />
           <Select
             label="Тип цены"
@@ -295,12 +345,14 @@ function PriceWithCurrencyField({
   currency,
   currencyOptions,
   onValueChange,
+  onValueBlur,
   onCurrencyChange,
 }: {
   value: string;
   currency: string;
   currencyOptions: SelectOption[];
   onValueChange: (value: string) => void;
+  onValueBlur: () => void;
   onCurrencyChange: (value: string) => void;
 }) {
   return (
@@ -308,9 +360,12 @@ function PriceWithCurrencyField({
       <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-zinc-300">Цена и валюта</span>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_190px]">
         <input
-          type="number"
+          type="text"
+          inputMode="decimal"
           value={value}
           onChange={(event) => onValueChange(event.target.value)}
+          onBlur={onValueBlur}
+          placeholder="Например: 28500"
           className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-orange-500"
         />
         <select
@@ -327,6 +382,64 @@ function PriceWithCurrencyField({
       </div>
     </label>
   );
+}
+
+function normalizePriceInput(value: string): string {
+  return value.replace(",", ".").replace(/\s+/g, "").replace(/[^0-9.]/g, "");
+}
+
+function formatPriceInput(value: number): string {
+  if (!Number.isFinite(value)) {
+    return "0";
+  }
+
+  return Number.isInteger(value) ? String(value) : String(value);
+}
+
+function buildCatalogSlug(form: Pick<CarFormState, "brand" | "model" | "generation" | "year">): string {
+  const transliterated = [form.brand, form.model, form.generation, String(form.year || "")]
+    .join(" ")
+    .trim()
+    .toLowerCase()
+    .replace(/а/g, "a")
+    .replace(/б/g, "b")
+    .replace(/в/g, "v")
+    .replace(/г/g, "g")
+    .replace(/д/g, "d")
+    .replace(/е/g, "e")
+    .replace(/ё/g, "e")
+    .replace(/ж/g, "zh")
+    .replace(/з/g, "z")
+    .replace(/и/g, "i")
+    .replace(/й/g, "y")
+    .replace(/к/g, "k")
+    .replace(/л/g, "l")
+    .replace(/м/g, "m")
+    .replace(/н/g, "n")
+    .replace(/о/g, "o")
+    .replace(/п/g, "p")
+    .replace(/р/g, "r")
+    .replace(/с/g, "s")
+    .replace(/т/g, "t")
+    .replace(/у/g, "u")
+    .replace(/ф/g, "f")
+    .replace(/х/g, "h")
+    .replace(/ц/g, "c")
+    .replace(/ч/g, "ch")
+    .replace(/ш/g, "sh")
+    .replace(/щ/g, "sch")
+    .replace(/ъ/g, "")
+    .replace(/ы/g, "y")
+    .replace(/ь/g, "")
+    .replace(/э/g, "e")
+    .replace(/ю/g, "yu")
+    .replace(/я/g, "ya");
+
+  return transliterated
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-")
+    .slice(0, 200);
 }
 
 function Input({

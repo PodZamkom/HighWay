@@ -39,7 +39,8 @@ export async function POST(request: Request) {
     const payload = await request.json();
     const parsed = catalogCarInputSchema.safeParse(payload);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Некорректные данные автомобиля" }, { status: 400 });
+      const issue = parsed.error.issues[0];
+      return NextResponse.json({ error: issue?.message || "Некорректные данные автомобиля" }, { status: 400 });
     }
 
     const created = await createCatalogCar(parsed.data);

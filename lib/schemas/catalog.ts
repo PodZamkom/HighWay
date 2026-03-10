@@ -10,11 +10,12 @@ const idSchema = z.string().trim().min(1).max(200);
 const slugSchema = z
   .string()
   .trim()
-  .min(1)
+  .min(1, "Укажите slug")
   .max(200)
   .regex(/^[a-z0-9][a-z0-9-]*$/i, "Некорректный slug");
 const text = z.string().trim();
-const requiredText = text.min(1);
+const requiredText = text.min(1, "Обязательное поле");
+const maxCatalogPrice = 999_999_999_999.99;
 
 const marketSchema = z.enum(["China", "USA", "Korea", "Europe"]);
 const conditionSchema = z.enum(["New", "Used", "Crashed"]);
@@ -70,10 +71,10 @@ export const catalogCarInputSchema = z
     model: requiredText,
     priority: z.number().int().default(0),
     generation: text.default(""),
-    year: z.number().int().min(1900).max(2100),
+    year: z.number().int().min(1900, "Год должен быть не меньше 1900").max(2100, "Год должен быть не больше 2100"),
     condition: conditionSchema,
     mileageKm: z.number().int().min(0).nullable().optional(),
-    priceValue: z.number().nonnegative(),
+    priceValue: z.number().nonnegative("Цена не может быть отрицательной").max(maxCatalogPrice, "Цена слишком большая"),
     priceCurrency: priceCurrencySchema,
     priceType: priceTypeSchema,
     availability: availabilitySchema,
@@ -95,10 +96,10 @@ export const catalogCarPatchSchema = z
     model: requiredText.optional(),
     priority: z.number().int().optional(),
     generation: text.optional(),
-    year: z.number().int().min(1900).max(2100).optional(),
+    year: z.number().int().min(1900, "Год должен быть не меньше 1900").max(2100, "Год должен быть не больше 2100").optional(),
     condition: conditionSchema.optional(),
     mileageKm: z.number().int().min(0).nullable().optional(),
-    priceValue: z.number().nonnegative().optional(),
+    priceValue: z.number().nonnegative("Цена не может быть отрицательной").max(maxCatalogPrice, "Цена слишком большая").optional(),
     priceCurrency: priceCurrencySchema.optional(),
     priceType: priceTypeSchema.optional(),
     availability: availabilitySchema.optional(),
