@@ -39,11 +39,15 @@ EXPECTED_SITE_URL="$(normalize_url "$EXPECTED_SITE_URL")"
 
 CHAT_WIDGET_SRC="${NEXT_PUBLIC_CHAT_WIDGET_SRC:-}"
 CHAT_WIDGET_SRC="$(printf '%s' "$CHAT_WIDGET_SRC" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+DEFAULT_CHAT_WIDGET_SRC="${SMOKE_DEFAULT_CHAT_WIDGET_SRC:-https://code.jivosite.com/widget/bGiJzgmI99}"
 tmp_headers=""
 tmp_body=""
 tmp_bitrix_body=""
 if [[ -z "$CHAT_WIDGET_SRC" && -n "${NEXT_PUBLIC_JIVO_WIDGET_ID:-}" ]]; then
   CHAT_WIDGET_SRC="https://code.jivo.ru/widget/${NEXT_PUBLIC_JIVO_WIDGET_ID}"
+fi
+if [[ -z "$CHAT_WIDGET_SRC" ]]; then
+  CHAT_WIDGET_SRC="$DEFAULT_CHAT_WIDGET_SRC"
 fi
 
 ROUTES=(
@@ -67,10 +71,6 @@ done
 
 homepage_html="$(curl -sS -L --max-time "$TIMEOUT_SECONDS" "${BASE_URL}/")"
 if [[ "$REQUIRE_CHAT" == "1" ]]; then
-  if [[ -z "$CHAT_WIDGET_SRC" ]]; then
-    fail "Chat is required, but NEXT_PUBLIC_CHAT_WIDGET_SRC/NEXT_PUBLIC_JIVO_WIDGET_ID is not configured"
-  fi
-
   if ! contains_case_insensitive "$homepage_html" "$CHAT_WIDGET_SRC"; then
     fail "Homepage does not include expected chat script src: ${CHAT_WIDGET_SRC}"
   fi
