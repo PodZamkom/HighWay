@@ -2,9 +2,15 @@ import fs from 'fs/promises';
 import path from 'path';
 import type { BitrixHeaderSetting, BitrixPhoneType, BitrixSettings } from '@/types/bitrix';
 
-const BITRIX_SETTINGS_FILE = path.join(process.cwd(), 'data', 'bitrix-settings.json');
+const RUNTIME_DIR = process.env.APP_RUNTIME_DIR?.trim() || path.join(process.cwd(), 'runtime');
+const BITRIX_SETTINGS_FILE = path.join(RUNTIME_DIR, 'bitrix-settings.json');
+const LEGACY_BITRIX_SETTINGS_FILE = path.join(process.cwd(), 'data', 'bitrix-settings.json');
 const MIN_TIMEOUT_MS = 1000;
 const MAX_TIMEOUT_MS = 30000;
+
+async function ensureRuntimeDir() {
+  await fs.mkdir(RUNTIME_DIR, { recursive: true });
+}
 
 function toStringValue(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
@@ -177,6 +183,18 @@ export async function readBitrixSettings(): Promise<BitrixSettings> {
     if (error?.code !== 'ENOENT') {
       console.error('Failed to read bitrix settings, fallback to defaults:', error);
     }
+
+    try {
+      const legacyRaw = await fs.readFile(LEGACY_BITRIX_SETTINGS_FILE, 'utf-8');
+      const migrated = normalizeBitrixSettings(JSON.parse(legacyRaw));
+      await writeBitrixSettings(migrated);
+      return migrated;
+    } catch (legacyError: any) {
+      if (legacyError?.code !== 'ENOENT') {
+        console.error('Failed to migrate legacy bitrix settings, fallback to defaults:', legacyError);
+      }
+    }
+
     const fallback = defaultBitrixSettings();
     await writeBitrixSettings(fallback);
     return fallback;
@@ -185,6 +203,7 @@ export async function readBitrixSettings(): Promise<BitrixSettings> {
 
 export async function writeBitrixSettings(nextSettings: unknown): Promise<BitrixSettings> {
   const normalized = normalizeBitrixSettings(nextSettings);
+  await ensureRuntimeDir();
   await fs.writeFile(BITRIX_SETTINGS_FILE, `${JSON.stringify(normalized, null, 2)}\n`, 'utf-8');
   return normalized;
 }

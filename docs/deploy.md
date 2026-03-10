@@ -30,6 +30,7 @@ Production deploy keeps the same safe sequence:
 - `refresh` for manual cache refresh with heavier export
 - `off` for emergency no-cache fallback
 - `PRE_DEPLOY_TYPECHECK=1` runs `npm run typecheck` before Docker build and blocks deploy early on validation failure
+- `SMOKE_REQUIRE_BITRIX=1` verifies Bitrix webhook health during candidate and production smoke-checks
 
 Related env vars:
 
@@ -38,6 +39,7 @@ Related env vars:
 - `DEPLOY_METRICS_LOG`
 - `SMOKE_REQUIRE_CHAT`
 - `PRE_DEPLOY_TYPECHECK`
+- `SMOKE_REQUIRE_BITRIX`
 
 Legacy `BUILD_NO_CACHE=1` is still treated as a hard fallback and disables build cache usage.
 
@@ -52,6 +54,14 @@ The repository now includes CI validation in `.github/workflows/ci.yml`:
 3. `npm run build`
 
 Deploy should happen only after CI is green.
+
+## Bitrix gate
+
+Bitrix is treated as a deploy-critical integration.
+
+- Bitrix settings must survive deploys, so they are stored in `/app/runtime`, not inside the image filesystem.
+- Candidate and production smoke-checks call the internal Bitrix health endpoint.
+- If Bitrix is disabled, missing `webhookUrl`, or the webhook rejects `crm.deal.fields`, deploy must fail when `SMOKE_REQUIRE_BITRIX=1`.
 
 ## Runtime prepare
 

@@ -4,7 +4,9 @@ set -Eeuo pipefail
 BASE_URL="${1:-${SMOKE_BASE_URL:-https://highwaymotors.site}}"
 EXPECTED_SITE_URL="${2:-${SMOKE_EXPECTED_SITE_URL:-https://highwaymotors.site}}"
 REQUIRE_CHAT="${SMOKE_REQUIRE_CHAT:-1}"
+REQUIRE_BITRIX="${SMOKE_REQUIRE_BITRIX:-1}"
 TIMEOUT_SECONDS="${SMOKE_TIMEOUT_SECONDS:-20}"
+RUNTIME_TOKEN="${RUNTIME_PREPARE_TOKEN:-${SMOKE_RUNTIME_TOKEN:-}}"
 
 log() {
   printf '[smoke] %s\n' "$*"
@@ -37,6 +39,9 @@ EXPECTED_SITE_URL="$(normalize_url "$EXPECTED_SITE_URL")"
 
 CHAT_WIDGET_SRC="${NEXT_PUBLIC_CHAT_WIDGET_SRC:-}"
 CHAT_WIDGET_SRC="$(printf '%s' "$CHAT_WIDGET_SRC" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+tmp_headers=""
+tmp_body=""
+tmp_bitrix_body=""
 if [[ -z "$CHAT_WIDGET_SRC" && -n "${NEXT_PUBLIC_JIVO_WIDGET_ID:-}" ]]; then
   CHAT_WIDGET_SRC="https://code.jivo.ru/widget/${NEXT_PUBLIC_JIVO_WIDGET_ID}"
 fi
@@ -99,4 +104,32 @@ if [[ "$sitemap_xml" != *"<loc>${EXPECTED_SITE_URL}/"* ]]; then
 fi
 
 log "OK sitemap domain -> ${EXPECTED_SITE_URL}"
+
+if [[ "$REQUIRE_BITRIX" == "1" ]]; then
+  [[ -n "$RUNTIME_TOKEN" ]] || fail "Bitrix check requires RUNTIME_PREPARE_TOKEN/SMOKE_RUNTIME_TOKEN"
+
+  tmp_bitrix_body="$(mktemp)"
+  trap 'rm -f "$tmp_headers" "$tmp_body" "$tmp_bitrix_body"' EXIT
+
+  bitrix_code="$(
+    curl -sS \
+      -o "$tmp_bitrix_body" \
+      -w '%{http_code}' \
+      -H "x-runtime-prepare-token: ${RUNTIME_TOKEN}" \
+      "${BASE_URL}/api/internal/bitrix/check"
+  )"
+
+  if [[ "$bitrix_code" != "200" ]]; then
+    printf '[smoke][ERROR] Bitrix health check failed with HTTP %s\n' "$bitrix_code" >&2
+    cat "$tmp_bitrix_body" >&2
+    exit 1
+  fi
+
+  log "OK bitrix health"
+  rm -f "$tmp_bitrix_body"
+  trap 'rm -f "$tmp_headers" "$tmp_body"' EXIT
+else
+  log "Bitrix check skipped (SMOKE_REQUIRE_BITRIX=${REQUIRE_BITRIX})"
+fi
+
 log "Smoke check passed"
