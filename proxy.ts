@@ -1,6 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { ADMIN_SESSION_COOKIE } from "@/lib/admin/constants";
 
+const LEGACY_HOSTS = new Set(["highwaymotors.site", "www.highwaymotors.site"]);
+const CANONICAL_HOST = "edelivery.by";
+
 function isPublicAdminPath(pathname: string): boolean {
   return pathname === "/admin/login";
 }
@@ -10,6 +13,15 @@ function isPublicAdminApiPath(pathname: string): boolean {
 }
 
 export function proxy(request: NextRequest) {
+  const host = (request.headers.get("host") ?? "").toLowerCase().split(":")[0] ?? "";
+  if (LEGACY_HOSTS.has(host)) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.host = CANONICAL_HOST;
+    redirectUrl.protocol = "https:";
+    redirectUrl.port = "";
+    return NextResponse.redirect(redirectUrl, 301);
+  }
+
   const { pathname, search } = request.nextUrl;
 
   if (pathname.startsWith("/admin")) {
@@ -45,5 +57,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
