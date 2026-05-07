@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { NavbarContent } from '@/types/site';
-import { Instagram, Send, MessageCircle, ChevronDown, Menu, Phone, X } from 'lucide-react';
+import { ChevronDown, Menu, Phone, X } from 'lucide-react';
+import { InstagramIcon, TelegramIcon, WhatsAppIcon } from './icons/SocialIcons';
 import { LeadFormModal } from './LeadFormModal';
 
 interface NavbarProps {
@@ -114,27 +115,30 @@ export function Navbar({ content }: NavbarProps) {
                       href={content.instagram}
                       target="_blank"
                       rel="noreferrer"
+                      aria-label="Instagram"
                       className="flex h-5 w-5 items-center justify-center text-[#a9a9a9] transition-colors hover:text-[#ff7a33]"
                     >
-                      <Instagram size={16} className="block" />
+                      <InstagramIcon size={16} />
                     </a>
                     {telegramLink ? (
                       <a
                         href={telegramLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex h-5 w-5 items-center justify-center text-[#a9a9a9] transition-colors hover:text-[#46a6ff]"
+                        aria-label="Telegram"
+                        className="flex h-5 w-5 items-center justify-center text-[#a9a9a9] transition-colors hover:text-[#229ED9]"
                       >
-                        <Send size={16} className="block rotate-[-20deg]" />
+                        <TelegramIcon size={16} />
                       </a>
                     ) : null}
                     <a
                       href={content.whatsapp}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex h-5 w-5 items-center justify-center text-[#a9a9a9] transition-colors hover:text-[#45d07f]"
+                      aria-label="WhatsApp"
+                      className="flex h-5 w-5 items-center justify-center text-[#a9a9a9] transition-colors hover:text-[#25D366]"
                     >
-                      <MessageCircle size={16} className="block" />
+                      <WhatsAppIcon size={16} />
                     </a>
                   </div>
                 </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { CheckCircle2, Phone, Send, Smartphone, X } from 'lucide-react';
+import { CheckCircle2, Phone, X } from 'lucide-react';
+import { TelegramIcon, WhatsAppIcon } from '@/components/icons/SocialIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type ContactMethod = 'telegram' | 'whatsapp' | 'phone';
@@ -192,7 +193,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
                                                     : 'bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400'
                                                     }`}
                                             >
-                                                <Send size={16} /> Telegram
+                                                <TelegramIcon size={16} /> Telegram
                                             </button>
                                             <button
                                                 type="button"
@@ -202,7 +203,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
                                                     : 'bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400'
                                                     }`}
                                             >
-                                                <Smartphone size={16} /> WhatsApp
+                                                <WhatsAppIcon size={16} /> WhatsApp
                                             </button>
                                             <button
                                                 type="button"

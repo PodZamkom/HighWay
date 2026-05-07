@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from 'react';
-import { Zap } from 'lucide-react';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
+import { WhatsAppIcon } from '@/components/icons/SocialIcons';
 import { LeadFormModal } from '@/components/LeadFormModal';
 import { CarModel } from '@/types/car';
 import { availabilityLabel, isInStockAvailability } from '@/lib/catalog/availability';
@@ -184,9 +184,9 @@ export function CarDetailClient({ car, catalogLabel, whatsappLink }: CarDetailCl
                                     href={whatsappLink}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex-1 bg-white border-2 border-green-500 text-green-600 font-bold py-4 rounded-xl hover:bg-green-50 transition-colors flex items-center justify-center gap-2"
+                                    className="flex-1 bg-white border-2 border-[#25D366] text-[#1ea355] font-bold py-4 rounded-xl hover:bg-green-50 transition-colors flex items-center justify-center gap-2"
                                 >
-                                    <Zap size={18} /> WhatsApp
+                                    <WhatsAppIcon size={18} /> WhatsApp
                                 </a>
                             ) : null}
                         </div>

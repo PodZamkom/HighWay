@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { CirclePlay, Instagram, MessageCircleMore, Send, Star } from "lucide-react";
+import { CirclePlay, Star } from "lucide-react";
 import type { HeroContent } from "@/types/site";
+import { InstagramIcon, TelegramIcon, WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { LeadFormModal } from "@/components/LeadFormModal";
 
 interface HeroProps {
@@ -114,7 +115,7 @@ export function Hero({ content }: HeroProps) {
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
                 aria-label="WhatsApp"
               >
-                <MessageCircleMore size={16} />
+                <WhatsAppIcon size={16} />
               </a>
               <a
                 href={content.telegramLink}
@@ -123,7 +124,7 @@ export function Hero({ content }: HeroProps) {
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
                 aria-label="Telegram"
               >
-                <Send size={16} />
+                <TelegramIcon size={16} />
               </a>
               <a
                 href={content.instagramLink}
@@ -132,7 +133,7 @@ export function Hero({ content }: HeroProps) {
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#ff5a00] text-white transition hover:bg-[#ff7429]"
                 aria-label="Instagram"
               >
-                <Instagram size={16} />
+                <InstagramIcon size={16} />
               </a>
             </div>
           </motion.div>
