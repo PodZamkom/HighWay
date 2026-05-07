@@ -4,10 +4,7 @@ import { getPublicAnalyticsCounters } from "@/lib/site/siteContentReadService";
 import type { AnalyticsCounter } from "@/types/cms";
 
 export const metadata: Metadata = {
-  title: {
-    default: "E-TRADE | Авто из Китая, Европы и США",
-    template: "%s | E-TRADE",
-  },
+  title: "E-TRADE | Авто из Китая, Европы и США",
   description: "E-TRADE — импорт и доставка автомобилей из Китая, США, Европы и Кореи в Беларусь. Честные цены, профессиональный подбор.",
   applicationName: "E-TRADE",
   icons: {
