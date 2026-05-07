@@ -1,6 +1,7 @@
 import "server-only";
 
 export {
+  getPublicAnalyticsCounters,
   getPublicContentPage,
   getPublicGlobalSeo,
   getPublicHomeLayout,

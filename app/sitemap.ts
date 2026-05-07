@@ -3,6 +3,8 @@ import { resolveSiteUrl } from "@/lib/breadcrumbs";
 import { listCatalogCarsLegacy } from "@/lib/catalog/catalogPublicReadService";
 import { listNewsForSitemap } from "@/lib/news/newsPublicReadService";
 
+export const dynamic = "force-dynamic";
+
 const CONTENT_ROUTES = [
   "/",
   "/o-kompanii",

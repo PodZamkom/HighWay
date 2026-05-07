@@ -1,7 +1,7 @@
 module.exports = {
     apps: [
         {
-            name: 'highway-motors',
+            name: 'etrade',
             script: 'npm',
             args: 'start',
             env: {

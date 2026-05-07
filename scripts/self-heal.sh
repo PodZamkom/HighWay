@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-APP_NAME="${APP_NAME:-highway-highway-1}"
+APP_NAME="${APP_NAME:-etrade-app}"
 HEALTHCHECK_URL="${HEALTHCHECK_URL:-http://127.0.0.1:8080/}"
 HTTP_TIMEOUT="${HTTP_TIMEOUT:-10}"
 

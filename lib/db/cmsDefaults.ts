@@ -3,6 +3,7 @@ import contentPagesJson from "@/data/content-pages.json";
 import type { ContentPage, ContentPageSlug } from "@/types/content-pages";
 import type { CmsDocumentKey, CmsSnapshot, HomeBlockKey } from "@/types/cms";
 import {
+  cmsAnalyticsCountersSchema,
   cmsCatalogDetailSeoTemplateSchema,
   cmsCatalogLabelsSchema,
   cmsCatalogListSeoSchema,
@@ -120,6 +121,33 @@ function buildSnapshot(): CmsSnapshot {
 
   const pages = readPagesFromJson();
 
+  const analyticsCounters = cmsAnalyticsCountersSchema.parse({
+    counters: [
+      {
+        id: "default-gtm",
+        name: "Google Tag Manager",
+        place: "head",
+        enabled: true,
+        code:
+          "<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n" +
+          "new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n" +
+          "j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n" +
+          "'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n" +
+          "})(window,document,'script','dataLayer','GTM-596Z6NHN');</script>",
+        notes: "Default seed (можно отредактировать в /admin/counters)",
+      },
+      {
+        id: "default-gtm-noscript",
+        name: "Google Tag Manager (noscript)",
+        place: "body-start",
+        enabled: true,
+        code:
+          "<noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id=GTM-596Z6NHN\"\n" +
+          "height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"></iframe></noscript>",
+      },
+    ],
+  });
+
   return {
     homeLayout,
     homeContent,
@@ -130,6 +158,7 @@ function buildSnapshot(): CmsSnapshot {
     catalogListSeo,
     catalogDetailSeoTemplate,
     catalogLabels,
+    analyticsCounters,
     pages,
   };
 }
@@ -145,6 +174,7 @@ function snapshotToDocuments(snapshot: CmsSnapshot): Record<CmsDocumentKey, unkn
     "seo:catalog-list": snapshot.catalogListSeo,
     "seo:catalog-detail-template": snapshot.catalogDetailSeoTemplate,
     "catalog:labels": snapshot.catalogLabels,
+    "analytics:counters": snapshot.analyticsCounters,
     "page:o-kompanii": snapshot.pages["o-kompanii"],
     "page:uslugi": snapshot.pages.uslugi,
     "page:servisy": snapshot.pages.servisy,

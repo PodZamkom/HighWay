@@ -1,10 +1,10 @@
 import { Pool, type PoolClient, type QueryResult } from "pg";
 
-const GLOBAL_KEY = "__highway_pg_pool__";
+const GLOBAL_KEY = "__etrade_pg_pool__";
 
 declare global {
   // eslint-disable-next-line no-var
-  var __highway_pg_pool__: Pool | undefined;
+  var __etrade_pg_pool__: Pool | undefined;
 }
 
 function parseSslMode(): boolean {

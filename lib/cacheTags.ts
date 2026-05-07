@@ -9,6 +9,7 @@ export const CACHE_TAGS = {
   catalog: "catalog",
   catalogSeo: "catalog-seo",
   globalSeo: "global-seo",
+  analytics: "analytics-counters",
 } as const;
 
 export const SITE_CONTENT_TAGS = [

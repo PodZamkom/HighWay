@@ -230,7 +230,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                   max={100000}
                   step={100}
                   onChange={(event) => updateForm({ carPrice: clamp(Number(event.target.value) || 0, 0, 100000) })}
-                  className="mb-2 w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xl font-semibold text-slate-900 outline-none focus:border-rose-400"
+                  className="mb-2 w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xl font-semibold text-slate-900 outline-none focus:border-orange-400"
                 />
                 <input
                   type="range"
@@ -239,7 +239,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                   step={100}
                   value={form.carPrice}
                   onChange={(event) => updateForm({ carPrice: clamp(Number(event.target.value), 0, 100000) })}
-                  className="w-full accent-rose-500"
+                  className="w-full accent-orange-500"
                 />
                 <div className="mt-1 flex justify-between text-[11px] text-slate-400">
                   <span>{content.labels.priceMin}</span>
@@ -253,8 +253,8 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                       onClick={() => updateForm({ carPrice: item })}
                       className={`rounded px-2.5 py-1 text-xs font-medium transition ${
                         form.carPrice === item
-                          ? 'bg-rose-500 text-white'
-                          : 'border border-slate-300 bg-white text-slate-700 hover:border-rose-300'
+                          ? 'bg-orange-500 text-white'
+                          : 'border border-slate-300 bg-white text-slate-700 hover:border-orange-300'
                       }`}
                     >
                       {item.toLocaleString('ru-RU')}$
@@ -276,8 +276,8 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                       onClick={() => onAgePresetClick(preset.key)}
                       className={`rounded px-2 py-1.5 text-left text-xs font-medium transition ${
                         form.agePreset === preset.key
-                          ? 'bg-rose-500 text-white'
-                          : 'border border-slate-300 bg-white text-slate-700 hover:border-rose-300'
+                          ? 'bg-orange-500 text-white'
+                          : 'border border-slate-300 bg-white text-slate-700 hover:border-orange-300'
                       }`}
                     >
                       {preset.name}
@@ -292,7 +292,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                     max={40}
                     value={form.age}
                     onChange={(event) => onAgeInput(Number(event.target.value) || 0)}
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-base text-slate-900 outline-none focus:border-rose-400"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-base text-slate-900 outline-none focus:border-orange-400"
                   />
                 </div>
               </div>
@@ -342,7 +342,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                     step={10}
                     value={form.engine}
                     onChange={(event) => updateForm({ engine: clamp(Number(event.target.value) || 0, 0, 12000) })}
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-rose-400"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-orange-400"
                   />
                 </div>
                 <label className="mt-6 flex cursor-pointer items-center gap-2 text-xs text-slate-700 sm:mt-5">
@@ -362,32 +362,32 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
             <div className="h-full overflow-y-auto rounded-lg border border-slate-100 bg-white p-3">
               {isLoadingResult && !result && (
                 <div className="flex min-h-[260px] items-center justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-rose-500" />
+                  <Loader2 className="h-6 w-6 animate-spin text-orange-500" />
                 </div>
               )}
 
               {error && (
-                <div className="rounded-md border border-rose-200 bg-rose-50 p-2 text-xs text-rose-700">{error}</div>
+                <div className="rounded-md border border-red-200 bg-red-50 p-2 text-xs text-red-700">{error}</div>
               )}
 
               {result && !error && (
                 <div className="space-y-3">
-                  <h3 className="border-b border-rose-300 pb-1 text-base font-semibold text-slate-900">{content.labels.purchaseAndDelivery}</h3>
+                  <h3 className="border-b border-orange-300 pb-1 text-base font-semibold text-slate-900">{content.labels.purchaseAndDelivery}</h3>
                   {resultRows.map((item, index) => (
                     <ResultRow key={`${item.label}-${index}`} label={item.label} value={formatMoney(item.value, item.currency)} />
                   ))}
 
-                  <h3 className="border-b border-rose-300 pb-1 pt-2 text-base font-semibold text-slate-900">{content.labels.customsAndClearance}</h3>
+                  <h3 className="border-b border-orange-300 pb-1 pt-2 text-base font-semibold text-slate-900">{content.labels.customsAndClearance}</h3>
                   {customsRows.map((item, index) => (
                     <ResultRow key={`${item.label}-${index}`} label={item.label} value={formatMoney(item.value, item.currency)} />
                   ))}
 
                   <div className="flex items-end justify-between border-t border-slate-200 pt-3 text-xl font-semibold">
                     <span className="text-slate-900">{content.labels.total}</span>
-                    <span className="text-rose-500">{formatMoney(result.total.value, result.total.currency)}</span>
+                    <span className="text-orange-500">{formatMoney(result.total.value, result.total.currency)}</span>
                   </div>
 
-                  <p className="text-[11px] text-rose-500">{content.labels.disclaimer}</p>
+                  <p className="text-[11px] text-orange-500">{content.labels.disclaimer}</p>
 
                   <div className="flex justify-end">
                     <button
@@ -438,7 +438,7 @@ function SelectField({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         disabled={disabled}
-        className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-rose-400"
+        className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-orange-400"
       >
         {options.length === 0 ? <option value="">{fallbackLabel || '—'}</option> : null}
         {options.map((item, index) => (
@@ -455,7 +455,7 @@ function ResultRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-3 text-sm">
       <span className="text-slate-700">{label}</span>
-      <span className="whitespace-nowrap font-semibold text-rose-500">{value}</span>
+      <span className="whitespace-nowrap font-semibold text-orange-500">{value}</span>
     </div>
   );
 }

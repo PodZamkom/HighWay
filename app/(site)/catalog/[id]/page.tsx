@@ -113,7 +113,7 @@ export default async function CarPage({ params }: { params: Promise<{ id: string
 
   return (
     <>
-      <CarDetailClient car={car} catalogLabel={catalogLabel} />
+      <CarDetailClient car={car} catalogLabel={catalogLabel} whatsappLink={siteContent.navbar.whatsapp} />
       {breadcrumbSchema ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       ) : null}

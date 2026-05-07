@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: "/admin/news", label: "Новости" },
   { href: "/admin/catalog", label: "Каталог" },
   { href: "/admin/calculator", label: "Калькулятор" },
+  { href: "/admin/counters", label: "Счётчики" },
   { href: "/admin/bitrix", label: "CRM" },
 ];
 

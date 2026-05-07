@@ -48,7 +48,6 @@ const heroSchema = z.object({
   consultationDescriptionLine1: requiredText,
   consultationDescriptionLine2: requiredText,
   primaryButtonLabel: requiredText,
-  primaryButtonHref: requiredText,
   contactsLabel: requiredText,
   whatsappLink: requiredText,
   telegramLink: requiredText,
@@ -456,6 +455,22 @@ export const cmsSeoBundleSchema = z.object({
   catalogDetailTemplate: cmsCatalogDetailSeoTemplateSchema,
 });
 
+export const analyticsCounterPlaceSchema = z.enum(["head", "body-start", "body-end"]);
+
+export const analyticsCounterSchema = z.object({
+  id: requiredText,
+  name: requiredText,
+  place: analyticsCounterPlaceSchema,
+  enabled: z.boolean(),
+  code: text,
+  notes: text.optional(),
+  updatedAt: text.optional(),
+});
+
+export const cmsAnalyticsCountersSchema = z.object({
+  counters: z.array(analyticsCounterSchema).max(50).default([]),
+});
+
 export type CmsHomeLayoutDto = z.infer<typeof cmsHomeLayoutSchema>;
 export type CmsHomeContentDto = z.infer<typeof cmsHomeContentSchema>;
 export type CmsNavigationDto = z.infer<typeof cmsNavigationSchema>;
@@ -464,3 +479,4 @@ export type CmsNewsSettingsDto = z.infer<typeof cmsNewsSettingsSchema>;
 export type CmsSeoBundleDto = z.infer<typeof cmsSeoBundleSchema>;
 export type CmsCatalogLabelsDto = z.infer<typeof cmsCatalogLabelsSchema>;
 export type CmsContentPageDto = z.infer<typeof cmsContentPageSchema>;
+export type CmsAnalyticsCountersDto = z.infer<typeof cmsAnalyticsCountersSchema>;

@@ -54,6 +54,22 @@ export interface CmsSeoDocument {
 export type CmsCatalogLabelsDocument = CmsCatalogLabelsDto;
 export type CmsNewsSettingsDocument = NewsSettings;
 
+export type AnalyticsCounterPlace = "head" | "body-start" | "body-end";
+
+export interface AnalyticsCounter {
+  id: string;
+  name: string;
+  place: AnalyticsCounterPlace;
+  enabled: boolean;
+  code: string;
+  notes?: string;
+  updatedAt?: string;
+}
+
+export interface CmsAnalyticsCountersDocument {
+  counters: AnalyticsCounter[];
+}
+
 export type CmsDocumentKey =
   | "home_layout"
   | "home_content"
@@ -64,6 +80,7 @@ export type CmsDocumentKey =
   | "seo:catalog-list"
   | "seo:catalog-detail-template"
   | "catalog:labels"
+  | "analytics:counters"
   | `page:${ContentPageSlug}`;
 
 export interface CmsRevisionRecord {
@@ -84,5 +101,6 @@ export interface CmsSnapshot {
   catalogListSeo: CmsCatalogListSeoDocument;
   catalogDetailSeoTemplate: CmsCatalogDetailSeoTemplateDocument;
   catalogLabels: CmsCatalogLabelsDocument;
+  analyticsCounters: CmsAnalyticsCountersDocument;
   pages: Record<ContentPageSlug, ContentPage>;
 }

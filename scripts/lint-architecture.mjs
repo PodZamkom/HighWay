@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, "..");
 
 const CODE_EXTENSIONS = new Set([".ts", ".tsx", ".mts", ".js", ".jsx"]);
-const IGNORED_DIRS = new Set([".git", ".next", "dist", "legacy_backup", "node_modules", "runtime"]);
+const IGNORED_DIRS = new Set([".git", ".next", "dist", "node_modules", "runtime"]);
 
 const findings = [];
 

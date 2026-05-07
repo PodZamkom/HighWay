@@ -52,7 +52,6 @@ export interface HeroContent {
   consultationDescriptionLine1: string;
   consultationDescriptionLine2: string;
   primaryButtonLabel: string;
-  primaryButtonHref: string;
   contactsLabel: string;
   whatsappLink: string;
   telegramLink: string;

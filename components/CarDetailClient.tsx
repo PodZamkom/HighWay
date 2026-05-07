@@ -10,9 +10,10 @@ import { availabilityLabel, isInStockAvailability } from '@/lib/catalog/availabi
 type CarDetailClientProps = {
     car: CarModel | null;
     catalogLabel: string;
+    whatsappLink: string;
 };
 
-export function CarDetailClient({ car, catalogLabel }: CarDetailClientProps) {
+export function CarDetailClient({ car, catalogLabel, whatsappLink }: CarDetailClientProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const baseBreadcrumbs = [
@@ -178,14 +179,16 @@ export function CarDetailClient({ car, catalogLabel }: CarDetailClientProps) {
                             >
                                 Заказать расчет
                             </button>
-                            <a
-                                href="https://wa.me/375298422224"
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex-1 bg-white border-2 border-green-500 text-green-600 font-bold py-4 rounded-xl hover:bg-green-50 transition-colors flex items-center justify-center gap-2"
-                            >
-                                <Zap size={18} /> WhatsApp
-                            </a>
+                            {whatsappLink ? (
+                                <a
+                                    href={whatsappLink}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="flex-1 bg-white border-2 border-green-500 text-green-600 font-bold py-4 rounded-xl hover:bg-green-50 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <Zap size={18} /> WhatsApp
+                                </a>
+                            ) : null}
                         </div>
 
                         {quickSpecs.length ? (

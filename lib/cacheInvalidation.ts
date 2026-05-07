@@ -61,3 +61,8 @@ export function invalidateGlobalSeoCache() {
   safeRevalidateTag(CACHE_TAGS.globalSeo);
   safeRevalidatePath("/");
 }
+
+export function invalidateAnalyticsCache() {
+  safeRevalidateTag(CACHE_TAGS.analytics);
+  safeRevalidatePath("/");
+}

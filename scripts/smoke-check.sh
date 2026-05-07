@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-BASE_URL="${1:-${SMOKE_BASE_URL:-https://highwaymotors.site}}"
-EXPECTED_SITE_URL="${2:-${SMOKE_EXPECTED_SITE_URL:-https://highwaymotors.site}}"
+BASE_URL="${1:-${SMOKE_BASE_URL:-https://edelivery.by}}"
+EXPECTED_SITE_URL="${2:-${SMOKE_EXPECTED_SITE_URL:-https://edelivery.by}}"
 REQUIRE_CHAT="${SMOKE_REQUIRE_CHAT:-1}"
 REQUIRE_BITRIX="${SMOKE_REQUIRE_BITRIX:-1}"
 TIMEOUT_SECONDS="${SMOKE_TIMEOUT_SECONDS:-20}"

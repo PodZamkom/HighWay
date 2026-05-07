@@ -117,7 +117,7 @@ function drawRowsInColumn(params: {
       y: cursorY,
       size: valueSize,
       font: fontBold,
-      color: rgb(0.95, 0.28, 0.34),
+      color: rgb(0.95, 0.43, 0.09),
     });
 
     const rowHeight = Math.max(minRowHeight, labelLines.length * lineHeight);
@@ -228,7 +228,7 @@ export async function buildCalculatorPdf(result: CalculatorResultPayload) {
     y: 141,
     size: 24,
     font: fontBold,
-    color: rgb(0.95, 0.28, 0.34),
+    color: rgb(0.95, 0.43, 0.09),
   });
 
   page.drawText(text('Суммы ориентировочные и могут изменяться на дату оформления сделки.'), {
@@ -239,7 +239,13 @@ export async function buildCalculatorPdf(result: CalculatorResultPayload) {
     color: rgb(0.45, 0.48, 0.5),
   });
 
-  page.drawText(text('Е-ТРЕЙД'), { x: 730, y: 18, size: 10, font, color: rgb(0.45, 0.48, 0.5) });
+  page.drawText(text('E-TRADE · edelivery.by · +375 (33) 696-22-24'), {
+    x: 28,
+    y: 18,
+    size: 10,
+    font,
+    color: rgb(0.45, 0.48, 0.5),
+  });
 
   const bytes = await pdf.save();
   return Buffer.from(bytes);

@@ -2,6 +2,7 @@ import "server-only";
 
 export {
   readAllContentPages,
+  readAnalyticsCounters,
   readCatalogDetailSeoTemplate,
   readCatalogLabels,
   readCatalogListSeo,
@@ -13,6 +14,7 @@ export {
   readHomeLayout,
   readNavigation,
   readNewsSettings,
+  writeAnalyticsCounters,
   writeCatalogLabels,
   writeContentPageDoc,
   writeContentPagesAndGlobalSeo,

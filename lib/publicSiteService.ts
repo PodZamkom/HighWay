@@ -4,6 +4,7 @@ import { unstable_cache } from "next/cache";
 import type { SiteContent } from "@/types/site";
 import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS, SITE_CONTENT_TAGS } from "@/lib/cacheTags";
 import {
+  readAnalyticsCounters,
   readCatalogDetailSeoTemplate,
   readCatalogLabels,
   readCatalogListSeo,
@@ -229,4 +230,17 @@ export async function getPublicNewsFacets() {
 
 export async function getPublicRelatedNews(slug: string, category: string, limit = 3) {
   return getRelatedNewsCached(slug, category, limit);
+}
+
+const getAnalyticsCountersCached = unstable_cache(
+  async () => readAnalyticsCounters(),
+  ["public-analytics-counters"],
+  {
+    revalidate: CONTENT_REVALIDATE_SECONDS,
+    tags: [CACHE_TAGS.analytics],
+  },
+);
+
+export async function getPublicAnalyticsCounters() {
+  return getAnalyticsCountersCached();
 }

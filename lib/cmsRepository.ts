@@ -4,6 +4,7 @@ import type { PoolClient } from "pg";
 import { dbQuery, isDatabaseConfigured, withDbClient } from "@/lib/db";
 import { ensureDatabaseReady } from "@/lib/db/ready";
 import {
+  invalidateAnalyticsCache,
   invalidateContentPagesCache,
   invalidateGlobalSeoCache,
   invalidateNewsCache,
@@ -13,6 +14,7 @@ import {
 } from "@/lib/cacheInvalidation";
 import { exportCmsSnapshot } from "@/lib/db/cmsDefaults";
 import type {
+  CmsAnalyticsCountersDocument,
   CmsCatalogDetailSeoTemplateDocument,
   CmsCatalogLabelsDocument,
   CmsCatalogListSeoDocument,
@@ -29,6 +31,7 @@ import type {
 } from "@/types/cms";
 import type { ContentPage, ContentPageSlug } from "@/types/content-pages";
 import {
+  cmsAnalyticsCountersSchema,
   cmsCatalogDetailSeoTemplateSchema,
   cmsCatalogLabelsSchema,
   cmsCatalogListSeoSchema,
@@ -208,6 +211,31 @@ export async function readCatalogLabels(): Promise<CmsCatalogLabelsDocument> {
   return readCmsDocumentWithFallback("catalog:labels", cmsCatalogLabelsSchema, (snapshot) => snapshot.catalogLabels);
 }
 
+export async function readAnalyticsCounters(): Promise<CmsAnalyticsCountersDocument> {
+  return readCmsDocumentWithFallback(
+    "analytics:counters",
+    cmsAnalyticsCountersSchema,
+    (snapshot) => snapshot.analyticsCounters,
+  );
+}
+
+export async function writeAnalyticsCounters(
+  next: CmsAnalyticsCountersDocument,
+  userId: string | null,
+): Promise<CmsAnalyticsCountersDocument> {
+  requireDatabaseForWrite();
+  await ensureDatabaseReady();
+
+  const parsed = cmsAnalyticsCountersSchema.parse(next);
+
+  await withDbClient(async (client) => {
+    await saveCmsDocument(client, "analytics:counters", parsed, userId);
+  });
+
+  invalidateAnalyticsCache();
+  return parsed;
+}
+
 export async function readContentPage(slug: ContentPageSlug): Promise<ContentPage> {
   const key = `page:${slug}` as CmsDocumentKey;
   return readCmsDocumentWithFallback(key, cmsContentPageSchema, (snapshot) => snapshot.pages[slug]);
@@ -242,6 +270,7 @@ export async function readCmsSnapshot(): Promise<CmsSnapshot> {
     catalogListSeo,
     catalogDetailSeoTemplate,
     catalogLabels,
+    analyticsCounters,
     pages,
   ] = await Promise.all([
     readHomeLayout(),
@@ -253,6 +282,7 @@ export async function readCmsSnapshot(): Promise<CmsSnapshot> {
     readCatalogListSeo(),
     readCatalogDetailSeoTemplate(),
     readCatalogLabels(),
+    readAnalyticsCounters(),
     readAllContentPages(),
   ]);
 
@@ -266,6 +296,7 @@ export async function readCmsSnapshot(): Promise<CmsSnapshot> {
     catalogListSeo,
     catalogDetailSeoTemplate,
     catalogLabels,
+    analyticsCounters,
     pages,
   };
 }

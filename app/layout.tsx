@@ -1,42 +1,55 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
-
-const GTM_ID = "GTM-596Z6NHN";
+import { getPublicAnalyticsCounters } from "@/lib/site/siteContentReadService";
+import type { AnalyticsCounter } from "@/types/cms";
 
 export const metadata: Metadata = {
-  title: "HighWay Motors",
-  description: "HighWay Motors",
+  title: {
+    default: "E-TRADE | Авто из Китая, Европы и США",
+    template: "%s | E-TRADE",
+  },
+  description: "E-TRADE — импорт и доставка автомобилей из Китая, США, Европы и Кореи в Беларусь. Честные цены, профессиональный подбор.",
+  applicationName: "E-TRADE",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/favicon.png",
+  },
 };
 
-export default function RootLayout({
+function pickEnabled(counters: AnalyticsCounter[], place: AnalyticsCounter["place"]): AnalyticsCounter[] {
+  return counters.filter((counter) => counter.enabled && counter.place === place && counter.code.trim().length > 0);
+}
+
+function CountersHtml({ counters }: { counters: AnalyticsCounter[] }) {
+  if (counters.length === 0) return null;
+  const html = counters.map((counter) => counter.code).join("\n");
+  return <div data-counters dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { counters } = await getPublicAnalyticsCounters().catch(() => ({ counters: [] as AnalyticsCounter[] }));
+  const headCounters = pickEnabled(counters, "head");
+  const bodyStartCounters = pickEnabled(counters, "body-start");
+  const bodyEndCounters = pickEnabled(counters, "body-end");
+
   return (
     <html lang="ru">
       <head>
-        <Script id="gtm" strategy="beforeInteractive">
-          {`
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${GTM_ID}');
-          `}
-        </Script>
+        {headCounters.length > 0 ? <CountersHtml counters={headCounters} /> : null}
       </head>
       <body className="min-h-screen antialiased">
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          />
-        </noscript>
+        {bodyStartCounters.length > 0 ? <CountersHtml counters={bodyStartCounters} /> : null}
         {children}
+        {bodyEndCounters.length > 0 ? <CountersHtml counters={bodyEndCounters} /> : null}
       </body>
     </html>
   );

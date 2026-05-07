@@ -1,4 +1,4 @@
-# Project Rules for Highway Motors
+# Project Rules for E-trade
 
 ## Delivery Gate (Mandatory)
 Before sending results or links to the user:
@@ -8,10 +8,10 @@ Before sending results or links to the user:
 
 ## Deploy Source
 - Always deploy from `origin/main`.
-- For calculator persistence, run container with volume: `-v highway-runtime:/app/runtime`.
+- For calculator persistence, run container with volume: `-v etrade-runtime:/app/runtime`.
 
 ## Verification
-- Use `curl -I https://highwaymotors.site/catalog/<slug>` for each new item.
+- Use `curl -I https://edelivery.by/catalog/<slug>` for each new item.
 
 ## Catalog Media (Mandatory)
 - Причина прошлой проблемы с одним фото: в данных было до 12 изображений, но карточка товара выводила только `images[0]` без галереи/превью.
