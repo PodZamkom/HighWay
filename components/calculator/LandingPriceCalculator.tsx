@@ -225,6 +225,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                 </label>
                 <input
                   type="number"
+                  inputMode="numeric"
                   value={form.carPrice}
                   min={0}
                   max={100000}
@@ -288,6 +289,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                   <label className="mb-1 block text-[11px] uppercase tracking-wide text-slate-500">Точный возраст (лет)</label>
                   <input
                     type="number"
+                    inputMode="numeric"
                     min={0}
                     max={40}
                     value={form.age}
@@ -337,6 +339,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                   </label>
                   <input
                     type="number"
+                    inputMode="numeric"
                     min={0}
                     max={12000}
                     step={10}

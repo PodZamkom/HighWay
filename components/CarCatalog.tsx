@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowUpDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { availabilityLabel, isInStockAvailability, parseAvailability } from "@/lib/catalog/availability";
@@ -102,6 +102,13 @@ export function CarCatalog({ initialMarket, initialAvailability, catalogLabel, c
   const [mileageFrom, setMileageFrom] = useState("");
   const [mileageTo, setMileageTo] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("priority");
+  const [searchInput, setSearchInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const handle = setTimeout(() => setSearchTerm(searchInput.trim().toLowerCase()), 250);
+    return () => clearTimeout(handle);
+  }, [searchInput]);
 
   const availabilityFiltered = useMemo(() => {
     if (availability === "All") return cars;
@@ -143,6 +150,10 @@ export function CarCatalog({ initialMarket, initialAvailability, catalogLabel, c
     const mTo = toNumber(mileageTo);
 
     const cars = marketFiltered.filter((car) => {
+      if (searchTerm) {
+        const haystack = `${car.brand} ${car.model} ${car.generation ?? ""}`.toLowerCase();
+        if (!haystack.includes(searchTerm)) return false;
+      }
       if (brand !== "All" && car.brand !== brand) return false;
       if (bodyType !== "All" && car.body_type !== bodyType) return false;
       if (engineType !== "All" && car.type !== engineType) return false;
@@ -176,7 +187,7 @@ export function CarCatalog({ initialMarket, initialAvailability, catalogLabel, c
     }
 
     return cars;
-  }, [bodyType, brand, drive, engineType, market, marketFiltered, mileageFrom, mileageTo, priceFrom, priceTo, sortMode, transmission, yearFrom, yearTo]);
+  }, [bodyType, brand, drive, engineType, market, marketFiltered, mileageFrom, mileageTo, priceFrom, priceTo, searchTerm, sortMode, transmission, yearFrom, yearTo]);
 
   const resetFilters = () => {
     setAvailability(initialAvailabilityFilter);
@@ -252,6 +263,32 @@ export function CarCatalog({ initialMarket, initialAvailability, catalogLabel, c
                 {tab.label}
               </button>
             ))}
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-3">
+            <label className="relative block">
+              <span className="sr-only">Поиск</span>
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <Search size={16} />
+              </span>
+              <input
+                type="search"
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder="Марка или модель..."
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-10 pr-9 text-sm text-slate-900 outline-none transition focus:border-orange-300 focus:bg-white"
+              />
+              {searchInput ? (
+                <button
+                  type="button"
+                  onClick={() => setSearchInput("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                  aria-label="Очистить поиск"
+                >
+                  <X size={14} />
+                </button>
+              ) : null}
+            </label>
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-3">

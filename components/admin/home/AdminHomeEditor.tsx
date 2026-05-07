@@ -56,6 +56,11 @@ function SectionCard({
         {actions}
       </div>
       <div className="space-y-4">{children}</div>
+      {actions ? (
+        <div className="mt-4 flex justify-end border-t border-white/5 pt-4">
+          {actions}
+        </div>
+      ) : null}
     </section>
   );
 }
