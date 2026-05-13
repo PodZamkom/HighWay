@@ -734,7 +734,7 @@ export function AdminHomeEditor() {
 
         <div className="space-y-4">
           {state.home.content.teamSection.groups.map((group, groupIndex) => (
-            <div key={`${group.title}-${groupIndex}`} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+            <div key={`team-group-${groupIndex}`} className="rounded-2xl border border-white/10 bg-black/20 p-4">
               <TextField
                 label={`Раздел команды ${groupIndex + 1}`}
                 value={group.title}
@@ -749,7 +749,7 @@ export function AdminHomeEditor() {
 
               <div className="mt-3 grid gap-3 md:grid-cols-3">
                 {group.members.map((member, memberIndex) => (
-                  <div key={`${member.name}-${memberIndex}`} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+                  <div key={`team-member-${groupIndex}-${memberIndex}`} className="rounded-2xl border border-white/10 bg-black/20 p-3">
                     <TextField
                       label="Имя"
                       value={member.name}

@@ -262,7 +262,7 @@ export function CatalogCarFormPanel({
 
         <div className="space-y-2">
           {form.images.map((image, index) => (
-            <div key={`${image.url}-${index}`} className="rounded-xl border border-white/10 bg-black/20 p-2">
+            <div key={`car-image-${index}`} className="rounded-xl border border-white/10 bg-black/20 p-2">
               <div className="flex items-start gap-2">
                 <img src={image.url} alt={image.alt || "preview"} className="h-14 w-20 rounded object-cover" />
                 <div className="flex-1 space-y-2">

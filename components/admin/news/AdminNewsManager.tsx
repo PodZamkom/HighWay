@@ -1084,7 +1084,7 @@ export function AdminNewsManager() {
               <SectionCard title="FAQ">
                 <div className="space-y-3">
                   {(draft.faq || []).map((item, index) => (
-                    <article key={`${index}-${item.question}`} className="rounded-xl border border-white/10 bg-black/20 p-3">
+                    <article key={`faq-${index}`} className="rounded-xl border border-white/10 bg-black/20 p-3">
                       <TextField
                         label={`Вопрос ${index + 1}`}
                         value={item.question}
