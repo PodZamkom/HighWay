@@ -242,12 +242,13 @@ export async function readContentPage(slug: ContentPageSlug): Promise<ContentPag
 }
 
 export async function readAllContentPages(): Promise<Record<ContentPageSlug, ContentPage>> {
-  const [about, services, tools, useful, contacts] = await Promise.all([
+  const [about, services, tools, useful, contacts, inStock] = await Promise.all([
     readContentPage("o-kompanii"),
     readContentPage("uslugi"),
     readContentPage("servisy"),
     readContentPage("poleznoe"),
     readContentPage("kontakty"),
+    readContentPage("v-nalichii"),
   ]);
 
   return {
@@ -256,6 +257,7 @@ export async function readAllContentPages(): Promise<Record<ContentPageSlug, Con
     servisy: tools,
     poleznoe: useful,
     kontakty: contacts,
+    "v-nalichii": inStock,
   };
 }
 
@@ -427,6 +429,7 @@ export async function writeContentPagesAndGlobalSeo(params: {
   const pageTools = cmsContentPageSchema.parse(params.pages.servisy);
   const pageUseful = cmsContentPageSchema.parse(params.pages.poleznoe);
   const pageContacts = cmsContentPageSchema.parse(params.pages.kontakty);
+  const pageInStock = cmsContentPageSchema.parse(params.pages["v-nalichii"]);
   const globalSeo = cmsGlobalSeoSchema.parse(params.globalSeo);
 
   await withDbClient(async (client) => {
@@ -437,6 +440,7 @@ export async function writeContentPagesAndGlobalSeo(params: {
       await saveCmsDocument(client, "page:servisy", pageTools, userId);
       await saveCmsDocument(client, "page:poleznoe", pageUseful, userId);
       await saveCmsDocument(client, "page:kontakty", pageContacts, userId);
+      await saveCmsDocument(client, "page:v-nalichii", pageInStock, userId);
       await saveCmsDocument(client, "seo:global", globalSeo, userId);
       await client.query("COMMIT");
     } catch (error) {

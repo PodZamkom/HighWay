@@ -83,11 +83,11 @@
         "items": [
           {
             "label": "В наличии в Хоргосе",
-            "href": "/catalog?availability=InStockKhorgos"
+            "href": "/v-nalichii?location=khorgos"
           },
           {
             "label": "В наличии в Минске",
-            "href": "/catalog?availability=InStockMinsk"
+            "href": "/v-nalichii?location=minsk"
           }
         ]
       }

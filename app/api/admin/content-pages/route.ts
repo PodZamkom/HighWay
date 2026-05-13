@@ -42,6 +42,7 @@ export async function POST(request: Request) {
       servisy: cmsContentPageSchema.safeParse(pagesPayload?.servisy),
       poleznoe: cmsContentPageSchema.safeParse(pagesPayload?.poleznoe),
       kontakty: cmsContentPageSchema.safeParse(pagesPayload?.kontakty),
+      "v-nalichii": cmsContentPageSchema.safeParse(pagesPayload?.["v-nalichii"]),
     };
     const parsedGlobalSeo = cmsGlobalSeoSchema.safeParse(globalSeoPayload);
 
@@ -51,6 +52,7 @@ export async function POST(request: Request) {
       !parsedPages.servisy.success ||
       !parsedPages.poleznoe.success ||
       !parsedPages.kontakty.success ||
+      !parsedPages["v-nalichii"].success ||
       !parsedGlobalSeo.success
     ) {
       return NextResponse.json({ error: "Некорректные данные страниц или SEO" }, { status: 400 });
@@ -62,6 +64,7 @@ export async function POST(request: Request) {
       servisy: parsedPages.servisy.data,
       poleznoe: parsedPages.poleznoe.data,
       kontakty: parsedPages.kontakty.data,
+      "v-nalichii": parsedPages["v-nalichii"].data,
     };
 
     const globalSeo = parsedGlobalSeo.data;

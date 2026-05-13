@@ -5,7 +5,8 @@ export type ContentPageSlug =
   | "uslugi"
   | "servisy"
   | "poleznoe"
-  | "kontakty";
+  | "kontakty"
+  | "v-nalichii";
 
 export interface ContentPageSeo {
   title: string;

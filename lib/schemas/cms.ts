@@ -5,7 +5,7 @@ const text = z.string().trim();
 const requiredText = text.min(1);
 const href = text.min(1);
 
-export const contentPageSlugSchema = z.enum(["o-kompanii", "uslugi", "servisy", "poleznoe", "kontakty"]);
+export const contentPageSlugSchema = z.enum(["o-kompanii", "uslugi", "servisy", "poleznoe", "kontakty", "v-nalichii"]);
 
 export const homeBlockKeySchema = z.enum(["hero", "promo", "market", "calculator", "team"]);
 

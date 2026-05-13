@@ -26,6 +26,7 @@ const PAGE_TABS: Array<{ slug: ContentPageSlug; label: string }> = [
   { slug: "servisy", label: "Сервисы" },
   { slug: "poleznoe", label: "Полезное" },
   { slug: "kontakty", label: "Контакты" },
+  { slug: "v-nalichii", label: "В наличии" },
 ];
 
 type EditorTab = ContentPageSlug | "global-seo";

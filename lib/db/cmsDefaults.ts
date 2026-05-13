@@ -17,7 +17,7 @@ import {
 } from "@/lib/schemas/cms";
 
 const HOME_BLOCKS: HomeBlockKey[] = ["hero", "promo", "market", "calculator", "team"];
-const PAGE_SLUGS: ContentPageSlug[] = ["o-kompanii", "uslugi", "servisy", "poleznoe", "kontakty"];
+const PAGE_SLUGS: ContentPageSlug[] = ["o-kompanii", "uslugi", "servisy", "poleznoe", "kontakty", "v-nalichii"];
 
 function deepClone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
@@ -177,6 +177,7 @@ function snapshotToDocuments(snapshot: CmsSnapshot): Record<CmsDocumentKey, unkn
     "analytics:counters": snapshot.analyticsCounters,
     "page:o-kompanii": snapshot.pages["o-kompanii"],
     "page:uslugi": snapshot.pages.uslugi,
+    "page:v-nalichii": snapshot.pages["v-nalichii"],
     "page:servisy": snapshot.pages.servisy,
     "page:poleznoe": snapshot.pages.poleznoe,
     "page:kontakty": snapshot.pages.kontakty,

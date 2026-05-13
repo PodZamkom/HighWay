@@ -14,6 +14,7 @@ const CONTENT_ROUTES = [
   "/kontakty",
   "/calculator",
   "/catalog",
+  "/v-nalichii",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
