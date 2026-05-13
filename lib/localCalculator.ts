@@ -1,6 +1,24 @@
 import { AGE_PRESETS } from '@/lib/calculatorDefaults';
-import { findBestPortRule, findBestRate, readCalculatorConfig } from '@/lib/calculatorDb';
-import type { AgePreset, CalculatorLineItem, CalculatorResultPayload, LocalCalculatorForm } from '@/types/calculator';
+import {
+  findAuctionFee,
+  findBestPortRule,
+  findBestRate,
+  findOceanRate,
+  findTowRate,
+  readCalculatorConfig,
+  readStageMargins,
+  warehouseToPort,
+} from '@/lib/calculatorDb';
+import type {
+  AgePreset,
+  CalcStageRow,
+  CalculatorFormV2,
+  CalculatorLineItem,
+  CalculatorResultPayload,
+  CalculatorResultV2,
+  LocalCalculatorForm,
+  Warehouse,
+} from '@/types/calculator';
 
 const POTI_DESTINATIONS = new Set(['ge', 'kg', 'uz', 'az', 'kz', 'kz_as']);
 
@@ -173,5 +191,136 @@ export function calculateLocalPrice(formInput: Partial<LocalCalculatorForm>): Ca
     junkFee,
     svxServicePrice,
     total,
+  };
+}
+
+// ===========================================================================
+// V2 — per-stage cost + margin engine
+// ===========================================================================
+
+const STAGE_LABELS: Record<string, string> = {
+  auction_price: 'Цена авто на аукционе',
+  auction_fee: 'Аукционный сбор',
+  tow: 'Эвакуатор до порта США',
+  ocean: 'Морская доставка',
+  land: 'Доставка до Минска',
+  customs: 'Таможенная пошлина и сборы',
+  util: 'Утилизационный сбор',
+};
+
+function normalizeFormV2(input: Partial<CalculatorFormV2>): CalculatorFormV2 {
+  const age = clamp(Number(input.age) || 1, 0, 40);
+  return {
+    transport: String(input.transport || 'auto'),
+    platform: input.platform ? String(input.platform) : undefined,
+    auction: (input.auction as CalculatorFormV2['auction']) || 'COPART',
+    auctionLocationState: String(input.auctionLocationState || ''),
+    auctionLocationCity: String(input.auctionLocationCity || ''),
+    auctionLocationZip: input.auctionLocationZip ? String(input.auctionLocationZip) : undefined,
+    oceanRoute: input.oceanRoute === 'poti' ? 'poti' : 'klaipeda',
+    isHazmat: Boolean(input.isHazmat),
+    containerType: input.containerType === 'closed' ? 'closed' : 'open',
+    titleType: (input.titleType as CalculatorFormV2['titleType']) || 'clean',
+    preferential: Boolean(input.preferential),
+    deliveryTo: String(input.deliveryTo || 'by'),
+    carPrice: clamp(Number(input.carPrice) || 3000, 0, 500000),
+    age,
+    agePreset: input.agePreset || toAgePreset(age),
+    engine: clamp(Number(input.engine) || 2000, 0, 12000),
+  };
+}
+
+export function calculateV2(formInput: Partial<CalculatorFormV2>): CalculatorResultV2 {
+  const form = normalizeFormV2(formInput);
+  const config = readCalculatorConfig();
+  const margins = readStageMargins();
+  const marginByStage = new Map(margins.map((m) => [m.stage, m]));
+  const usdByn = config.rates.usd_byn || 3.4;
+
+  // 1) Tow
+  const towLookup = findTowRate({
+    state: form.auctionLocationState,
+    city: form.auctionLocationCity,
+    zip: form.auctionLocationZip,
+    auction: form.auction === 'IAAI' ? 'IAAI' : 'COPART',
+  });
+  const towCost = towLookup?.cost ?? config.fallback.delivery_to_usa_port_usd;
+  const warehouse: Warehouse | null = towLookup?.warehouse ?? null;
+  const port = warehouse ? warehouseToPort(warehouse) : 'Newark';
+
+  // 2) Ocean
+  const oceanCost =
+    findOceanRate({ port, route: form.oceanRoute, hazmat: form.isHazmat }) ??
+    (form.oceanRoute === 'poti'
+      ? config.fallback.ocean_to_poti_usd
+      : config.fallback.ocean_to_klaipeda_usd);
+
+  // 3) Land
+  const landKlaipedaConfig = config.land?.klaipeda_to_minsk_usd ?? 1350;
+  const landPotiConfig = config.land?.poti_to_minsk_usd ?? 2900;
+  const landCost = form.oceanRoute === 'poti' ? landPotiConfig : landKlaipedaConfig;
+
+  // 4) Auction fee
+  const auctionFeeDb = findAuctionFee({ auction: form.auction === 'IAAI' ? 'IAAI' : 'COPART', carPrice: form.carPrice });
+  const auctionFee = auctionFeeDb ?? config.fallback.auction_fee_usd;
+
+  // 5) Customs
+  const dutyRate = getDutyRate(form.agePreset);
+  let customsDuty = Math.max(form.carPrice * dutyRate, getEngineFloor(form.agePreset, form.engine));
+  if (form.preferential) customsDuty *= 0.5;
+  const customsFeeUsd = config.fallback.customs_fee_byn / usdByn;
+  const customsTotal = customsDuty + customsFeeUsd;
+
+  // 6) Util
+  const utilByn = pickRecyclingByAgePreset(form.agePreset, config.fallback);
+  const utilCost = utilByn / usdByn;
+
+  const stageList: Array<Pick<CalcStageRow, 'key' | 'cost'>> = [
+    { key: 'auction_price', cost: form.carPrice },
+    { key: 'auction_fee', cost: auctionFee },
+    { key: 'tow', cost: towCost },
+    { key: 'ocean', cost: oceanCost },
+    { key: 'land', cost: landCost },
+    { key: 'customs', cost: customsTotal },
+    { key: 'util', cost: utilCost },
+  ];
+
+  const stages: CalcStageRow[] = stageList.map((s) => {
+    const margin = marginByStage.get(s.key);
+    const marginUsd = margin?.enabled ? Number(margin.marginUsd) || 0 : 0;
+    return {
+      key: s.key,
+      label: STAGE_LABELS[s.key] || s.key,
+      cost: Number(s.cost.toFixed(2)),
+      margin: Number(marginUsd.toFixed(2)),
+      currency: 'USD',
+    };
+  });
+
+  const totalCost = stages.reduce((sum, s) => sum + s.cost, 0);
+  const totalMargin = stages.reduce((sum, s) => sum + s.margin, 0);
+
+  return {
+    stages,
+    totalCost: Number(totalCost.toFixed(2)),
+    totalMargin: Number(totalMargin.toFixed(2)),
+    total: Number((totalCost + totalMargin).toFixed(2)),
+    meta: {
+      warehouse,
+      port: warehouse ? port : null,
+      route: form.oceanRoute,
+      hazmat: form.isHazmat,
+    },
+    legacy: calculateLocalPrice({
+      transport: form.transport,
+      platform: form.platform || 'Any',
+      auction: form.auction,
+      deliveryTo: form.deliveryTo,
+      carPrice: form.carPrice,
+      age: form.age,
+      agePreset: form.agePreset,
+      engine: form.engine,
+      preferential: form.preferential,
+    }),
   };
 }

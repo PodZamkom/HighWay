@@ -37,6 +37,10 @@ export const DEFAULT_CALCULATOR_CONFIG: CalculatorConfig = {
   policies: {
     ai_model: 'gpt-4.1-mini',
   },
+  land: {
+    klaipeda_to_minsk_usd: 1350,
+    poti_to_minsk_usd: 2900,
+  },
 };
 
-export const CONFIG_KEYS: Array<keyof CalculatorConfig> = ['rates', 'fallback', 'costs', 'margins', 'policies'];
+export const CONFIG_KEYS: Array<keyof CalculatorConfig> = ['rates', 'fallback', 'costs', 'margins', 'policies', 'land'];

@@ -1,6 +1,101 @@
 export type AgePreset = '0_3' | '3_5' | '5_7' | '7_plus';
 
-export type ParseFileKind = 'rates' | 'ports';
+export type ParseFileKind = 'rates' | 'ports' | 'tow' | 'ocean' | 'auction_fee';
+
+export type CalcStageKey =
+  | 'auction_price'
+  | 'auction_fee'
+  | 'tow'
+  | 'ocean'
+  | 'land'
+  | 'customs'
+  | 'util';
+
+export type OceanRoute = 'klaipeda' | 'poti';
+
+export type AuctionKey = 'COPART' | 'IAAI' | 'MANHEIM';
+
+export type Warehouse = 'NEW JERSEY' | 'GEORGIA' | 'TEXAS' | 'CALIFORNIA';
+
+export type UsPort = 'Newark' | 'Savannah' | 'Houston' | 'Long Beach';
+
+export interface TowRate {
+  id?: number;
+  state: string;
+  city: string;
+  zip?: string | null;
+  copartCost: number | null;
+  iaaiCost: number | null;
+  warehouse: Warehouse;
+  isActive: boolean;
+}
+
+export interface OceanRate {
+  id?: number;
+  port: UsPort;
+  destination: OceanRoute;
+  hazmat: boolean;
+  cost: number;
+  currency: 'USD';
+}
+
+export interface AuctionFeeBracket {
+  id?: number;
+  auction: AuctionKey;
+  minPrice: number;
+  maxPrice: number;
+  flatFee: number | null;
+  pctFee: number | null;
+  internetBidFee: number;
+  serviceFee: number;
+}
+
+export interface StageMargin {
+  stage: CalcStageKey;
+  marginUsd: number;
+  enabled: boolean;
+}
+
+export interface CalculatorFormV2 {
+  carPrice: number;
+  age: number;
+  agePreset: AgePreset;
+  engine: number;
+  auction: AuctionKey;
+  auctionLocationState: string;
+  auctionLocationCity: string;
+  auctionLocationZip?: string;
+  oceanRoute: OceanRoute;
+  isHazmat: boolean;
+  containerType: 'open' | 'closed';
+  titleType: 'clean' | 'salvage' | 'parts' | 'junk';
+  preferential: boolean;
+  deliveryTo: string;
+  transport: string;
+  platform?: string;
+}
+
+export interface CalcStageRow {
+  key: CalcStageKey;
+  label: string;
+  cost: number;
+  margin: number;
+  currency: 'USD';
+}
+
+export interface CalculatorResultV2 {
+  stages: CalcStageRow[];
+  totalCost: number;
+  totalMargin: number;
+  total: number;
+  meta: {
+    warehouse: Warehouse | null;
+    port: UsPort | null;
+    route: OceanRoute;
+    hazmat: boolean;
+  };
+  legacy?: CalculatorResultPayload;
+}
 
 export interface LocalCalculatorForm {
   transport: string;
@@ -72,6 +167,10 @@ export interface CalculatorConfig {
   policies: {
     ai_model: string;
   };
+  land?: {
+    klaipeda_to_minsk_usd: number;
+    poti_to_minsk_usd: number;
+  };
 }
 
 export interface UploadedDocument {
@@ -114,4 +213,30 @@ export interface ParsedPortsResult {
   ports: PortRuleInput[];
   platforms: string[];
   summary: string;
+}
+
+export interface ParsedTowResult {
+  rows: TowRate[];
+  summary: string;
+}
+
+export interface ParsedOceanResult {
+  rows: OceanRate[];
+  summary: string;
+}
+
+export interface ParsedAuctionFeeResult {
+  rows: AuctionFeeBracket[];
+  summary: string;
+}
+
+export interface ParseUrlResult {
+  auction: AuctionKey | null;
+  carPrice: number | null;
+  locationState: string | null;
+  locationCity: string | null;
+  locationZip: string | null;
+  year: number | null;
+  engine: number | null;
+  raw: Record<string, unknown>;
 }

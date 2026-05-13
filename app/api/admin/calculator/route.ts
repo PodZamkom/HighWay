@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { requireAdminApiAuth } from '@/lib/admin/api';
 import {
+  listAuctionFeeBrackets,
+  listOceanRates,
   listPlatforms,
+  listTowRates,
   listUploadedDocuments,
   readCalculatorConfig,
+  readStageMargins,
   writeCalculatorConfig,
 } from '@/lib/calculatorDb';
 import { DEFAULT_CALCULATOR_CONFIG } from '@/lib/calculatorDefaults';
@@ -23,11 +27,19 @@ export async function GET(request: Request) {
     const config = readCalculatorConfig();
     const uploads = listUploadedDocuments();
     const platforms = listPlatforms();
+    const towRates = listTowRates({ limit: 1000 });
+    const oceanRates = listOceanRates();
+    const auctionFees = listAuctionFeeBrackets();
+    const stageMargins = readStageMargins();
 
     return NextResponse.json({
       config,
       uploads,
       platforms,
+      towRates,
+      oceanRates,
+      auctionFees,
+      stageMargins,
     });
   } catch (error) {
     console.error('Error reading calculator settings:', error);
@@ -117,6 +129,10 @@ export async function POST(request: Request) {
           typeof source?.policies?.ai_model === 'string' && source.policies.ai_model.trim()
             ? source.policies.ai_model.trim()
             : DEFAULT_CALCULATOR_CONFIG.policies.ai_model,
+      },
+      land: {
+        klaipeda_to_minsk_usd: sanitizeNumber(source?.land?.klaipeda_to_minsk_usd, 1350),
+        poti_to_minsk_usd: sanitizeNumber(source?.land?.poti_to_minsk_usd, 2900),
       },
     };
 

@@ -3,11 +3,20 @@ import path from 'path';
 import Database from 'better-sqlite3';
 import { DEFAULT_CALCULATOR_CONFIG } from '@/lib/calculatorDefaults';
 import type {
+  AuctionFeeBracket,
+  AuctionKey,
+  CalcStageKey,
   CalculatorConfig,
+  OceanRate,
+  OceanRoute,
   ParseFileKind,
   PortRuleInput,
   RateRuleInput,
+  StageMargin,
+  TowRate,
   UploadedDocument,
+  UsPort,
+  Warehouse,
 } from '@/types/calculator';
 
 const DB_PATH = path.join(process.cwd(), 'runtime', 'calculator.db');
@@ -87,10 +96,78 @@ function createDb() {
       error TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS tow_rates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      state TEXT NOT NULL,
+      city TEXT NOT NULL,
+      zip TEXT,
+      copart_cost REAL,
+      iaai_cost REAL,
+      warehouse TEXT NOT NULL,
+      is_active INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_tow_rates_state ON tow_rates(state);
+    CREATE INDEX IF NOT EXISTS idx_tow_rates_zip ON tow_rates(zip);
+    CREATE INDEX IF NOT EXISTS idx_tow_rates_city ON tow_rates(city);
+
+    CREATE TABLE IF NOT EXISTS ocean_rates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      port TEXT NOT NULL,
+      destination TEXT NOT NULL,
+      hazmat INTEGER NOT NULL,
+      cost REAL NOT NULL,
+      currency TEXT NOT NULL DEFAULT 'USD',
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(port, destination, hazmat)
+    );
+
+    CREATE TABLE IF NOT EXISTS auction_fee_brackets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      auction TEXT NOT NULL,
+      min_price REAL NOT NULL,
+      max_price REAL NOT NULL,
+      flat_fee REAL,
+      pct_fee REAL,
+      internet_bid_fee REAL NOT NULL DEFAULT 0,
+      service_fee REAL NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_auction_fee_auction ON auction_fee_brackets(auction);
+
+    CREATE TABLE IF NOT EXISTS stage_margins (
+      stage TEXT PRIMARY KEY,
+      margin_usd REAL NOT NULL DEFAULT 0,
+      enabled INTEGER NOT NULL DEFAULT 1
+    );
   `);
 
   seedConfig(db);
+  seedStageMargins(db);
   return db;
+}
+
+const DEFAULT_STAGE_MARGINS: Record<CalcStageKey, number> = {
+  auction_price: 0,
+  auction_fee: 0,
+  tow: 0,
+  ocean: 0,
+  land: 0,
+  customs: 0,
+  util: 0,
+};
+
+function seedStageMargins(db: Database.Database) {
+  const insert = db.prepare(
+    'INSERT OR IGNORE INTO stage_margins(stage, margin_usd, enabled) VALUES(?, ?, 1)',
+  );
+  const tx = db.transaction(() => {
+    for (const [stage, value] of Object.entries(DEFAULT_STAGE_MARGINS)) {
+      insert.run(stage, value);
+    }
+  });
+  tx();
 }
 
 function seedConfig(db: Database.Database) {
@@ -206,6 +283,9 @@ export function writeCalculatorConfig(nextConfig: CalculatorConfig) {
     insert.run('costs', JSON.stringify(nextConfig.costs));
     insert.run('margins', JSON.stringify(nextConfig.margins));
     insert.run('policies', JSON.stringify(nextConfig.policies));
+    if (nextConfig.land) {
+      insert.run('land', JSON.stringify(nextConfig.land));
+    }
 
     marginInsert.run('minsk', Number(nextConfig.margins.minsk_byn) || 0, 'BYN');
     marginInsert.run('klaipeda', Number(nextConfig.margins.klaipeda_byn) || 0, 'BYN');
@@ -398,4 +478,256 @@ export function findBestPortRule(input: { origin: string; destination: string; r
        LIMIT 1`,
     )
     .get(input) as { cost: number; currency: 'USD' | 'BYN' } | undefined;
+}
+
+// ---------------------------------------------------------------------------
+// Tow rates (per US location)
+// ---------------------------------------------------------------------------
+
+export function listTowRates(opts?: { state?: string; query?: string; limit?: number }): TowRate[] {
+  const db = getCalculatorDb();
+  const limit = Math.max(1, Math.min(1000, opts?.limit ?? 1000));
+  const where: string[] = ['is_active = 1'];
+  const params: Record<string, unknown> = { limit };
+  if (opts?.state) {
+    where.push('state = @state');
+    params.state = opts.state;
+  }
+  if (opts?.query) {
+    where.push('(LOWER(city) LIKE @q OR LOWER(state) LIKE @q OR zip LIKE @q)');
+    params.q = `%${opts.query.toLowerCase()}%`;
+  }
+  const rows = db
+    .prepare(
+      `SELECT id, state, city, zip, copart_cost, iaai_cost, warehouse, is_active
+       FROM tow_rates
+       WHERE ${where.join(' AND ')}
+       ORDER BY state, city
+       LIMIT @limit`,
+    )
+    .all(params) as any[];
+  return rows.map((r) => ({
+    id: r.id,
+    state: r.state,
+    city: r.city,
+    zip: r.zip,
+    copartCost: r.copart_cost,
+    iaaiCost: r.iaai_cost,
+    warehouse: r.warehouse as Warehouse,
+    isActive: !!r.is_active,
+  }));
+}
+
+export function replaceTowRates(rows: TowRate[]) {
+  const db = getCalculatorDb();
+  const disable = db.prepare('UPDATE tow_rates SET is_active = 0');
+  const insert = db.prepare(
+    'INSERT INTO tow_rates(state, city, zip, copart_cost, iaai_cost, warehouse, is_active) VALUES(?, ?, ?, ?, ?, ?, 1)',
+  );
+  const tx = db.transaction(() => {
+    disable.run();
+    for (const r of rows) {
+      insert.run(
+        r.state.trim(),
+        r.city.trim(),
+        r.zip?.trim() || null,
+        r.copartCost ?? null,
+        r.iaaiCost ?? null,
+        r.warehouse,
+      );
+    }
+  });
+  tx();
+}
+
+export function findTowRate(input: {
+  state?: string;
+  city?: string;
+  zip?: string;
+  auction: AuctionKey;
+}): { cost: number; warehouse: Warehouse } | null {
+  const db = getCalculatorDb();
+  const auctionCol = input.auction === 'IAAI' ? 'iaai_cost' : 'copart_cost';
+  // Priority: zip match → state+city match → state-only first row
+  if (input.zip) {
+    const r = db
+      .prepare(
+        `SELECT ${auctionCol} AS cost, warehouse FROM tow_rates WHERE is_active = 1 AND zip = ? AND ${auctionCol} IS NOT NULL LIMIT 1`,
+      )
+      .get(input.zip) as any;
+    if (r && typeof r.cost === 'number') return { cost: r.cost, warehouse: r.warehouse as Warehouse };
+  }
+  if (input.state && input.city) {
+    const r = db
+      .prepare(
+        `SELECT ${auctionCol} AS cost, warehouse FROM tow_rates WHERE is_active = 1 AND state = ? AND LOWER(city) = LOWER(?) AND ${auctionCol} IS NOT NULL LIMIT 1`,
+      )
+      .get(input.state, input.city) as any;
+    if (r && typeof r.cost === 'number') return { cost: r.cost, warehouse: r.warehouse as Warehouse };
+  }
+  if (input.state) {
+    const r = db
+      .prepare(
+        `SELECT ${auctionCol} AS cost, warehouse FROM tow_rates WHERE is_active = 1 AND state = ? AND ${auctionCol} IS NOT NULL LIMIT 1`,
+      )
+      .get(input.state) as any;
+    if (r && typeof r.cost === 'number') return { cost: r.cost, warehouse: r.warehouse as Warehouse };
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// Ocean rates
+// ---------------------------------------------------------------------------
+
+export function listOceanRates(): OceanRate[] {
+  const db = getCalculatorDb();
+  const rows = db
+    .prepare('SELECT id, port, destination, hazmat, cost, currency FROM ocean_rates ORDER BY port, destination, hazmat')
+    .all() as any[];
+  return rows.map((r) => ({
+    id: r.id,
+    port: r.port as UsPort,
+    destination: r.destination as OceanRoute,
+    hazmat: !!r.hazmat,
+    cost: r.cost,
+    currency: r.currency as 'USD',
+  }));
+}
+
+export function replaceOceanRates(rows: OceanRate[]) {
+  const db = getCalculatorDb();
+  const clear = db.prepare('DELETE FROM ocean_rates');
+  const insert = db.prepare(
+    'INSERT INTO ocean_rates(port, destination, hazmat, cost, currency) VALUES(?, ?, ?, ?, ?)',
+  );
+  const tx = db.transaction(() => {
+    clear.run();
+    for (const r of rows) {
+      insert.run(r.port, r.destination, r.hazmat ? 1 : 0, Number(r.cost) || 0, r.currency || 'USD');
+    }
+  });
+  tx();
+}
+
+export function findOceanRate(input: { port: UsPort; route: OceanRoute; hazmat: boolean }): number | null {
+  const db = getCalculatorDb();
+  const r = db
+    .prepare('SELECT cost FROM ocean_rates WHERE port = ? AND destination = ? AND hazmat = ? LIMIT 1')
+    .get(input.port, input.route, input.hazmat ? 1 : 0) as any;
+  return r && typeof r.cost === 'number' ? r.cost : null;
+}
+
+// ---------------------------------------------------------------------------
+// Auction fee brackets
+// ---------------------------------------------------------------------------
+
+export function listAuctionFeeBrackets(auction?: AuctionKey): AuctionFeeBracket[] {
+  const db = getCalculatorDb();
+  const rows = auction
+    ? db
+        .prepare(
+          'SELECT id, auction, min_price, max_price, flat_fee, pct_fee, internet_bid_fee, service_fee FROM auction_fee_brackets WHERE auction = ? ORDER BY min_price',
+        )
+        .all(auction)
+    : db
+        .prepare(
+          'SELECT id, auction, min_price, max_price, flat_fee, pct_fee, internet_bid_fee, service_fee FROM auction_fee_brackets ORDER BY auction, min_price',
+        )
+        .all();
+  return (rows as any[]).map((r) => ({
+    id: r.id,
+    auction: r.auction as AuctionKey,
+    minPrice: r.min_price,
+    maxPrice: r.max_price,
+    flatFee: r.flat_fee,
+    pctFee: r.pct_fee,
+    internetBidFee: r.internet_bid_fee,
+    serviceFee: r.service_fee,
+  }));
+}
+
+export function replaceAuctionFeeBrackets(rows: AuctionFeeBracket[]) {
+  const db = getCalculatorDb();
+  const clear = db.prepare('DELETE FROM auction_fee_brackets');
+  const insert = db.prepare(
+    'INSERT INTO auction_fee_brackets(auction, min_price, max_price, flat_fee, pct_fee, internet_bid_fee, service_fee) VALUES(?, ?, ?, ?, ?, ?, ?)',
+  );
+  const tx = db.transaction(() => {
+    clear.run();
+    for (const r of rows) {
+      insert.run(
+        r.auction,
+        Number(r.minPrice) || 0,
+        Number(r.maxPrice) || 0,
+        r.flatFee ?? null,
+        r.pctFee ?? null,
+        Number(r.internetBidFee) || 0,
+        Number(r.serviceFee) || 0,
+      );
+    }
+  });
+  tx();
+}
+
+export function findAuctionFee(input: { auction: AuctionKey; carPrice: number }): number | null {
+  const db = getCalculatorDb();
+  const r = db
+    .prepare(
+      `SELECT flat_fee, pct_fee, internet_bid_fee, service_fee
+       FROM auction_fee_brackets
+       WHERE auction = ? AND ? BETWEEN min_price AND max_price
+       ORDER BY min_price DESC
+       LIMIT 1`,
+    )
+    .get(input.auction, input.carPrice) as any;
+  if (!r) return null;
+  const base = typeof r.pct_fee === 'number' && r.pct_fee > 0
+    ? input.carPrice * Number(r.pct_fee)
+    : Number(r.flat_fee || 0);
+  return base + Number(r.internet_bid_fee || 0) + Number(r.service_fee || 0);
+}
+
+// ---------------------------------------------------------------------------
+// Stage margins
+// ---------------------------------------------------------------------------
+
+export function readStageMargins(): StageMargin[] {
+  const db = getCalculatorDb();
+  const rows = db.prepare('SELECT stage, margin_usd, enabled FROM stage_margins').all() as any[];
+  const map = new Map(rows.map((r) => [r.stage as CalcStageKey, r]));
+  return (Object.keys(DEFAULT_STAGE_MARGINS) as CalcStageKey[]).map((stage) => {
+    const r = map.get(stage);
+    return {
+      stage,
+      marginUsd: r ? Number(r.margin_usd) || 0 : 0,
+      enabled: r ? !!r.enabled : true,
+    };
+  });
+}
+
+export function writeStageMargins(rows: StageMargin[]) {
+  const db = getCalculatorDb();
+  const upsert = db.prepare(
+    'INSERT INTO stage_margins(stage, margin_usd, enabled) VALUES(?, ?, ?) ON CONFLICT(stage) DO UPDATE SET margin_usd = excluded.margin_usd, enabled = excluded.enabled',
+  );
+  const tx = db.transaction(() => {
+    for (const r of rows) {
+      upsert.run(r.stage, Number(r.marginUsd) || 0, r.enabled ? 1 : 0);
+    }
+  });
+  tx();
+}
+
+export function warehouseToPort(warehouse: Warehouse): UsPort {
+  switch (warehouse) {
+    case 'NEW JERSEY':
+      return 'Newark';
+    case 'GEORGIA':
+      return 'Savannah';
+    case 'TEXAS':
+      return 'Houston';
+    case 'CALIFORNIA':
+      return 'Long Beach';
+  }
 }
