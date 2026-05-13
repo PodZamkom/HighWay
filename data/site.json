@@ -36,19 +36,19 @@
         "items": [
           {
             "label": "Авто из Китая",
-            "href": "/catalog"
+            "href": "/catalog?market=china"
           },
           {
             "label": "Авто из США",
-            "href": "/catalog"
+            "href": "/catalog?market=usa"
           },
           {
             "label": "Авто из Кореи",
-            "href": "/catalog"
+            "href": "/catalog?market=korea"
           },
           {
             "label": "Авто из Европы",
-            "href": "/catalog"
+            "href": "/catalog?market=europe"
           }
         ]
       },
@@ -57,11 +57,11 @@
         "items": [
           {
             "label": "из США",
-            "href": "/catalog"
+            "href": "/catalog?market=usa&engine=EV"
           },
           {
             "label": "из Китая",
-            "href": "/catalog"
+            "href": "/catalog?market=china&engine=EV"
           }
         ]
       },
@@ -70,11 +70,11 @@
         "items": [
           {
             "label": "Мото из США",
-            "href": "/catalog"
+            "href": "/catalog?market=usa&body=Мото"
           },
           {
             "label": "Мото из Европы",
-            "href": "/catalog"
+            "href": "/catalog?market=europe&body=Мото"
           }
         ]
       },

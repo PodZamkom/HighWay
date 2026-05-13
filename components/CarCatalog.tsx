@@ -15,8 +15,16 @@ type EngineFilter = "All" | "EV" | "EREV" | "HEV" | "ICE";
 interface CarCatalogProps {
   initialMarket?: string;
   initialAvailability?: string;
+  initialEngine?: string;
+  initialBodyType?: string;
   catalogLabel: string;
   cars: CarModel[];
+}
+
+function normalizeEngineFilter(value?: string): EngineFilter {
+  const v = value?.toUpperCase();
+  if (v === "EV" || v === "EREV" || v === "HEV" || v === "ICE") return v;
+  return "All";
 }
 
 function normalizeMarket(value?: string): MarketFilter {
@@ -86,13 +94,20 @@ function engineLabel(value: EngineFilter) {
   return "Любой";
 }
 
-export function CarCatalog({ initialMarket, initialAvailability, catalogLabel, cars }: CarCatalogProps) {
+export function CarCatalog({
+  initialMarket,
+  initialAvailability,
+  initialEngine,
+  initialBodyType,
+  catalogLabel,
+  cars,
+}: CarCatalogProps) {
   const initialAvailabilityFilter = normalizeAvailabilityFilter(initialAvailability);
   const [market, setMarket] = useState<MarketFilter>(normalizeMarket(initialMarket));
   const [availability, setAvailability] = useState<AvailabilityFilter>(initialAvailabilityFilter);
   const [brand, setBrand] = useState("All");
-  const [bodyType, setBodyType] = useState("All");
-  const [engineType, setEngineType] = useState<EngineFilter>("All");
+  const [bodyType, setBodyType] = useState(initialBodyType?.trim() || "All");
+  const [engineType, setEngineType] = useState<EngineFilter>(normalizeEngineFilter(initialEngine));
   const [transmission, setTransmission] = useState("All");
   const [drive, setDrive] = useState("All");
   const [yearFrom, setYearFrom] = useState("");
