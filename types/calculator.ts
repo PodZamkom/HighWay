@@ -114,6 +114,7 @@ export interface CalculatorOptionsResponse {
   auctions: { key: string; name: string }[];
   deliveries: { key: string; name: string; cityName: string; cityNameOld?: string }[];
   platforms: { key: string; name: string }[];
+  locations?: { key: string; state: string; city: string; name: string }[];
   agePresets: { key: AgePreset; name: string; min: number; max: number | null }[];
 }
 

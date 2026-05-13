@@ -1,13 +1,17 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Download, Info, Loader2 } from 'lucide-react';
 import { AGE_PRESETS } from '@/lib/calculatorDefaults';
 import type {
   AgePreset,
+  AuctionKey,
+  CalcStageRow,
+  CalculatorFormV2,
   CalculatorOptionsResponse,
-  CalculatorResultPayload,
+  CalculatorResultV2,
   LocalCalculatorForm,
+  OceanRoute,
 } from '@/types/calculator';
 import type { CalculatorFormContent } from '@/types/site';
 
@@ -24,6 +28,17 @@ const DEFAULT_FORM: LocalCalculatorForm = {
   engine: 2000,
   preferential: false,
 };
+
+interface LocationState {
+  state: string;
+  city: string;
+  key: string;
+}
+
+const AUCTION_OPTIONS: { key: AuctionKey; name: string }[] = [
+  { key: 'COPART', name: 'Copart' },
+  { key: 'IAAI', name: 'IAAI' },
+];
 
 interface LandingPriceCalculatorProps {
   content: CalculatorFormContent;
@@ -44,8 +59,12 @@ function formatMoney(value: number, currency: 'USD' | 'BYN') {
 export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps) {
   const pdfDownloadLabel = 'Скачать расчет';
   const [form, setForm] = useState<LocalCalculatorForm>(DEFAULT_FORM);
+  const [auctionKey, setAuctionKey] = useState<AuctionKey>('COPART');
+  const [location, setLocation] = useState<LocationState>({ state: '', city: '', key: '' });
+  const [oceanRoute, setOceanRoute] = useState<OceanRoute>('klaipeda');
+  const [isHazmat, setIsHazmat] = useState(false);
   const [options, setOptions] = useState<CalculatorOptionsResponse | null>(null);
-  const [result, setResult] = useState<CalculatorResultPayload | null>(null);
+  const [resultV2, setResultV2] = useState<CalculatorResultV2 | null>(null);
   const [isLoadingResult, setIsLoadingResult] = useState(false);
   const [isLoadingOptions, setIsLoadingOptions] = useState(true);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
@@ -101,20 +120,38 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
       setError(null);
 
       try {
-        const response = await fetch('/api/calculator/calculate', {
+        const formV2: Partial<CalculatorFormV2> = {
+          carPrice: form.carPrice,
+          age: form.age,
+          agePreset: form.agePreset,
+          engine: form.engine,
+          auction: auctionKey,
+          auctionLocationState: location.state,
+          auctionLocationCity: location.city,
+          oceanRoute,
+          isHazmat,
+          containerType: 'open',
+          titleType: 'clean',
+          preferential: form.preferential,
+          deliveryTo: form.deliveryTo,
+          transport: form.transport,
+          platform: form.platform,
+        };
+
+        const response = await fetch('/api/calculator/calculate-v2', {
           method: 'POST',
           cache: 'no-store',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ form }),
+          body: JSON.stringify({ form: formV2 }),
           signal: controller.signal,
         });
         const data = await response.json();
 
         if (!response.ok || !data?.success || !data?.data) {
-          throw new Error('Не удалось выполнить расчет');
+          throw new Error('Не удалось выполнить расчёт');
         }
 
-        setResult(data.data);
+        setResultV2(data.data as CalculatorResultV2);
       } catch {
         if (!controller.signal.aborted) {
           setError(content.errors.calculationFailed);
@@ -130,7 +167,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
       clearTimeout(timer);
       controller.abort();
     };
-  }, [form, options, content.errors.calculationFailed]);
+  }, [form, auctionKey, location.state, location.city, oceanRoute, isHazmat, options, content.errors.calculationFailed]);
 
   const updateForm = (patch: Partial<LocalCalculatorForm>) => {
     setForm((prev) => ({ ...prev, ...patch }));
@@ -150,10 +187,29 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
   const onDownloadPdf = async () => {
     try {
       setIsDownloadingPdf(true);
-      const response = await fetch('/api/calculator/pdf', {
+
+      const formV2: Partial<CalculatorFormV2> = {
+        carPrice: form.carPrice,
+        age: form.age,
+        agePreset: form.agePreset,
+        engine: form.engine,
+        auction: auctionKey,
+        auctionLocationState: location.state,
+        auctionLocationCity: location.city,
+        oceanRoute,
+        isHazmat,
+        containerType: 'open',
+        titleType: 'clean',
+        preferential: form.preferential,
+        deliveryTo: form.deliveryTo,
+        transport: form.transport,
+        platform: form.platform,
+      };
+
+      const response = await fetch('/api/calculator/pdf-v2', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ form, result }),
+        body: JSON.stringify({ form: formV2, result: resultV2, mode: 'client' }),
       });
 
       if (!response.ok) {
@@ -173,23 +229,6 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
       setIsDownloadingPdf(false);
     }
   };
-
-  const resultRows = useMemo(() => {
-    if (!result) return [];
-    return [
-      result.carPrice,
-      result.auctionFee,
-      result.deliveryToPortUSA,
-      result.deliveryFromPortUSA,
-      result.fromKlaipeda,
-      result.ourServicePrice,
-    ];
-  }, [result]);
-
-  const customsRows = useMemo(() => {
-    if (!result) return [];
-    return [result.customDuty, result.customFee, result.junkFee, result.svxServicePrice];
-  }, [result]);
 
   return (
     <div className="h-[100dvh] max-h-[100dvh] min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:h-[75vh] md:min-h-[520px]">
@@ -317,14 +356,50 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                   withInfoIcon
                   disabled={isLoadingOptions}
                 />
-                <SelectField
-                  label={content.labels.auction}
-                  value={form.auction}
-                  onChange={(value) => updateForm({ auction: value })}
-                  options={options?.auctions || []}
-                  withInfoIcon
-                  disabled={isLoadingOptions}
-                />
+                <div>
+                  <label className="mb-1 inline-flex items-center gap-1 text-[11px] uppercase tracking-wide text-slate-500">
+                    {content.labels.auction}
+                    <Info size={12} />
+                  </label>
+                  <select
+                    value={auctionKey}
+                    onChange={(event) => setAuctionKey(event.target.value as AuctionKey)}
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-orange-400"
+                  >
+                    {AUCTION_OPTIONS.map((item) => (
+                      <option key={item.key} value={item.key}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1 inline-flex items-center gap-1 text-[11px] uppercase tracking-wide text-slate-500">
+                    Площадка авто (штат / город)
+                    <Info size={12} />
+                  </label>
+                  <input
+                    type="text"
+                    list="calc-locations"
+                    value={location.key}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      const match = (options?.locations || []).find((l) => l.name === value || l.key === value);
+                      if (match) {
+                        setLocation({ state: match.state, city: match.city, key: match.name });
+                      } else {
+                        setLocation({ state: '', city: '', key: value });
+                      }
+                    }}
+                    placeholder="Например: NJ - New Jersey · Newark"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-orange-400"
+                  />
+                  <datalist id="calc-locations">
+                    {(options?.locations || []).map((item) => (
+                      <option key={item.key} value={item.name} />
+                    ))}
+                  </datalist>
+                </div>
                 <SelectField
                   label={content.labels.deliveryTo}
                   value={form.deliveryTo}
@@ -333,6 +408,30 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                   withInfoIcon
                   disabled={isLoadingOptions}
                 />
+                <div>
+                  <label className="mb-1 inline-flex items-center gap-1 text-[11px] uppercase tracking-wide text-slate-500">
+                    Маршрут океан
+                  </label>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {([
+                      { key: 'klaipeda', label: 'Клайпеда (Литва)' },
+                      { key: 'poti', label: 'Поти (Грузия)' },
+                    ] as { key: OceanRoute; label: string }[]).map((item) => (
+                      <button
+                        key={item.key}
+                        type="button"
+                        onClick={() => setOceanRoute(item.key)}
+                        className={`rounded px-2 py-1.5 text-xs font-medium transition ${
+                          oceanRoute === item.key
+                            ? 'bg-orange-500 text-white'
+                            : 'border border-slate-300 bg-white text-slate-700 hover:border-orange-300'
+                        }`}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div>
                   <label className="mb-1 inline-flex items-center gap-1 text-[11px] uppercase tracking-wide text-slate-500">
                     {content.labels.engine}
@@ -353,9 +452,18 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                     type="checkbox"
                     checked={form.preferential}
                     onChange={(event) => updateForm({ preferential: event.target.checked })}
-                    className="h-4 w-4"
+                    className="h-4 w-4 accent-orange-500"
                   />
                   <span>{content.labels.preferential}</span>
+                </label>
+                <label className="mt-6 flex cursor-pointer items-center gap-2 text-xs text-slate-700 sm:mt-5">
+                  <input
+                    type="checkbox"
+                    checked={isHazmat}
+                    onChange={(event) => setIsHazmat(event.target.checked)}
+                    className="h-4 w-4 accent-orange-500"
+                  />
+                  <span>Hazmat (электро / гибрид)</span>
                 </label>
               </div>
             </div>
@@ -363,7 +471,7 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
 
           <div className={`h-full border-t border-slate-200 p-3 md:border-l md:border-t-0 md:p-4 ${mobileView === 'result' ? 'block' : 'hidden md:block'}`}>
             <div className="h-full overflow-y-auto rounded-lg border border-slate-100 bg-white p-3">
-              {isLoadingResult && !result && (
+              {isLoadingResult && !resultV2 && (
                 <div className="flex min-h-[260px] items-center justify-center">
                   <Loader2 className="h-6 w-6 animate-spin text-orange-500" />
                 </div>
@@ -373,22 +481,26 @@ export function LandingPriceCalculator({ content }: LandingPriceCalculatorProps)
                 <div className="rounded-md border border-red-200 bg-red-50 p-2 text-xs text-red-700">{error}</div>
               )}
 
-              {result && !error && (
+              {resultV2 && !error && (
                 <div className="space-y-3">
-                  <h3 className="border-b border-orange-300 pb-1 text-base font-semibold text-slate-900">{content.labels.purchaseAndDelivery}</h3>
-                  {resultRows.map((item, index) => (
-                    <ResultRow key={`${item.label}-${index}`} label={item.label} value={formatMoney(item.value, item.currency)} />
-                  ))}
-
-                  <h3 className="border-b border-orange-300 pb-1 pt-2 text-base font-semibold text-slate-900">{content.labels.customsAndClearance}</h3>
-                  {customsRows.map((item, index) => (
-                    <ResultRow key={`${item.label}-${index}`} label={item.label} value={formatMoney(item.value, item.currency)} />
+                  <h3 className="border-b border-orange-300 pb-1 text-base font-semibold text-slate-900">
+                    {content.labels.purchaseAndDelivery}
+                  </h3>
+                  {resultV2.stages.map((stage) => (
+                    <StageRow key={stage.key} stage={stage} />
                   ))}
 
                   <div className="flex items-end justify-between border-t border-slate-200 pt-3 text-xl font-semibold">
                     <span className="text-slate-900">{content.labels.total}</span>
-                    <span className="text-orange-500">{formatMoney(result.total.value, result.total.currency)}</span>
+                    <span className="text-orange-500">{formatMoney(resultV2.total, 'USD')}</span>
                   </div>
+
+                  {resultV2.meta.port ? (
+                    <p className="text-[11px] text-slate-500">
+                      Маршрут: {resultV2.meta.port} → {resultV2.meta.route === 'poti' ? 'Поти' : 'Клайпеда'}
+                      {resultV2.meta.hazmat ? ' · Hazmat' : ''}
+                    </p>
+                  ) : null}
 
                   <p className="text-[11px] text-orange-500">{content.labels.disclaimer}</p>
 
@@ -459,6 +571,17 @@ function ResultRow({ label, value }: { label: string; value: string }) {
     <div className="flex items-center justify-between gap-3 text-sm">
       <span className="text-slate-700">{label}</span>
       <span className="whitespace-nowrap font-semibold text-orange-500">{value}</span>
+    </div>
+  );
+}
+
+function StageRow({ stage }: { stage: CalcStageRow }) {
+  return (
+    <div className="flex items-center justify-between gap-3 text-sm">
+      <span className="text-slate-700">{stage.label}</span>
+      <span className="whitespace-nowrap font-semibold text-orange-500">
+        {(stage.cost + stage.margin).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} USD
+      </span>
     </div>
   );
 }
