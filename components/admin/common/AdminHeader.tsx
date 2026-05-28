@@ -11,7 +11,8 @@ const NAV_ITEMS = [
   { href: "/admin/catalog", label: "Каталог" },
   { href: "/admin/calculator", label: "Калькулятор" },
   { href: "/admin/counters", label: "Счётчики" },
-  { href: "/admin/bitrix", label: "CRM" },
+  { href: "/admin/bitrix", label: "Битрикс" },
+  { href: "/admin/amocrm", label: "amoCRM" },
 ];
 
 interface AdminHeaderProps {

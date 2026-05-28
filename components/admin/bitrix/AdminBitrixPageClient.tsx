@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { FileText, Link2, Loader2, Plus, Save, Settings2, Shield, TestTube2, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { BITRIX_PHONE_TYPES, BITRIX_TEMPLATE_VARIABLES, type BitrixHeaderSetting, type BitrixSettings } from '@/types/bitrix';
+import { CrmProviderToggle } from '@/components/admin/common/CrmProviderToggle';
 
 interface BitrixSettingsResponse {
   settings: BitrixSettings;
@@ -257,6 +258,8 @@ export function AdminBitrixPageClient() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
+        <CrmProviderToggle pageProvider="bitrix" />
+
         <div className="rounded-2xl border border-white/10 bg-zinc-900 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h1 className="flex items-center gap-2 text-2xl font-bold">
