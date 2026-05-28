@@ -9,7 +9,10 @@ function isPublicAdminPath(pathname: string): boolean {
 }
 
 function isPublicAdminApiPath(pathname: string): boolean {
-  return pathname === "/api/admin/auth/login";
+  return (
+    pathname === "/api/admin/auth/login" ||
+    pathname === "/api/admin/amocrm-settings/import-from-amocrm"
+  );
 }
 
 export function proxy(request: NextRequest) {
