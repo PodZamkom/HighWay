@@ -230,6 +230,12 @@ export async function createLead(
 
   const leadName = applyTemplate(settings.leadNameTemplate, vars).trim() || `Заявка: ${input.name}`;
 
+  // Branch: "Неразобранное" inbox via unsorted/forms endpoint
+  if (settings.useUnsorted) {
+    return createUnsortedFormLead(settings, input, vars, leadName);
+  }
+
+  // Regular lead creation in a specific pipeline status
   let contactId: number | null = null;
   if (settings.dedupeByPhone) {
     contactId = await findContactByPhone(settings, input.phone).catch(() => null);
@@ -284,4 +290,90 @@ export async function createLead(
   }
 
   return { leadId: Number(leadId), contactId };
+}
+
+/* --------------------------- UNSORTED INBOX FLOW -------------------------- */
+
+async function createUnsortedFormLead(
+  settings: AmocrmSettings,
+  input: CreateLeadInput,
+  vars: Record<string, string>,
+  leadName: string,
+): Promise<{ leadId: number; contactId: number }> {
+  const now = Math.floor(Date.now() / 1000);
+  const note = applyTemplate(settings.noteTemplate, vars).trim();
+
+  const leadEntity: Record<string, unknown> = { name: leadName };
+  if (settings.responsibleUserId) leadEntity.responsible_user_id = settings.responsibleUserId;
+  if (settings.tags.length > 0) {
+    leadEntity._embedded = {
+      tags: settings.tags.map((name) => ({ name })),
+    };
+  }
+
+  const contactEntity: Record<string, unknown> = {
+    name: input.name,
+    custom_fields_values: [
+      {
+        field_code: "PHONE",
+        values: [{ value: input.phone, enum_code: "WORK" }],
+      },
+    ],
+  };
+
+  const sourceUid = `highway-site-${now}-${Math.random().toString(36).slice(2, 8)}`;
+  const sourceName = settings.sourceName || "Сайт Highway";
+
+  const body: Record<string, unknown>[] = [
+    {
+      source_uid: sourceUid,
+      source_name: sourceName,
+      created_at: now,
+      ...(settings.pipelineId ? { pipeline_id: settings.pipelineId } : {}),
+      metadata: {
+        form_id: "highway-leadform",
+        form_name: input.source || "Заказать звонок",
+        form_page: input.pageUrl,
+        form_sent_at: now,
+        ip: "0.0.0.0",
+        referer: input.pageUrl,
+      },
+      _embedded: {
+        contacts: [contactEntity],
+        leads: [leadEntity],
+      },
+    },
+  ];
+
+  const { data } = await amoFetch(settings, "/api/v4/leads/unsorted/forms", {
+    method: "POST",
+    body,
+    timeoutMs: settings.timeoutMs,
+  });
+
+  const unsorted = data?._embedded?.unsorted?.[0];
+  const leadId = Number(unsorted?._embedded?.leads?.[0]?.id || unsorted?.lead_id || 0);
+  const contactId = Number(unsorted?._embedded?.contacts?.[0]?.id || unsorted?.contact_id || 0);
+
+  if (!leadId) {
+    throw new AmocrmError("amoCRM не вернул id неразобранной заявки", 502);
+  }
+
+  // Attach note to the lead
+  if (note) {
+    await amoFetch(settings, `/api/v4/leads/${leadId}/notes`, {
+      method: "POST",
+      body: [
+        {
+          note_type: "common",
+          params: { text: note },
+        },
+      ],
+      timeoutMs: settings.timeoutMs,
+    }).catch((err) => {
+      console.error("amoCRM note attach failed:", err?.message);
+    });
+  }
+
+  return { leadId, contactId };
 }

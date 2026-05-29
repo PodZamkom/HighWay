@@ -12,6 +12,10 @@ export interface AmocrmSettings {
   dedupeByPhone: boolean;
   /** Tags to attach to created lead */
   tags: string[];
+  /** If true, leads go via `/leads/unsorted/forms` into the "Неразобранное" inbox. */
+  useUnsorted: boolean;
+  /** Public source identifier shown in amoCRM unsorted card */
+  sourceName: string;
 }
 
 export interface AmocrmPipeline {

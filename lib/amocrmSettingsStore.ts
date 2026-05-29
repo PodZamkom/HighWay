@@ -76,6 +76,8 @@ export function defaultAmocrmSettings(): AmocrmSettings {
     timeoutMs: 10000,
     dedupeByPhone: true,
     tags: ["highway-site"],
+    useUnsorted: true,
+    sourceName: "Сайт Highway",
   };
 }
 
@@ -102,6 +104,8 @@ export function normalizeAmocrmSettings(input: unknown): AmocrmSettings {
     timeoutMs,
     dedupeByPhone: toBooleanValue(v.dedupeByPhone, defaults.dedupeByPhone),
     tags: normalizeTags(v.tags),
+    useUnsorted: toBooleanValue(v.useUnsorted, defaults.useUnsorted),
+    sourceName: toStringValue(v.sourceName) || defaults.sourceName,
   };
 }
 
