@@ -42,11 +42,40 @@ export default async function RootLayout({
     <html lang="ru">
       <head>
         {headCounters.length > 0 ? <CountersHtml counters={headCounters} /> : null}
+        {/* Marquiz quiz loader */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w, d, s, o){
+  var j = d.createElement(s); j.async = true; j.src = '//script.marquiz.ru/v2.js';j.onload = function() {
+    if (document.readyState !== 'loading') Marquiz.init(o);
+    else document.addEventListener("DOMContentLoaded", function() {
+      Marquiz.init(o);
+    });
+  };
+  d.head.insertBefore(j, d.head.firstElementChild);
+})(window, document, 'script', {
+    host: '//quiz.marquiz.ru',
+    region: 'ru',
+    id: '656763572016880025f93225',
+    autoOpen: false,
+    autoOpenFreq: 'once',
+    openOnExit: false,
+    disableOnMobile: false
+  }
+);`,
+          }}
+        />
       </head>
       <body className="min-h-screen antialiased">
         {bodyStartCounters.length > 0 ? <CountersHtml counters={bodyStartCounters} /> : null}
         {children}
         {bodyEndCounters.length > 0 ? <CountersHtml counters={bodyEndCounters} /> : null}
+        {/* Marquiz banner (Pop) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(t, p) {window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {Marquiz.add([t, p])})})('Pop', {id: '656763572016880025f93225', title: 'Сделать подбор', text: 'Edelivery', delay: 20, textColor: '#000000', bgColor: '#f4e4ba', svgColor: '#000000', closeColor: '#ffffff', bonusCount: 0, bonusText: false, type: 'side', position: 'position_top-left', rounded: true, shadow: true, blicked: true, pulse: false, symbolMode: 'icon', symbolIconId: 'rocket_launch', disableOnMobile: false})`,
+          }}
+        />
       </body>
     </html>
   );
